@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <%- include('../partials/favicon') %>
+    <title>
+        <%= title %>
+    </title>
+    <link href="/css/output.css" rel="stylesheet">
+</head>
+
+<body class="bg-gray-50 dark:bg-gray-900 min-h-screen">
+    <div class="p-4 md:p-6 max-w-2xl mx-auto">
+        <div class="flex items-center gap-3 mb-6">
+            <a href="/core-lamda/<%= coreLamdaId %>"
+                class="p-2 text-gray-500 hover:text-gray-700 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                </svg>
+            </a>
+            <div>
+                <h1 class="text-lg md:text-xl font-bold text-gray-900 dark:text-white">
+                    <% if (segment) { %>Edit Segment<% } else { %>Add Segment<% } %>
+                </h1>
+                <p class="text-xs md:text-sm text-gray-500">Tube <%= tubeNumber %> - Core <%= coreNumber %> (<%=
+                                coreColor %>)</p>
+            </div>
+        </div>
+
+        <div
+            class="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 p-4 md:p-6">
+            <form
+                action="<% if (segment) { %>/core-lamda/<%= coreLamdaId %>/segments/<%= segment.id %>?_method=PUT<% } else if (isNewCore) { %>/core-lamda/<%= coreLamdaId %>/cores<% } else { %>/core-lamda/<%= coreLamdaId %>/cores/<%= tubeNumber %>/<%= coreNumber %>/segments<% } %>"
+                method="POST" class="space-y-4">
+                <% if (isNewCore) { %>
+                    <input type="hidden" name="tube_number" value="<%= tubeNumber %>">
+                    <input type="hidden" name="core_number" value="<%= coreNumber %>">
+                    <% } %>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Nama
+                                Segment</label>
+                            <input type="text" name="segmen" value="<%= segment ? segment.segmen || '' : '' %>"
+                                placeholder="Contoh: ODC Bandara - ODC BT Besar"
+                                class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        </div>
+
+                        <div>
+                            <label
+                                class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Panjang</label>
+                            <input type="text" name="segmen_length"
+                                value="<%= segment ? segment.segmen_length || '' : '' %>" placeholder="Contoh: 700 m"
+                                class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        </div>
+
+                        <% if (isNewCore) { %>
+                            <div>
+                                <label
+                                    class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Description
+                                    (opsional)</label>
+                                <input type="text" name="description" placeholder="Contoh: Idle, Active, Reserved"
+                                    class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            </div>
+                            <% } %>
+
+                                <div class="flex gap-3 pt-4">
+                                    <button type="submit"
+                                        class="flex-1 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors">
+                                        <% if (segment) { %>Update Segment<% } else { %>Tambah Segment<% } %>
+                                    </button>
+                                    <a href="/core-lamda/<%= coreLamdaId %>"
+                                        class="px-6 py-3 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 font-medium rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors">
+                                        Batal
+                                    </a>
+                                </div>
+            </form>
+
+            <% if (segment) { %>
+                <div class="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
+                    <form action="/core-lamda/<%= coreLamdaId %>/segments/<%= segment.id %>?_method=DELETE"
+                        method="POST"
+                        onsubmit="return confirmSubmit(this, 'Apakah Anda yakin ingin menghapus segment ini?')">
+                        <button type="submit"
+                            class="w-full px-6 py-3 bg-red-500 hover:bg-red-600 text-white font-medium rounded-lg transition-colors">
+                            Hapus Segment
+                        </button>
+                    </form>
+                </div>
+                <% } %>
+        </div>
+    </div>
+</body>
+
+</html>

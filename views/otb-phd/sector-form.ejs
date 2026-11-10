@@ -1,0 +1,86 @@
+<!-- OTB PHD Sector Form -->
+<div class="space-y-6">
+    <!-- Page Header -->
+    <div class="flex items-center gap-4">
+        <a href="/otb-phd"
+            class="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 dark:hover:text-white dark:hover:bg-gray-700 rounded-lg transition-colors">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18">
+                </path>
+            </svg>
+        </a>
+        <div>
+            <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Tambah Sector Baru</h1>
+            <p class="text-gray-500 dark:text-gray-400">Buat sector dengan tube (12 core per tube)</p>
+        </div>
+    </div>
+
+    <!-- Form -->
+    <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-6 shadow-sm">
+        <form action="/otb-phd/sector" method="POST" class="space-y-6">
+            <input type="hidden" name="central_id" value="<%= central.id %>">
+            <div class="grid gap-6 md:grid-cols-2">
+                <!-- Sector Name -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Nama Sector <span class="text-red-500">*</span>
+                    </label>
+                    <input type="text" name="sector" required
+                        class="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="Contoh: Sector A, OTB PHD-1, dll">
+                </div>
+
+                <!-- Tube Count -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Jumlah Tube <span class="text-red-500">*</span>
+                    </label>
+                    <select name="tube_count" required id="tubeCount"
+                        class="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        onchange="updateCoreCount()">
+                        <option value="1">1 Tube (12 Core)</option>
+                        <option value="2">2 Tube (24 Core)</option>
+                        <option value="3">3 Tube (36 Core)</option>
+                        <option value="4" selected>4 Tube (48 Core)</option>
+                        <option value="5">5 Tube (60 Core)</option>
+                        <option value="6">6 Tube (72 Core)</option>
+                        <option value="7">7 Tube (84 Core)</option>
+                        <option value="8">8 Tube (96 Core)</option>
+                        <option value="9">9 Tube (108 Core)</option>
+                        <option value="10">10 Tube (120 Core)</option>
+                        <option value="11">11 Tube (132 Core)</option>
+                        <option value="12">12 Tube (144 Core)</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Info Box -->
+            <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+                <div class="flex items-start gap-3">
+                    <svg class="w-5 h-5 text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" fill="none"
+                        stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <div class="text-sm text-blue-700 dark:text-blue-300">
+                        <p class="font-medium mb-1">Struktur OTB PHD</p>
+                        <p>Setiap tube memiliki 12 core dengan warna standar FO (Blue, Orange, Green, dll). Core akan
+                            otomatis dibuat dengan status "Available". Anda dapat mengedit setiap core setelahnya.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Submit -->
+            <div class="flex items-center justify-end gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
+                <a href="/otb-phd"
+                    class="px-4 py-2.5 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-medium rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                    Batal
+                </a>
+                <button type="submit"
+                    class="px-6 py-2.5 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-medium rounded-lg shadow-lg shadow-blue-500/25 transition-all">
+                    Buat Sector
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

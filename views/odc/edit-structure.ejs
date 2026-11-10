@@ -1,0 +1,136 @@
+<div class="space-y-6">
+    <!-- Page Header -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div class="flex items-center gap-4">
+            <a href="/odc/<%= odc.id %>"
+                class="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 dark:hover:text-white dark:hover:bg-gray-700 rounded-lg transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                </svg>
+            </a>
+            <div>
+                <h1 class="text-xl md:text-2xl font-bold text-gray-900 dark:text-white">
+                    Edit <%= type.charAt(0).toUpperCase() + type.slice(1) %>
+                </h1>
+                <p class="text-sm text-gray-500 dark:text-gray-400">
+                    <%= odc.nama_odc %>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Form -->
+    <div
+        class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-6 shadow-sm max-w-2xl mx-auto">
+
+        <!-- Rename Form -->
+        <form action="/odc/<%= odc.id %>/structure/<%= type %>?_method=PUT" method="POST" class="space-y-6 mb-8">
+            <input type="hidden" name="sector" value="<%= query.sector %>">
+            <% if (query.tray) { %>
+                <input type="hidden" name="oldTray" value="<%= query.tray %>">
+                <input type="hidden" name="tray" value="<%= query.tray %>"> <!-- For context logic if needed -->
+                <% } %>
+                    <% if (type==='sector' ) { %>
+                        <input type="hidden" name="oldSector" value="<%= query.sector %>">
+                        <% } %>
+
+                            <div class="grid gap-6">
+                                <!-- Current Info Display -->
+                                <div
+                                    class="p-4 bg-gray-50 dark:bg-gray-900/50 rounded-lg border border-gray-100 dark:border-gray-700">
+                                    <div class="grid grid-cols-1 gap-2">
+                                        <% if (type==='sector' || query.sector) { %>
+                                            <div>
+                                                <span class="text-xs font-medium text-gray-500 uppercase">Sector:</span>
+                                                <span class="font-bold text-gray-900 dark:text-white">
+                                                    <%= query.sector %>
+                                                </span>
+                                            </div>
+                                            <% } %>
+                                                <% if (type==='tray' || type==='tube' ) { %>
+                                                    <div>
+                                                        <span
+                                                            class="text-xs font-medium text-gray-500 uppercase">Tray:</span>
+                                                        <span class="font-bold text-gray-900 dark:text-white">
+                                                            <%= query.tray %>
+                                                        </span>
+                                                    </div>
+                                                    <% } %>
+                                                        <% if (type==='tube' ) { %>
+                                                            <div>
+                                                                <span
+                                                                    class="text-xs font-medium text-gray-500 uppercase">Tube:</span>
+                                                                <span class="font-bold text-gray-900 dark:text-white">
+                                                                    <%= query.tube %>
+                                                                </span>
+                                                            </div>
+                                                            <% } %>
+                                    </div>
+                                </div>
+
+                                <% if (type !=='tube' ) { %>
+                                    <!-- Rename Input (Tube usually doesn't need renaming, but Tray/Sector does) -->
+                                    <!-- Wait, Tube is determined by number 1-12... renaming it might conflict or just shift? -->
+                                    <!-- User likely wants to Delete mainly, but Rename is useful for Sector/Tray. -->
+
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                            Nama/Nomor Baru
+                                        </label>
+                                        <% if (type==='sector' ) { %>
+                                            <input type="text" name="newSector" value="<%= query.sector %>" required
+                                                class="w-full px-4 py-2 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500">
+                                            <% } else if (type==='tray' ) { %>
+                                                <input type="number" name="newTray" value="<%= query.tray %>" required
+                                                    class="w-full px-4 py-2 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500">
+                                                <% } %>
+                                                    <p class="mt-1 text-xs text-gray-500">Ubah nama/nomor jika ingin
+                                                        mengganti.</p>
+                                    </div>
+
+                                    <div class="flex justify-end">
+                                        <button type="submit"
+                                            class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors">
+                                            Simpan Perubahan
+                                        </button>
+                                    </div>
+                                    <% } else { %>
+                                        <div class="p-4 bg-yellow-50 text-yellow-800 text-sm rounded-lg">
+                                            Tube <%= query.tube %> tidak dapat diubah namanya (terikat warna). Hanya
+                                                dapat dihapus.
+                                        </div>
+                                        <% } %>
+                            </div>
+        </form>
+
+        <hr class="border-gray-200 dark:border-gray-700 my-6">
+
+        <!-- Delete Section -->
+        <div class="flex flex-col gap-4">
+            <h3 class="text-lg font-semibold text-red-600">Danger Zone</h3>
+            <p class="text-sm text-gray-600 dark:text-gray-400">
+                Menghapus <%= type %> akan menghapus <strong>SEMUA</strong> data di dalamnya permanen.
+            </p>
+
+            <form action="/odc/<%= odc.id %>/structure/<%= type %>?_method=DELETE" method="POST"
+                onsubmit="return confirmSubmit(this, 'Yakin hapus permanen?');">
+                <input type="hidden" name="sector" value="<%= query.sector %>">
+                <% if (query.tray) { %> <input type="hidden" name="tray" value="<%= query.tray %>">
+                    <% } %>
+                        <% if (query.tube) { %> <input type="hidden" name="tube" value="<%= query.tube %>">
+                            <% } %>
+
+                                <button type="submit"
+                                    class="w-full sm:w-auto px-4 py-2 bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 font-medium rounded-lg transition-colors flex items-center justify-center gap-2">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
+                                        </path>
+                                    </svg>
+                                    Hapus <%= type.charAt(0).toUpperCase() + type.slice(1) %>
+                                </button>
+            </form>
+        </div>
+    </div>
+</div>

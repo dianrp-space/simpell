@@ -1,0 +1,114 @@
+<!-- Akses Third Party Detail -->
+<div class="max-w-2xl mx-auto space-y-6">
+    <!-- Page Header -->
+    <div class="flex items-center gap-4">
+        <a href="javascript:history.back()"
+            class="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 dark:hover:text-white dark:hover:bg-gray-700 rounded-lg transition-colors">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18">
+                </path>
+            </svg>
+        </a>
+        <div>
+            <h1 class="text-2xl font-bold text-gray-900 dark:text-white">
+                Detail Akses 3rd Party
+            </h1>
+            <p class="text-gray-500 dark:text-gray-400">Detail Layanan Akses Third Party</p>
+        </div>
+    </div>
+
+    <!-- Form Card -->
+    <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-6 shadow-sm">
+        <div class="space-y-6">
+            <!-- Customer Display -->
+            <div class="space-y-4">
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Customer</label>
+                <div
+                    class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white opacity-70 cursor-not-allowed">
+                    <%= data && data.pelanggan ? (data.pelanggan.no_jaringan + ' - ' + data.pelanggan.nama_pelanggan) :
+                        (data.no_jaringan || '-' ) %>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">ID SEGMENT</label>
+                    <input type="text" disabled value="<%= data ? data.id_segment || '' : '' %>"
+                        class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white opacity-70 cursor-not-allowed">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">ID PROVIDER</label>
+                    <input type="text" disabled value="<%= data ? data.id_provider || '' : '' %>"
+                        class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white opacity-70 cursor-not-allowed">
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Nama Mitra</label>
+                <input type="text" disabled value="<%= data ? data.nama_mitra || '' : '' %>"
+                    class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white opacity-70 cursor-not-allowed">
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Asal</label>
+                    <input type="text" disabled value="<%= data ? data.asal || '' : '' %>"
+                        class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white opacity-70 cursor-not-allowed">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Tujuan</label>
+                    <input type="text" disabled value="<%= data ? data.tujuan || '' : '' %>"
+                        class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white opacity-70 cursor-not-allowed">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Bandwidth</label>
+                    <input type="text" disabled value="<%= data ? data.bandwidth || '' : '' %>"
+                        class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white opacity-70 cursor-not-allowed">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Sewa / Bulan</label>
+                    <div class="relative">
+                        <span class="absolute left-4 top-3.5 text-gray-500 dark:text-gray-400">Rp</span>
+                        <input type="text" disabled value="<%= data ? data.sewa_per_bulan || '' : '' %>"
+                            class="w-full pl-10 pr-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white opacity-70 cursor-not-allowed">
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Tanggal
+                        Online</label>
+                    <input type="date" disabled value="<%= data ? data.tgl_online || '' : '' %>"
+                        class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white opacity-70 cursor-not-allowed">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Service ID</label>
+                    <input type="text" disabled value="<%= data ? data.service_id || '' : '' %>"
+                        class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white opacity-70 cursor-not-allowed">
+                </div>
+            </div>
+
+            <div class="flex gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
+                <a href="javascript:history.back()"
+                    class="inline-flex items-center px-5 py-2.5 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 font-medium rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                    Kembali
+                </a>
+                <% if (isEditor && data) { %>
+                    <a href="/akses-third-party/<%= data.id %>/edit"
+                        class="inline-flex items-center px-5 py-2.5 bg-amber-500 hover:bg-amber-600 text-white font-medium rounded-lg transition-colors shadow-lg shadow-amber-500/25">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z">
+                            </path>
+                        </svg>
+                        Edit Data
+                    </a>
+                    <% } %>
+            </div>
+        </div>
+    </div>
+</div>

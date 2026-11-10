@@ -1,0 +1,114 @@
+<!-- Data Core Sector Form -->
+<div class="max-w-2xl mx-auto space-y-6">
+    <!-- Page Header -->
+    <div class="flex items-center gap-4">
+        <a href="/data-core/<%= dataCore.id %>"
+            class="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 dark:hover:text-white dark:hover:bg-gray-700 rounded-lg transition-colors">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18">
+                </path>
+            </svg>
+        </a>
+        <div>
+            <h1 class="text-2xl font-bold text-gray-900 dark:text-white">
+                <%= sector ? 'Edit' : 'Tambah' %> Sector
+            </h1>
+            <p class="text-gray-500 dark:text-gray-400">
+                <%= dataCore.nama_lokasi %> (<%= dataCore.no_jaringan %>)
+            </p>
+        </div>
+    </div>
+
+    <!-- Parent Info -->
+    <div
+        class="bg-gradient-to-br from-blue-100 to-indigo-100 dark:from-blue-900/30 dark:to-indigo-900/30 border-2 border-blue-300 dark:border-blue-700 rounded-lg p-4">
+        <div class="flex items-center gap-3">
+            <div
+                class="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center">
+                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10">
+                    </path>
+                </svg>
+            </div>
+            <div>
+                <p class="font-bold text-gray-800 dark:text-white">
+                    <%= dataCore.nama_lokasi %>
+                </p>
+                <p class="text-xs text-gray-600 dark:text-gray-400 font-mono">
+                    <%= dataCore.no_jaringan %>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Form Card -->
+    <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-6 shadow-sm">
+        <form
+            action="<%= sector ? '/data-core/' + dataCore.id + '/sector/' + sector.id + '?_method=PUT' : '/data-core/' + dataCore.id + '/sector' %>"
+            method="POST" class="space-y-5">
+
+            <!-- Nama Sector -->
+            <div>
+                <label for="nama_sector" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Nama Sector <span class="text-red-500">*</span>
+                </label>
+                <input type="text" id="nama_sector" name="nama_sector" required
+                    value="<%= sector ? sector.nama_sector : '' %>"
+                    class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                    placeholder="Contoh: K48 T1 C5,C4 atau HH PANRIL Joint">
+                <p class="mt-1 text-xs text-gray-500">Nama atau kode sector (contoh: K48 T3 C6,C11)</p>
+            </div>
+
+            <!-- Koordinat GPS -->
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label for="latitude" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Latitude
+                    </label>
+                    <input type="text" id="latitude" name="latitude"
+                        value="<%= sector && sector.latitude ? sector.latitude : '' %>"
+                        class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                        placeholder="-6.xxxxxx">
+                </div>
+                <div>
+                    <label for="longitude" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Longitude
+                    </label>
+                    <input type="text" id="longitude" name="longitude"
+                        value="<%= sector && sector.longitude ? sector.longitude : '' %>"
+                        class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                        placeholder="106.xxxxxx">
+                </div>
+            </div>
+            <p class="text-xs text-gray-500 -mt-3">Koordinat GPS lokasi sector (opsional)</p>
+
+            <!-- Keterangan -->
+            <div>
+                <label for="keterangan" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Keterangan / Info Core
+                </label>
+                <textarea id="keterangan" name="keterangan" rows="6"
+                    class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                    placeholder="Contoh:&#10;Tube Biru Core Biru [dari BAJ]&#10;Tube Biru Gore Abuz2 [dari NEU]&#10;Tube Putih Core Merah"><%= sector ? sector.keterangan || '' : '' %></textarea>
+                <p class="mt-1 text-xs text-gray-500">Detail informasi tube dan core, termasuk asal/tujuan koneksi</p>
+            </div>
+
+            <div class="flex gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
+                <button type="submit"
+                    class="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-medium rounded-lg shadow-lg shadow-green-500/25 transition-all transform hover:scale-[1.02]">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                    <%= sector ? 'Simpan Perubahan' : 'Tambah Sector' %>
+                </button>
+                <a href="/data-core/<%= dataCore.id %>"
+                    class="inline-flex items-center px-5 py-2.5 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 font-medium rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                    Batal
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="/js/coordinate-converter.js"></script>

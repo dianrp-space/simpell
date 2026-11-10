@@ -1,0 +1,490 @@
+<div class="container mx-auto px-4 pt-16 relative z-10 min-h-[calc(100vh-64px)] flex flex-col items-center">
+    <div class="text-center mb-12">
+        <!-- Title with Typewriter effect -->
+        <h1 class="text-4xl md:text-6xl font-bold text-gray-900 dark:text-white mb-6">
+            <span id="portalTitle"></span><span id="typewriterCursor"
+                class="inline-block w-[2px] h-[36px] md:h-[56px] bg-blue-600 align-text-bottom cursor-blink ml-1"></span>
+        </h1>
+        <!-- Subtitle (Starts Hidden) -->
+        <p id="portalSubtitle"
+            class="text-xl text-gray-600 dark:text-gray-400 opacity-0 transition-all duration-1000 translate-y-4">Portal
+            Operasional Lintasarta</p>
+    </div>
+
+    <!-- Cards Wrapper (Starts Hidden) -->
+    <div id="portalCards"
+        class="grid grid-cols-1 gap-8 max-w-md mx-auto opacity-0 transition-all duration-1000 translate-y-8 delay-300">
+
+        <!-- Simpell Card -->
+        <% if (user && user.role === 'mitra' && (!allowedMenus || !allowedMenus.length)) { %>
+        <div class="block relative bg-white dark:bg-gray-800 rounded-2xl shadow-xl overflow-hidden">
+            <div class="p-8">
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-3">SIMPELL</h2>
+                <p class="text-sm text-gray-600 dark:text-gray-400">Belum ada menu yang dibuka untuk akun ini. Minta admin membuka satu menu di User Management.</p>
+            </div>
+        </div>
+        <% } else { %>
+        <a href="<%= firstAllowedPath || '/dashboard' %>"
+            class="group block relative bg-white dark:bg-gray-800 rounded-2xl shadow-xl overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
+            <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                <img src="/img/logo_simpell.png" class="w-[88px] h-[88px] object-contain" alt="Simpell Watermark">
+            </div>
+            <div class="p-8">
+                <div
+                    class="w-16 h-16 bg-white rounded-xl flex items-center justify-center mb-6 group-hover:bg-blue-50 transition-colors duration-300 shadow-sm">
+                    <img src="/img/simpell_logo.png" alt="SIMPELL Logo" class="w-10 h-10 object-contain">
+                </div>
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-3">SIMPELL</h2>
+                <p class="text-[12px] text-gray-600 dark:text-gray-400 mb-6">Sistem Informasi Managemen Pelanggan
+                    dan
+                    Layanan
+                    Lintasarta</p>
+                <div
+                    class="flex items-center text-blue-600 dark:text-blue-400 font-semibold group-hover:translate-x-2 transition-transform">
+                    Akses SIMPELL
+                    <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M17 8l4 4m0 0l-4 4m4-4H3">
+                        </path>
+                    </svg>
+                </div>
+            </div>
+        </a>
+        <% } %>
+    </div>
+
+    <!-- Admin Section (Only for Admin with Editor sub_role) -->
+    <% if (user && user.role && user.role.toLowerCase()==='admin' && user.sub_user &&
+        user.sub_user.toLowerCase()==='editor' ) { %>
+        <div id="adminSection"
+            class="mt-12 max-w-4xl mx-auto w-full opacity-0 transition-all duration-1000 translate-y-8 delay-500">
+            <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-6 text-center">Administrasi Sistem</h3>
+            <div class="grid md:grid-cols-2 xl:grid-cols-3 gap-6">
+                <!-- User Management Card -->
+                <a href="/admin/users"
+                    class="group flex items-center p-6 bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border-l-4 border-violet-600">
+                    <div
+                        class="p-3 bg-violet-100 dark:bg-violet-900/30 rounded-lg text-violet-600 dark:text-violet-400 mr-4">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z">
+                            </path>
+                        </svg>
+                    </div>
+                    <div>
+                        <h4
+                            class="text-lg font-bold text-gray-900 dark:text-white group-hover:text-violet-600 transition-colors">
+                            User Management
+                        </h4>
+                        <p class="text-sm text-gray-500 dark:text-gray-400">Kelola akun, approval, dan hak akses user.
+                        </p>
+                    </div>
+                </a>
+
+                <!-- Activity Log Card -->
+                <a href="/activity-log"
+                    class="group flex items-center p-6 bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border-l-4 border-green-600">
+                    <div
+                        class="p-3 bg-green-100 dark:bg-green-900/30 rounded-lg text-green-600 dark:text-green-400 mr-4">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01">
+                            </path>
+                        </svg>
+                    </div>
+                    <div>
+                        <h4
+                            class="text-lg font-bold text-gray-900 dark:text-white group-hover:text-green-600 transition-colors">
+                            Activity Log
+                        </h4>
+                        <p class="text-sm text-gray-500 dark:text-gray-400">Pantau aktivitas login dan perubahan data.
+                        </p>
+                    </div>
+                </a>
+
+                <a href="/admin/backup"
+                    class="group flex items-center p-6 bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border-l-4 border-amber-600">
+                    <div
+                        class="p-3 bg-amber-100 dark:bg-amber-900/30 rounded-lg text-amber-600 dark:text-amber-400 mr-4">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5m0 0l5-5m-5 5V4">
+                            </path>
+                        </svg>
+                    </div>
+                    <div>
+                        <h4
+                            class="text-lg font-bold text-gray-900 dark:text-white group-hover:text-amber-600 transition-colors">
+                            Backup & Restore
+                        </h4>
+                        <p class="text-sm text-gray-500 dark:text-gray-400">Unduh data untuk pindah server, atau pulihkan cadangan.
+                        </p>
+                    </div>
+                </a>
+            </div>
+        </div>
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                setTimeout(() => {
+                    const adminSection = document.getElementById('adminSection');
+                    if (adminSection) {
+                        adminSection.classList.remove('opacity-0', 'translate-y-8');
+                    }
+                }, 800);
+            });
+        </script>
+        <% } %>
+
+            <!-- Easter Egg Modal (Lintasarta Batam) -->
+            <div id="batamModal" class="fixed inset-0 z-[99999] hidden" aria-labelledby="modal-title" role="dialog"
+                aria-modal="true">
+                <div class="fixed inset-0 bg-slate-900/90 backdrop-blur-md transition-opacity duration-500 ease-in-out">
+                </div>
+                <div class="fixed inset-0 z-10 w-screen overflow-y-auto">
+                    <div class="flex min-h-full items-center justify-center p-4 text-center">
+                        <div id="batamModalContent"
+                            class="relative transform overflow-hidden rounded-3xl bg-white dark:bg-slate-800 text-left shadow-2xl transition-all sm:w-full sm:max-w-4xl border border-white/20 dark:border-slate-700/50 scale-95 opacity-0 duration-500">
+
+                            <!-- Close Button -->
+                            <button type="button" onclick="closeBatamModal()"
+                                class="absolute top-4 right-4 z-20 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition backdrop-blur-sm shadow-lg border border-white/20">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M6 18L18 6M6 6l12 12"></path>
+                                </svg>
+                            </button>
+
+                            <!-- Modal Content -->
+                            <div class="relative">
+                                <!-- Hero Image Area -->
+                                <div class="relative h-64 md:h-80 w-full overflow-hidden group">
+                                    <div
+                                        class="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/40 to-transparent z-10">
+                                    </div>
+                                    <!-- Slideshow Images -->
+                                    <img src="/img/foto_bareng.jpeg?v=<%= Date.now() %>" alt="Team Photo 1"
+                                        class="easter-slide absolute inset-0 w-full h-full object-cover object-center transition-opacity duration-1000 opacity-100">
+                                    <img src="/img/foto_bareng2.jpeg?v=<%= Date.now() %>" alt="Team Photo 2"
+                                        class="easter-slide absolute inset-0 w-full h-full object-cover object-center transition-opacity duration-1000 opacity-0">
+
+                                    <!-- Title Overlay -->
+                                    <div class="absolute bottom-0 left-0 right-0 p-8 z-20 text-center">
+                                        <h2
+                                            class="text-2xl md:text-3xl lg:text-4xl font-bold text-white mb-2 drop-shadow-lg tracking-tight">
+                                            Born from the Vision of <span class="animate-gradient-text">Lintasarta
+                                                Batam</span>
+                                        </h2>
+                                        <div
+                                            class="w-24 h-1 bg-blue-500 mx-auto rounded-full mt-4 shadow-[0_0_10px_rgba(59,130,246,0.5)]">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="p-8 md:p-10 bg-slate-50 dark:bg-slate-900 relative overflow-hidden">
+                                    <!-- Decorative Background Elements -->
+                                    <div
+                                        class="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none overflow-hidden">
+                                        <div
+                                            class="absolute -top-20 -left-20 w-64 h-64 bg-blue-500 rounded-full blur-[100px]">
+                                        </div>
+                                        <div
+                                            class="absolute -bottom-20 -right-20 w-80 h-80 bg-violet-500 rounded-full blur-[100px]">
+                                        </div>
+                                    </div>
+
+                                    <!-- Logos Section -->
+                                    <div
+                                        class="flex flex-wrap justify-center items-center gap-8 md:gap-12 mb-12 relative z-10">
+                                        <div class="group/logo relative">
+                                            <div
+                                                class="absolute -inset-4 bg-white/5 rounded-full blur-xl opacity-0 group-hover/logo:opacity-100 transition-opacity">
+                                            </div>
+                                            <img src="/img/pola_logo.png" alt="POLA"
+                                                class="h-12 md:h-16 object-contain hover:scale-110 transition-transform duration-300 drop-shadow-md hover:drop-shadow-[0_0_15px_rgba(37,99,235,0.3)] relative">
+                                        </div>
+                                        <div class="group/logo relative">
+                                            <div
+                                                class="absolute -inset-4 bg-blue-500/10 rounded-full blur-xl opacity-0 group-hover/logo:opacity-100 transition-opacity">
+                                            </div>
+                                            <img src="/img/logo_simpell.png" alt="SIMPELL"
+                                                class="h-12 md:h-16 object-contain hover:scale-110 transition-transform duration-300 drop-shadow-md hover:drop-shadow-[0_0_15px_rgba(37,99,235,0.3)] relative">
+                                        </div>
+                                        <div class="group/logo relative">
+                                            <div
+                                                class="absolute -inset-4 bg-blue-500/10 rounded-full blur-xl opacity-0 group-hover/logo:opacity-100 transition-opacity">
+                                            </div>
+                                            <img src="/img/logo_remembrall.png" alt="REMEMBRALL"
+                                                class="h-[42px] md:h-[58px] object-contain hover:scale-110 transition-transform duration-300 drop-shadow-md hover:drop-shadow-[0_0_15px_rgba(37,99,235,0.3)] relative">
+                                        </div>
+                                        <div class="group/logo relative">
+                                            <div
+                                                class="absolute -inset-4 bg-blue-500/10 rounded-full blur-xl opacity-0 group-hover/logo:opacity-100 transition-opacity">
+                                            </div>
+                                            <img src="/img/logo_astala.png" alt="ASTALA"
+                                                class="h-12 md:h-16 object-contain hover:scale-110 transition-transform duration-300 drop-shadow-md hover:drop-shadow-[0_0_15px_rgba(37,99,235,0.3)] relative">
+                                        </div>
+                                    </div>
+
+                                    <!-- Contributors Grid -->
+                                    <div class="relative z-10">
+                                        <h3
+                                            class="text-xs font-bold text-slate-400 uppercase tracking-[0.2em] text-center mb-8">
+                                            The Minds Behind The Systems</h3>
+
+                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4 max-w-2xl mx-auto">
+                                            <!-- Col 1 -->
+                                            <div
+                                                class="space-y-3 text-center md:text-right flex flex-col items-center md:items-end">
+                                                <div class="contributor-item group/item">
+                                                    <p
+                                                        class="text-base font-medium text-slate-600 dark:text-slate-300 group-hover/item:text-blue-600 dark:group-hover/item:text-blue-400 transition-colors">
+                                                        AKHMAD SULISTIONO</p>
+                                                </div>
+                                                <div class="contributor-item group/item">
+                                                    <p
+                                                        class="text-base font-medium text-slate-600 dark:text-slate-300 hover-animate-violet-blue transition-all duration-300">
+                                                        ANDRE PUTRA DEWANSYAH</p>
+                                                </div>
+                                                <div class="contributor-item group/item">
+                                                    <p
+                                                        class="text-base font-medium text-slate-600 dark:text-slate-300 group-hover/item:text-blue-600 dark:group-hover/item:text-blue-400 transition-colors">
+                                                        FATKHATUL KHUSNIAH</p>
+                                                </div>
+                                                <div class="contributor-item group/item">
+                                                    <p
+                                                        class="text-base font-medium text-slate-600 dark:text-slate-300 group-hover/item:text-blue-600 dark:group-hover/item:text-blue-400 transition-colors">
+                                                        MUHAMAD FADHIL</p>
+                                                </div>
+                                                <div class="contributor-item group/item">
+                                                    <p
+                                                        class="text-base font-medium text-slate-600 dark:text-slate-300 group-hover/item:text-blue-600 dark:group-hover/item:text-blue-400 transition-colors">
+                                                        HARIANSYAH</p>
+                                                </div>
+                                            </div>
+
+                                            <!-- Col 2 -->
+                                            <div
+                                                class="space-y-3 text-center md:text-left flex flex-col items-center md:items-start">
+                                                <div class="contributor-item group/item">
+                                                    <p
+                                                        class="text-base font-medium text-slate-600 dark:text-slate-300 group-hover/item:text-blue-600 dark:group-hover/item:text-blue-400 transition-colors">
+                                                        AKBAR GUNTARA SALEH</p>
+                                                </div>
+                                                <div class="contributor-item group/item">
+                                                    <p
+                                                        class="text-base font-medium text-slate-600 dark:text-slate-300 group-hover/item:text-blue-600 dark:group-hover/item:text-blue-400 transition-colors">
+                                                        SHAFIRA PUTRI REYNA</p>
+                                                </div>
+                                                <div class="contributor-item group/item">
+                                                    <p
+                                                        class="text-base font-medium text-slate-600 dark:text-slate-300 group-hover/item:text-blue-600 dark:group-hover/item:text-blue-400 transition-colors">
+                                                        ROMADONA WINATA</p>
+                                                </div>
+                                                <div class="contributor-item group/item">
+                                                    <p
+                                                        class="text-base font-medium text-slate-600 dark:text-slate-300 group-hover/item:text-blue-600 dark:group-hover/item:text-blue-400 transition-colors">
+                                                        IWAN KAVERIUS MARBUN</p>
+                                                </div>
+                                                <div class="contributor-item group/item">
+                                                    <p
+                                                        class="text-base font-medium text-slate-600 dark:text-slate-300 group-hover/item:text-blue-600 dark:group-hover/item:text-blue-400 transition-colors">
+                                                        MUHAMAD NUR</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Footer -->
+                                <div
+                                    class="mt-12 text-center relative z-10 border-t border-slate-200 dark:border-slate-800 pt-6">
+                                    <p class="text-[10px] text-slate-400 font-mono tracking-wider">
+                                        <span class="opacity-50">EST. 2026 //</span> LINTASARTA BATAM <span
+                                            class="opacity-50">// CODE & CREATIVITY</span>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+</div>
+
+<audio id="batamAudio" loop>
+    <source src="/sounds/bg_music.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+    // Easter Egg Logic (Ctrl + A + L)
+    const batamKeys = {};
+    const batamModal = document.getElementById('batamModal');
+    const batamModalContent = document.getElementById('batamModalContent');
+    const batamAudio = document.getElementById('batamAudio');
+    let easterSlideInterval = null;
+
+    // Preload audio
+    if (batamAudio) batamAudio.load();
+
+    document.addEventListener('keydown', (e) => {
+        // Only trigger if no other inputs are focused
+        if (['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName)) return;
+
+        const key = e.key.toLowerCase();
+
+        if (e.ctrlKey) {
+            if (['a', 'l'].includes(key)) {
+                e.preventDefault();
+                batamKeys[key] = true;
+            }
+
+            // Check if both 'a' and 'l' are pressed while Ctrl is held
+            if (batamKeys['a'] && batamKeys['l']) {
+                openBatamModal();
+                // Reset keys to prevent multiple triggers
+                batamKeys['a'] = false;
+                batamKeys['l'] = false;
+            }
+        }
+    });
+
+    document.addEventListener('keyup', (e) => {
+        const key = e.key.toLowerCase();
+        if (['a', 'l'].includes(key)) {
+            batamKeys[key] = false;
+        }
+        // Also reset on Ctrl release just in case
+        if (key === 'control') {
+            batamKeys['a'] = false;
+            batamKeys['l'] = false;
+        }
+    });
+
+    function startEasterSlideshow() {
+        const slides = document.querySelectorAll('.easter-slide');
+        if (slides.length < 2) return;
+        let current = 0;
+        // Reset to first slide
+        slides.forEach((s, i) => s.classList.toggle('opacity-0', i !== 0));
+        slides[0].classList.remove('opacity-0');
+
+        easterSlideInterval = setInterval(() => {
+            slides[current].classList.add('opacity-0');
+            current = (current + 1) % slides.length;
+            slides[current].classList.remove('opacity-0');
+        }, 4000);
+    }
+
+    function stopEasterSlideshow() {
+        if (easterSlideInterval) {
+            clearInterval(easterSlideInterval);
+            easterSlideInterval = null;
+        }
+    }
+
+    function openBatamModal() {
+        if (!batamModal.classList.contains('hidden')) return; // Already open
+
+        // Hide Navbar to prevent overlap
+        const navbar = document.querySelector('nav');
+        if (navbar) navbar.style.display = 'none';
+
+        batamModal.classList.remove('hidden');
+
+        // Trigger reflow
+        void batamModal.offsetWidth;
+
+        // Animate in
+        requestAnimationFrame(() => {
+            batamModalContent.classList.remove('scale-95', 'opacity-0');
+            batamModalContent.classList.add('scale-100', 'opacity-100');
+        });
+
+        // Start photo slideshow
+        startEasterSlideshow();
+
+        // Play Music with fade in
+        if (batamAudio) {
+            batamAudio.currentTime = 0;
+            batamAudio.volume = 0;
+            const playPromise = batamAudio.play();
+
+            if (playPromise !== undefined) {
+                playPromise.then(_ => {
+                    // Fade in
+                    let vol = 0;
+                    const interval = setInterval(() => {
+                        if (vol < 0.5) {
+                            vol += 0.05;
+                            batamAudio.volume = vol;
+                        } else {
+                            clearInterval(interval);
+                        }
+                    }, 100);
+                })
+                    .catch(error => {
+                        console.log("Audio autoplay blocked by browser policy:", error);
+                    });
+            }
+        }
+    }
+
+    function closeBatamModal() {
+        // Stop slideshow
+        stopEasterSlideshow();
+
+        // Animate out
+        batamModalContent.classList.remove('scale-100', 'opacity-100');
+        batamModalContent.classList.add('scale-95', 'opacity-0');
+
+        // Fade out music
+        if (batamAudio) {
+            let vol = batamAudio.volume;
+            const interval = setInterval(() => {
+                if (vol > 0.05) {
+                    vol -= 0.05;
+                    batamAudio.volume = vol;
+                } else {
+                    clearInterval(interval);
+                    batamAudio.pause();
+                    batamAudio.currentTime = 0;
+                }
+            }, 50);
+        }
+
+        setTimeout(() => {
+            batamModal.classList.add('hidden');
+            // Restore Navbar
+            const navbar = document.querySelector('nav');
+            if (navbar) navbar.style.display = '';
+        }, 300); // 300ms matches transition duration (if set, else 500ms from class)
+    }
+
+    // Close on click background
+    batamModal.addEventListener('click', (e) => {
+        // Check if identified as the backdrop wrapper
+        if (e.target.closest('#batamModalContent') === null) {
+            closeBatamModal();
+        }
+    });
+</script>
+
+<style>
+    .hover-animate-violet-blue {
+        transition: all 0.3s ease;
+    }
+
+    .hover-animate-violet-blue:hover {
+        background: linear-gradient(to right, #8b5cf6, #38bdf8, #8b5cf6);
+        /* Violet-500, Sky-400 */
+        background-size: 200% auto;
+        color: transparent;
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        animation: shine 3s linear infinite;
+        font-weight: 800;
+        transform: scale(1.05);
+        display: inline-block;
+    }
+</style>
+</div>

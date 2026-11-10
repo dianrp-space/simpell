@@ -1,0 +1,46 @@
+<div class="max-w-3xl mx-auto">
+    <div class="mb-6">
+        <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Backup & Restore</h1>
+        <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">Cadangan ini berisi seluruh tabel database dan file yang diunggah, termasuk foto profil. File <span class="font-medium">.env</span> tidak ikut, jadi di server baru variabel itu diisi sendiri sebelum data dipulihkan.</p>
+    </div>
+
+    <section class="mb-6 rounded-xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800">
+        <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Unduh cadangan</h2>
+        <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">Simpan file <span class="font-medium">.tar.gz</span> ini sebelum pindah server.</p>
+        <a href="/admin/backup/download"
+            class="mt-4 inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700">
+            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5m0 0l5-5m-5 5V4"></path>
+            </svg>
+            Unduh backup
+        </a>
+    </section>
+
+    <section class="rounded-xl border border-amber-200 bg-white p-6 shadow-sm dark:border-amber-900/50 dark:bg-gray-800">
+        <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Pulihkan cadangan</h2>
+        <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">Isi database dan file unggahan di server ini diganti dengan isi cadangan. Yang sedang dipakai akan tertimpa.</p>
+        <form action="/admin/backup/restore" method="POST" enctype="multipart/form-data" class="mt-4 space-y-4">
+            <div>
+                <label for="archive" class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">File cadangan</label>
+                <input id="archive" name="archive" type="file" accept=".tar.gz,.tgz,application/gzip" required
+                    class="block w-full text-sm text-gray-700 file:mr-3 file:rounded-lg file:border-0 file:bg-gray-100 file:px-3 file:py-2 file:text-sm file:font-medium hover:file:bg-gray-200 dark:text-gray-300 dark:file:bg-gray-700 dark:file:text-gray-200">
+            </div>
+            <div>
+                <label for="confirm" class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">Ketik PULIHKAN untuk melanjutkan</label>
+                <input id="confirm" name="confirm" type="text" autocomplete="off" required
+                    class="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-900 dark:text-white">
+            </div>
+            <button id="restoreBtn" type="submit" disabled
+                class="inline-flex items-center rounded-lg bg-amber-600 px-4 py-2 text-sm font-semibold text-white enabled:hover:bg-amber-700 disabled:cursor-not-allowed disabled:opacity-50">
+                Pulihkan data
+            </button>
+        </form>
+    </section>
+</div>
+<script>
+    const confirmInput = document.getElementById('confirm');
+    const restoreBtn = document.getElementById('restoreBtn');
+    confirmInput.addEventListener('input', () => {
+        restoreBtn.disabled = confirmInput.value !== 'PULIHKAN';
+    });
+</script>

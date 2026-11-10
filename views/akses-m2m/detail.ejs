@@ -1,0 +1,200 @@
+<!-- M2M Detail -->
+<div class="max-w-2xl mx-auto space-y-6">
+    <!-- Page Header -->
+    <div class="flex items-center gap-4">
+        <a href="javascript:history.back()"
+            class="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 dark:hover:text-white dark:hover:bg-gray-700 rounded-lg transition-colors">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18">
+                </path>
+            </svg>
+        </a>
+        <div>
+            <h1 class="text-2xl font-bold text-gray-900 dark:text-white">
+                Detail M2M
+            </h1>
+            <p class="text-gray-500 dark:text-gray-400">Detail Layanan M2M</p>
+        </div>
+    </div>
+
+    <!-- Form Card -->
+    <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-6 shadow-sm">
+        <div class="space-y-5">
+            <!-- Pelanggan Display -->
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Customer</label>
+                <input type="text" disabled
+                    value="<%= data && data.pelanggan ? (data.pelanggan.no_jaringan + ' - ' + data.pelanggan.nama_pelanggan) : '-' %>"
+                    class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white opacity-70 cursor-not-allowed">
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Latitude</label>
+                    <input type="text" disabled value="<%= data ? data.latitude || '' : '' %>"
+                        class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white opacity-70 cursor-not-allowed">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Longitude</label>
+                    <input type="text" disabled value="<%= data ? data.longitude || '' : '' %>"
+                        class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white opacity-70 cursor-not-allowed">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">VLAN</label>
+                    <input type="text" disabled value="<%= data ? data.vlan || '' : '' %>"
+                        class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white opacity-70 cursor-not-allowed">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">IP
+                        Secondary</label>
+                    <input type="text" disabled value="<%= data ? data.ip_secondary || '' : '' %>"
+                        class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white opacity-70 cursor-not-allowed">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Detail</label>
+                    <textarea disabled rows="3"
+                        class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white opacity-70 cursor-not-allowed"><%= data ? data.detail || '' : '' %></textarea>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Layanan</label>
+                    <input type="text" disabled value="<%= data ? data.layanan || '' : '' %>"
+                        class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white opacity-70 cursor-not-allowed">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">No
+                        GSM</label>
+                    <input type="text" disabled value="<%= data ? data.no_gsm || '' : '' %>"
+                        class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white opacity-70 cursor-not-allowed">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Kuota</label>
+                    <input type="text" disabled value="<%= data ? data.kuota || '' : '' %>"
+                        class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white opacity-70 cursor-not-allowed">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Slot
+                        SIM</label>
+                    <input type="text" disabled value="<%= data ? data.slot_sim || '' : '' %>"
+                        class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white opacity-70 cursor-not-allowed">
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Keterangan</label>
+                <textarea disabled rows="3"
+                    class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white opacity-70 cursor-not-allowed"><%= data ? data.keterangan || '' : '' %></textarea>
+            </div>
+
+            <div class="flex gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
+                <a href="javascript:history.back()"
+                    class="inline-flex items-center px-5 py-2.5 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 font-medium rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                    Kembali
+                </a>
+                <% if (isEditor && data) { %>
+                    <a href="<%= m2mBase %>/<%= data.id %>/edit"
+                        class="inline-flex items-center px-5 py-2.5 bg-amber-500 hover:bg-amber-600 text-white font-medium rounded-lg transition-colors shadow-lg shadow-amber-500/25">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z">
+                            </path>
+                        </svg>
+                        Edit Data
+                    </a>
+                    <% } %>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Hidden Input for Pelanggan Data -->
+<input type="hidden" id="pelanggan_list_data" value='<%- JSON.stringify(pelangganList || []) %>'>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const pelangganSearch = document.getElementById('pelanggan_search');
+        const pelangganDropdown = document.getElementById('pelanggan_dropdown');
+        // const noJaringanInput = document.getElementById('no_jaringan'); // Removed
+        // const namaPelangganInput = document.getElementById('nama_pelanggan'); // Removed
+        const pelangganIdInput = document.getElementById('pelanggan_id');
+        const selectedPelangganDiv = document.getElementById('selected_pelanggan');
+        const selectedText = document.getElementById('selected_text');
+        const clearButton = document.getElementById('clear_pelanggan');
+
+        // Load data safely
+        let pelangganList = [];
+        try {
+            const rawData = document.getElementById('pelanggan_list_data').value;
+            pelangganList = JSON.parse(rawData);
+        } catch (e) {
+            console.error("Error parsing pelanggan data:", e);
+        }
+
+        // Search Functionality
+        pelangganSearch.addEventListener('input', function () {
+            const query = this.value.toLowerCase();
+            pelangganDropdown.innerHTML = '';
+
+            if (query.length < 1) {
+                pelangganDropdown.classList.add('hidden');
+                return;
+            }
+
+            const filtered = pelangganList.filter(p =>
+                (p.no_jaringan && p.no_jaringan.toLowerCase().includes(query)) ||
+                (p.nama_pelanggan && p.nama_pelanggan.toLowerCase().includes(query))
+            ).slice(0, 10);
+
+            if (filtered.length > 0) {
+                pelangganDropdown.innerHTML = filtered.map(p => `
+                    <div class="pelanggan-item px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer border-b border-gray-100 dark:border-gray-700 last:border-0"
+                         data-id="${p.id}" data-no="${p.no_jaringan}" data-nama="${p.nama_pelanggan}">
+                        <div class="font-medium text-sm text-gray-900 dark:text-white">${p.no_jaringan}</div>
+                        <div class="text-sm text-gray-500 dark:text-gray-400">${p.nama_pelanggan}</div>
+                    </div>
+                `).join('');
+                pelangganDropdown.classList.remove('hidden');
+            } else {
+                pelangganDropdown.innerHTML = '<div class="px-4 py-3 text-sm text-gray-500">Tidak ditemukan</div>';
+                pelangganDropdown.classList.remove('hidden');
+            }
+        });
+
+        // Select Pelanggan (Event Delegation)
+        pelangganDropdown.addEventListener('click', function (e) {
+            const item = e.target.closest('.pelanggan-item');
+            if (item) {
+                const id = item.dataset.id;
+                const noJaringan = item.dataset.no;
+                const nama = item.dataset.nama;
+
+                // noJaringanInput.value = noJaringan; // Removed
+                // namaPelangganInput.value = nama; // Removed
+                pelangganIdInput.value = id;
+
+                selectedText.textContent = `${noJaringan} - ${nama}`;
+                selectedPelangganDiv.classList.remove('hidden');
+                pelangganSearch.value = '';
+                pelangganDropdown.classList.add('hidden');
+            }
+        });
+
+        // Clear Selection
+        clearButton.addEventListener('click', function () {
+            // noJaringanInput.value = ''; // Removed
+            // namaPelangganInput.value = ''; // Removed
+            pelangganIdInput.value = '';
+            selectedPelangganDiv.classList.add('hidden');
+            pelangganSearch.value = '';
+        });
+    });
+</script>
+<script src="/js/coordinate-converter.js"></script>

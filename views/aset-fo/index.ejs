@@ -1,0 +1,234 @@
+<!-- Aset FO Index -->
+<div class="space-y-6">
+    <!-- Page Header -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Aset FO</h1>
+            <p class="text-gray-500 dark:text-gray-400">Data Aset Fiber Optik • <%= pagination.total %> Node</p>
+        </div>
+        <div class="flex flex-col sm:flex-row gap-3">
+            <% if (isEditor) { %>
+                <a href="/aset-fo/create"
+                    class="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-medium rounded-lg shadow-lg shadow-blue-500/25 transition-all transform hover:scale-[1.02] cursor-pointer">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                    </svg>
+                    Tambah Data
+                </a>
+                <% } %>
+                    <a href="/aset-fo/export<%= typeof search !== 'undefined' && search ? '?search=' + search : '' %>"
+                        class="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg shadow-lg shadow-green-500/25 transition-all transform hover:scale-[1.02] cursor-pointer">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                            </path>
+                        </svg>
+                        Download Excel
+                    </a>
+        </div>
+    </div>
+
+    <!-- Search -->
+    <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4 shadow-sm">
+        <form action="/aset-fo" method="GET" class="flex flex-col sm:flex-row gap-3">
+            <div class="relative flex-1">
+                <input type="text" id="searchInput" name="search" value="<%= search %>" placeholder="Cari node, kota..."
+                    class="w-full px-4 py-2.5 pl-10 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                <div class="absolute left-3 top-1/2 -translate-y-1/2">
+                    <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                </div>
+            </div>
+            <button type="submit"
+                class="px-4 py-2.5 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 font-medium rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
+                Cari
+            </button>
+            <% if (search) { %>
+                <a href="/aset-fo"
+                    class="px-4 py-2.5 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-medium rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors text-center">
+                    Reset
+                </a>
+                <% } %>
+        </form>
+    </div>
+
+    <script>
+        const searchInput = document.getElementById('searchInput');
+        let timeout = null;
+
+        if (searchInput) {
+            searchInput.addEventListener('input', function (e) {
+                clearTimeout(timeout);
+                timeout = setTimeout(function () {
+                    // Submit if empty (reset) or at least 1 character
+                    if (searchInput.value.length === 0 || searchInput.value.length >= 1) {
+                        searchInput.form.submit();
+                    }
+                }, 500);
+            });
+
+            // Focus and move cursor to end if we just searched
+            if (window.location.search.includes('search=')) {
+                searchInput.focus();
+                const val = searchInput.value;
+                searchInput.value = '';
+                searchInput.value = val;
+            }
+        }
+    </script>
+
+    <!-- Table -->
+    <div
+        class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm overflow-hidden">
+        <div class="overflow-auto max-h-[80vh] relative">
+            <table class="w-full">
+                <thead
+                    class="sticky top-0 z-50 bg-gray-50 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 shadow-sm">
+                    <tr>
+                        <th
+                            class="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider whitespace-nowrap">
+                            Nama Node
+                        </th>
+                        <th
+                            class="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider whitespace-nowrap">
+                            Kota
+                        </th>
+                        <th
+                            class="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider whitespace-nowrap">
+                            Node
+                        </th>
+                        <th
+                            class="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider whitespace-nowrap">
+                            Splitter ODP
+                        </th>
+                        <th
+                            class="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider whitespace-nowrap">
+                            Jml SI ONT
+                        </th>
+                        <th
+                            class="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider whitespace-nowrap">
+                            Jml SI P2P
+                        </th>
+                        <th
+                            class="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider whitespace-nowrap">
+                            Jml HH
+                        </th>
+                        <th
+                            class="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider whitespace-nowrap">
+                            P. Backbone
+                        </th>
+                        <th
+                            class="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider whitespace-nowrap">
+                            P. Lastmile
+                        </th>
+                        <th
+                            class="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider whitespace-nowrap">
+                            Jml Tiang
+                        </th>
+                        <% if (isEditor) { %>
+                            <th
+                                class="px-3 py-3 text-center text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider whitespace-nowrap sticky right-0 top-0 bg-gray-50 dark:bg-gray-900 z-30 shadow-[-4px_0_8px_-4px_rgba(0,0,0,0.1)] w-1">
+                                Aksi
+                            </th>
+                            <% } %>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+                    <% if (data.length===0) { %>
+                        <tr>
+                            <td colspan="11" class="px-6 py-12 text-center">
+                                <div class="flex flex-col items-center">
+                                    <svg class="w-12 h-12 text-gray-300 dark:text-gray-600 mb-4" fill="none"
+                                        stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707.293l-2.414-2.414A1 1 0 006.586 13H4">
+                                        </path>
+                                    </svg>
+                                    <p class="text-gray-500 dark:text-gray-400 mb-2">Tidak ada data</p>
+                                    <% if (isEditor) { %>
+                                        <a href="/aset-fo/create"
+                                            class="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 font-medium">Tambah
+                                            data baru</a>
+                                        <% } %>
+                                </div>
+                            </td>
+                        </tr>
+                        <% } else { %>
+                            <% data.forEach(item=> { %>
+                                <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors text-xs">
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="text-gray-900 dark:text-white">
+                                            <%= item.nama_node %>
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4 text-gray-700 dark:text-gray-300 whitespace-nowrap">
+                                        <%= item.kota || '-' %>
+                                    </td>
+                                    <td class="px-6 py-4 text-gray-700 dark:text-gray-300 whitespace-nowrap text-sm">
+                                        <%= item.node || '-' %>
+                                    </td>
+                                    <td class="px-6 py-4 text-gray-700 dark:text-gray-400 whitespace-nowrap text-sm">
+                                        <%= item.splitter_odp || '-' %>
+                                    </td>
+                                    <td class="px-6 py-4 text-gray-700 dark:text-gray-300 whitespace-nowrap text-left">
+                                        <%= item.jumlah_si_ont || 0 %>
+                                    </td>
+                                    <td class="px-6 py-4 text-gray-700 dark:text-gray-300 whitespace-nowrap text-left">
+                                        <%= item.jumlah_si_p2p || 0 %>
+                                    </td>
+                                    <td class="px-6 py-4 text-gray-700 dark:text-gray-300 whitespace-nowrap text-left">
+                                        <%= item.jumlah_hh || 0 %>
+                                    </td>
+                                    <td class="px-6 py-4 text-gray-700 dark:text-gray-300 whitespace-nowrap text-left">
+                                        <%= item.panjang_backbone ? Math.round(item.panjang_backbone) + ' m' : '-' %>
+                                    </td>
+                                    <td class="px-6 py-4 text-gray-700 dark:text-gray-300 whitespace-nowrap text-left">
+                                        <%= item.panjang_lastmile ? Math.round(item.panjang_lastmile) + ' m' : '-' %>
+                                    </td>
+                                    <td class="px-6 py-4 text-gray-700 dark:text-gray-300 whitespace-nowrap text-left">
+                                        <%= item.jumlah_tiang || 0 %>
+                                    </td>
+                                    <% if (isEditor) { %>
+                                        <td
+                                            class="px-3 py-4 whitespace-nowrap sticky right-0 bg-white dark:bg-gray-800 z-20 shadow-[-4px_0_8px_-4px_rgba(0,0,0,0.1)] w-1">
+                                            <div class="flex items-center justify-center gap-2">
+                                                <a href="/aset-fo/<%= item.id %>/edit"
+                                                    class="p-2 text-amber-600 hover:bg-amber-50 dark:hover:bg-amber-900/20 rounded-lg transition-colors"
+                                                    title="Edit">
+                                                    <svg class="w-5 h-5" fill="none" stroke="currentColor"
+                                                        viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                                            stroke-width="2"
+                                                            d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z">
+                                                        </path>
+                                                    </svg>
+                                                </a>
+                                                <form action="/aset-fo/<%= item.id %>?_method=DELETE" method="POST"
+                                                    class="inline"
+                                                    onsubmit="return confirmSubmit(this, 'Hapus data ini?')">
+                                                    <button type="submit"
+                                                        class="p-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
+                                                        title="Hapus">
+                                                        <svg class="w-5 h-5" fill="none" stroke="currentColor"
+                                                            viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                                stroke-width="2"
+                                                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
+                                                            </path>
+                                                        </svg>
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </td>
+                                        <% } %>
+                                </tr>
+                                <% }); %>
+                                    <% } %>
+                </tbody>
+            </table>
+            <%- include('../partials/pagination') %>
+        </div>
+    </div>
+</div>

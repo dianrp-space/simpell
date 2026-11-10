@@ -1,0 +1,771 @@
+<div class="space-y-6">
+    <!-- Welcome Section -->
+    <div class="bg-gradient-to-r from-blue-500 to-blue-600 rounded-2xl p-6 shadow-lg shadow-blue-500/25">
+        <div class="flex items-center justify-between">
+            <div>
+                <h1 class="text-2xl font-bold text-white">Selamat Datang, <%= user ? user.nama : 'User' %>!</h1>
+                <p class="text-blue-100 mt-1">Sistem Informasi Manajemen Pelanggan & Layanan</p>
+            </div>
+            <div class="flex items-center gap-4">
+                <a href="/export-dashboard"
+                    class="hidden sm:inline-flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 text-white font-medium rounded-lg backdrop-blur-sm transition-colors border border-white/20">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    Download Excel
+                </a>
+                <div class="hidden md:block">
+                    <div class="w-16 h-16 bg-white rounded-xl flex items-center justify-center p-2">
+                        <img src="/img/simpell_logo.png" alt="Logo SIMPELL" class="w-full h-full object-contain">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pelanggan Statistics Section -->
+    <div>
+        <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
+            <svg class="w-5 h-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z">
+                </path>
+            </svg>
+            Data Customer
+        </h2>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            <a href="/pelanggan"
+                class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4 shadow-sm hover:shadow-md hover:border-emerald-400 transition-all">
+                <p class="text-sm text-gray-500 dark:text-gray-400">Total Customer</p>
+                <p class="text-2xl font-bold text-gray-900 dark:text-white">
+                    <%= stats.pelanggan_total || 0 %>
+                </p>
+            </a>
+            <a href="/pelanggan?status=Active"
+                class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4 shadow-sm hover:shadow-md hover:border-green-400 transition-all">
+                <p class="text-sm text-gray-500 dark:text-gray-400">Active</p>
+                <p class="text-2xl font-bold text-gray-900 dark:text-white">
+                    <%= stats.pelanggan_active || 0 %>
+                </p>
+            </a>
+            <a href="/pelanggan?status=Inactive"
+                class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4 shadow-sm hover:shadow-md hover:border-gray-400 transition-all">
+                <p class="text-sm text-gray-500 dark:text-gray-400">Inactive</p>
+                <p class="text-2xl font-bold text-gray-600 dark:text-gray-400">
+                    <%= stats.pelanggan_inactive || 0 %>
+                </p>
+            </a>
+            <a href="/pelanggan?status=Suspended"
+                class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4 shadow-sm hover:shadow-md hover:border-red-400 transition-all">
+                <p class="text-sm text-gray-500 dark:text-gray-400">Suspended</p>
+                <p class="text-2xl font-bold text-gray-900 dark:text-white">
+                    <%= stats.pelanggan_suspended || 0 %>
+                </p>
+            </a>
+        </div>
+    </div>
+
+    <!-- Data FO Section -->
+    <div>
+        <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
+            <svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z">
+                </path>
+            </svg>
+            Data FO
+        </h2>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            <a href="/core-lamda"
+                class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4 shadow-sm hover:shadow-md hover:border-blue-400 transition-all">
+                <p class="text-sm text-gray-500 dark:text-gray-400">Core Lamda</p>
+                <p class="text-2xl font-bold text-gray-900 dark:text-white">
+                    <%= stats.core_lamda || 0 %>
+                </p>
+            </a>
+            <a href="/odc"
+                class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4 shadow-sm hover:shadow-md hover:border-green-400 transition-all">
+                <p class="text-sm text-gray-500 dark:text-gray-400">Data ODC</p>
+                <p class="text-2xl font-bold text-gray-900 dark:text-white">
+                    <%= stats.odc || 0 %>
+                </p>
+            </a>
+
+            <a href="/otb-phd"
+                class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4 shadow-sm hover:shadow-md hover:border-cyan-400 transition-all">
+                <p class="text-sm text-gray-500 dark:text-gray-400">OTB</p>
+                <p class="text-2xl font-bold text-gray-900 dark:text-white">
+                    <%= stats.otb_phd || 0 %>
+                </p>
+            </a>
+            <a href="/data-core"
+                class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4 shadow-sm hover:shadow-md hover:border-indigo-400 transition-all">
+                <p class="text-sm text-gray-500 dark:text-gray-400">Data Core</p>
+                <p class="text-2xl font-bold text-gray-900 dark:text-white">
+                    <%= stats.data_core || 0 %>
+                </p>
+            </a>
+        </div>
+    </div>
+
+    <!-- Akses Network Section -->
+    <div>
+        <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
+            <svg class="w-5 h-5 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.141 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0">
+                </path>
+            </svg>
+            Akses Network
+        </h2>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            <% if (canSeeMenu('akses-fo')) { %>
+            <a href="/akses-fo"
+                class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4 shadow-sm hover:shadow-md hover:border-purple-400 transition-all">
+                <p class="text-sm text-gray-500 dark:text-gray-400">Fiber Optic</p>
+                <p class="text-2xl font-bold text-gray-900 dark:text-white">
+                    <%= stats.akses_fo || 0 %>
+                </p>
+            </a>
+            <% } %>
+            <% if (canSeeMenu('akses-fo-p2p')) { %>
+            <a href="/akses-fo-p2p"
+                class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4 shadow-sm hover:shadow-md hover:border-purple-400 transition-all">
+                <p class="text-sm text-gray-500 dark:text-gray-400">P2P/FO Core</p>
+                <p class="text-2xl font-bold text-gray-900 dark:text-white">
+                    <%= stats.akses_fo_p2p || 0 %>
+                </p>
+            </a>
+            <% } %>
+            <% if (canSeeMenu('akses-direct-lan')) { %>
+            <a href="/akses-direct-lan"
+                class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4 shadow-sm hover:shadow-md hover:border-purple-400 transition-all">
+                <p class="text-sm text-gray-500 dark:text-gray-400">Direct LAN</p>
+                <p class="text-2xl font-bold text-gray-900 dark:text-white">
+                    <%= stats.akses_direct_lan || 0 %>
+                </p>
+            </a>
+            <% } %>
+            <a href="/akses-vsat-starlink"
+                class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4 shadow-sm hover:shadow-md hover:border-sky-400 transition-all">
+                <p class="text-sm text-gray-500 dark:text-gray-400">Starlink</p>
+                <p class="text-2xl font-bold text-gray-900 dark:text-white">
+                    <%= stats.starlink || 0 %>
+                </p>
+            </a>
+            <% if (canSeeMenu('akses-m2m')) { %>
+            <a href="/akses-m2m"
+                class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4 shadow-sm hover:shadow-md hover:border-pink-400 transition-all">
+                <p class="text-sm text-gray-500 dark:text-gray-400">Backup M2M</p>
+                <p class="text-2xl font-bold text-gray-900 dark:text-white">
+                    <%= stats.m2m || 0 %>
+                </p>
+            </a>
+            <% } %>
+            <% if (canSeeMenu('akses-soltem')) { %>
+            <a href="/akses-soltem"
+                class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4 shadow-sm hover:shadow-md hover:border-amber-400 transition-all">
+                <p class="text-sm text-gray-500 dark:text-gray-400">Soltemp</p>
+                <p class="text-2xl font-bold text-gray-900 dark:text-white">
+                    <%= stats.soltem || 0 %>
+                </p>
+            </a>
+            <% } %>
+            <a href="/akses-vsat-tdma"
+                class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4 shadow-sm hover:shadow-md hover:border-rose-400 transition-all">
+                <p class="text-sm text-gray-500 dark:text-gray-400">VSAT TDMA / SCPC</p>
+                <p class="text-2xl font-bold text-gray-900 dark:text-white">
+                    <%= stats.tdma || 0 %>
+                </p>
+            </a>
+        </div>
+        <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 mt-4">
+            <a href="/radio-link"
+                class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4 shadow-sm hover:shadow-md hover:border-violet-400 transition-all">
+                <p class="text-sm text-gray-500 dark:text-gray-400">Radio Link (AP)</p>
+                <p class="text-2xl font-bold text-gray-900 dark:text-white">
+                    <%= stats.radio_link_ap || 0 %>
+                </p>
+            </a>
+            <a href="/akses-third-party"
+                class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4 shadow-sm hover:shadow-md hover:border-teal-400 transition-all">
+                <p class="text-sm text-gray-500 dark:text-gray-400">3rd Party</p>
+                <p class="text-2xl font-bold text-gray-900 dark:text-white">
+                    <%= stats.third_party || 0 %>
+                </p>
+            </a>
+            <a href="/cpe"
+                class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4 shadow-sm hover:shadow-md hover:border-cyan-400 transition-all">
+                <p class="text-sm text-gray-500 dark:text-gray-400">CPE/SDWAN</p>
+                <p class="text-2xl font-bold text-gray-900 dark:text-white">
+                    <%= stats.cpe || 0 %>
+                </p>
+            </a>
+        </div>
+    </div>
+
+    <!-- Infrastruktur Section -->
+    <div>
+        <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
+            <svg class="w-5 h-5 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4">
+                </path>
+            </svg>
+            Infrastruktur
+        </h2>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            <a href="/aset-fo"
+                class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4 shadow-sm hover:shadow-md hover:border-orange-400 transition-all">
+                <p class="text-sm text-gray-500 dark:text-gray-400">Aset FO</p>
+                <p class="text-2xl font-bold text-gray-900 dark:text-white">
+                    <%= stats.aset_fo || 0 %>
+                </p>
+            </a>
+            <a href="/data-hh"
+                class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4 shadow-sm hover:shadow-md hover:border-amber-400 transition-all">
+                <p class="text-sm text-gray-500 dark:text-gray-400">Data HH</p>
+                <p class="text-2xl font-bold text-gray-900 dark:text-white">
+                    <%= stats.data_hh || 0 %>
+                </p>
+            </a>
+            <a href="/data-closure"
+                class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4 shadow-sm hover:shadow-md hover:border-yellow-400 transition-all">
+                <p class="text-sm text-gray-500 dark:text-gray-400">Data Closure</p>
+                <p class="text-2xl font-bold text-gray-900 dark:text-white">
+                    <%= stats.data_closure || 0 %>
+                </p>
+            </a>
+            <a href="/data-odp"
+                class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4 shadow-sm hover:shadow-md hover:border-lime-400 transition-all">
+                <p class="text-sm text-gray-500 dark:text-gray-400">Data ODP</p>
+                <p class="text-2xl font-bold text-gray-900 dark:text-white">
+                    <%= stats.data_odp || 0 %>
+                </p>
+            </a>
+        </div>
+    </div>
+
+    <!-- Tiket & Laporan Section -->
+    <div>
+        <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
+            <svg class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            Ticket & Monitoring
+        </h2>
+        <div class="space-y-6">
+
+            <!-- Subsection: Pending GGN -->
+            <div>
+                <h3 class="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">
+                    Pendingan GGN & PM
+                </h3>
+                <div class="grid grid-cols-2 sm:grid-cols-5 gap-4">
+                    <!-- Total Pending -->
+                    <a href="/pending-ggn"
+                        class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4 shadow-sm hover:shadow-md hover:border-red-500 transition-all">
+                        <p class="text-sm text-gray-500 dark:text-gray-400">Total Tiket</p>
+                        <p class="text-2xl font-bold text-gray-900 dark:text-white">
+                            <%= stats.pending_ggn.total || 0 %>
+                        </p>
+                    </a>
+
+                    <!-- Status Breakdown -->
+                    <a href="/pending-ggn?status=Pending"
+                        class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4 shadow-sm hover:shadow-md hover:border-yellow-400 transition-all">
+                        <p class="text-sm text-gray-500 dark:text-gray-400">Pending</p>
+                        <p class="text-2xl font-bold text-gray-900 dark:text-white">
+                            <%= stats.pending_ggn.pending || 0 %>
+                        </p>
+                    </a>
+                    <a href="/pending-ggn?status=Progress"
+                        class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4 shadow-sm hover:shadow-md hover:border-blue-400 transition-all">
+                        <p class="text-sm text-gray-500 dark:text-gray-400">Progress</p>
+                        <p class="text-2xl font-bold text-gray-900 dark:text-white">
+                            <%= stats.pending_ggn.progress || 0 %>
+                        </p>
+                    </a>
+                    <a href="/pending-ggn?status=Done"
+                        class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4 shadow-sm hover:shadow-md hover:border-green-400 transition-all">
+                        <p class="text-sm text-gray-500 dark:text-gray-400">Done</p>
+                        <p class="text-2xl font-bold text-gray-900 dark:text-white">
+                            <%= stats.pending_ggn.done || 0 %>
+                        </p>
+                    </a>
+                    <a href="/pending-ggn?status=Cancelled"
+                        class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4 shadow-sm hover:shadow-md hover:border-red-400 transition-all">
+                        <p class="text-sm text-gray-500 dark:text-gray-400">Cancelled</p>
+                        <p class="text-2xl font-bold text-gray-900 dark:text-white">
+                            <%= stats.pending_ggn.cancelled || 0 %>
+                        </p>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Subsection: Record GGN -->
+            <div>
+                <h3 class="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">
+                    Record GGN & PM
+                </h3>
+                <div class="grid grid-cols-2 gap-4">
+                    <!-- Total Record (All Time) -->
+                    <a href="/record-ggn"
+                        class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4 shadow-sm hover:shadow-md hover:border-indigo-400 transition-all">
+                        <p class="text-sm text-gray-500 dark:text-gray-400">Total Data (All Time)</p>
+                        <p class="text-2xl font-bold text-gray-900 dark:text-white">
+                            <%= stats.record_ggn_total || 0 %>
+                        </p>
+                    </a>
+
+                    <!-- Monthly Record -->
+                    <a href="/record-ggn"
+                        class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4 shadow-sm hover:shadow-md hover:border-emerald-400 transition-all">
+                        <p class="text-sm text-gray-500 dark:text-gray-400">Total Bulan Ini</p>
+                        <p class="text-2xl font-bold text-gray-900 dark:text-white">
+                            <%= stats.record_ggn || 0 %>
+                        </p>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chart Section -->
+    <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-6 shadow-sm">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 gap-3">
+            <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Statistik Record GGN & PM</h2>
+            <div class="flex gap-2">
+                <button onclick="updateChart('daily')" id="btn-daily"
+                    class="px-4 py-2 text-sm font-medium rounded-lg border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                    Hari
+                </button>
+                <button onclick="updateChart('monthly')" id="btn-monthly"
+                    class="px-4 py-2 text-sm font-medium rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition-colors">
+                    Bulan
+                </button>
+                <button onclick="updateChart('yearly')" id="btn-yearly"
+                    class="px-4 py-2 text-sm font-medium rounded-lg border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                    Tahun
+                </button>
+            </div>
+        </div>
+        <div id="recordChart"></div>
+    </div>
+
+    <!-- Info Section -->
+    <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-6 shadow-sm">
+        <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Informasi Sistem</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="flex items-center gap-3 p-4 bg-gray-50 dark:bg-gray-900/50 rounded-lg">
+                <div
+                    class="w-10 h-10 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center overflow-hidden">
+                    <% if (user.foto) { %>
+                        <img src="/uploads/profiles/<%= user.foto %>" alt="Profile"
+                            class="w-full h-full object-contain">
+                        <% } else { %>
+                            <svg class="w-5 h-5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                            </svg>
+                            <% } %>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-500 dark:text-gray-400">Login sebagai</p>
+                    <p class="font-medium text-gray-900 dark:text-white">
+                        <%= user ? user.nama : 'User' %> (<%= user ? user.role : 'Karyawan' %>)
+                    </p>
+                </div>
+            </div>
+            <div class="flex items-center gap-3 p-4 bg-gray-50 dark:bg-gray-900/50 rounded-lg">
+                <div class="w-10 h-10 bg-green-100 dark:bg-green-900/30 rounded-lg flex items-center justify-center">
+                    <svg class="w-5 h-5 text-green-600 dark:text-green-400" fill="none" stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-500 dark:text-gray-400">Status Sistem</p>
+                    <p class="font-medium text-green-600 dark:text-green-400">Online & Berjalan</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Chart Data Payload -->
+<div id="chart-data-payload"
+    data-json="<%= (typeof chartData !== 'undefined' && chartData) ? JSON.stringify(chartData) : 'null' %>"
+    style="display:none;"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+<script>
+    // Chart Data from Server
+    var srvChartData = null;
+    try {
+        var payloadEl = document.getElementById('chart-data-payload');
+        if (payloadEl) {
+            var rawData = payloadEl.getAttribute('data-json');
+            if (rawData && rawData !== 'null') {
+                srvChartData = JSON.parse(rawData);
+            }
+        }
+    } catch (e) {
+        console.error("Error parsing chart data from payload", e);
+    }
+
+    var recordChart = null;
+    var currentPeriod = 'monthly';
+
+    document.addEventListener('DOMContentLoaded', function () {
+        console.log("Dashboard Chart Loaded", srvChartData);
+
+        var chartEl = document.getElementById('recordChart');
+        if (!chartEl) return;
+
+        // CHECK 1: ApexCharts Library
+        if (typeof ApexCharts === 'undefined') {
+            console.error("ApexCharts not loaded");
+            chartEl.innerHTML = `
+                <div class="p-6 text-center text-red-500 bg-red-50 rounded-lg border border-red-200">
+                    <p class="font-bold">Gagal Memuat Grafik</p>
+                    <p class="text-sm mt-1">Library ApexCharts tidak dapat dimuat. Periksa koneksi internet Anda.</p>
+                </div>
+            `;
+            return;
+        }
+
+        // CHECK 2: Data Availability
+        if (!srvChartData || (!srvChartData.daily && !srvChartData.monthly)) {
+            console.warn("Chart data missing or empty");
+            chartEl.innerHTML = `
+                <div class="p-6 text-center text-gray-500 custom-bg rounded-lg border border-dashed border-gray-300">
+                    <p class="font-medium">Tidak Ada Data Statistik</p>
+                    <p class="text-sm mt-1">Data statistik Record GGN & PM belum tersedia.</p>
+                </div>
+            `;
+            return;
+        }
+
+        // Initial Render
+        try {
+            updateChart('monthly');
+        } catch (err) {
+            console.error("Error rendering chart:", err);
+            chartEl.innerHTML = `
+                <div class="p-4 text-center text-red-500 text-sm">
+                    Terjadi kesalahan saat merender grafik: ${err.message}
+                </div>
+            `;
+        }
+    });
+
+    function generatePadding(period, categories, data, count) {
+        if (!categories || !data) return { categories: [], data: [] };
+
+        var paddedCategories = [...categories];
+        var paddedData = [...data];
+
+        for (var i = 1; i <= count; i++) {
+            paddedCategories.push(`+${i}`);
+            paddedData.push(0);
+        }
+        for (var i = 1; i <= count; i++) {
+            paddedCategories.unshift(`-${i}`);
+            paddedData.unshift(0);
+        }
+
+        return { categories: paddedCategories, data: paddedData };
+    }
+
+    function renderChart(period, rawData) {
+        var chartEl = document.querySelector("#recordChart");
+        if (!chartEl) return;
+
+        if (!rawData || !rawData.categories || !rawData.data) {
+            console.error("Invalid data for period:", period);
+            chartEl.innerHTML = '<div class="p-4 text-center text-gray-500">Data tidak valid untuk periode ini</div>';
+            return;
+        }
+
+        // Ensure data are numbers
+        var numericData = rawData.data.map(function (x) { return parseInt(x) || 0; });
+        var cleanCategories = rawData.categories;
+
+        var paddingCount = 15;
+        var processed = generatePadding(period, cleanCategories, numericData, paddingCount);
+
+        var initialMin = paddingCount;
+        var initialMax = processed.categories.length - paddingCount - 1;
+
+        if (initialMax - initialMin < 5) {
+            initialMin = Math.max(0, initialMin - 2);
+            initialMax = Math.min(processed.categories.length - 1, initialMax + 2);
+        }
+
+        var options = {
+            series: [{
+                name: 'Record GGN',
+                data: processed.data
+            }],
+            chart: {
+                id: 'main-chart',
+                type: 'area',
+                height: 350,
+                fontFamily: 'Inter, sans-serif',
+                animations: { enabled: false },
+                toolbar: { show: false, autoSelected: 'pan' },
+                zoom: { enabled: true, type: 'x', autoScaleYaxis: true },
+                pan: { enabled: true, mode: 'x' }
+            },
+            dataLabels: { enabled: false },
+            stroke: { curve: 'smooth', width: 2 },
+            markers: {
+                size: 5,
+                colors: ['#fff'],
+                strokeColors: '#3B82F6',
+                strokeWidth: 2,
+                hover: { size: 7 }
+            },
+            fill: {
+                type: 'gradient',
+                gradient: {
+                    shadeIntensity: 1,
+                    opacityFrom: 0.7,
+                    opacityTo: 0.1,
+                    stops: [0, 90, 100]
+                }
+            },
+            colors: ['#3B82F6'],
+            xaxis: {
+                categories: processed.categories,
+                type: 'category',
+                tickPlacement: 'on',
+                min: initialMin,
+                max: initialMax,
+                labels: {
+                    style: { colors: '#6B7280' },
+                    rotate: -45,
+                    formatter: function (value) {
+                        if (value && (value.toString().startsWith('+') || value.toString().startsWith('-'))) return '';
+                        return value;
+                    }
+                },
+                tooltip: { enabled: false }
+            },
+            yaxis: {
+                min: 0,
+                forceNiceScale: true,
+                stepSize: 1,
+                labels: {
+                    style: { colors: '#6B7280' },
+                    formatter: function (val) { return val.toFixed(0); }
+                }
+            },
+            grid: {
+                show: true,
+                borderColor: '#E5E7EB',
+                strokeDashArray: 0,
+                xaxis: { lines: { show: true } },
+                yaxis: { lines: { show: true } }
+            },
+            tooltip: {
+                theme: 'light',
+                x: { show: true },
+                y: { formatter: function (val) { return val + " Tiket"; } }
+            }
+        };
+
+        if (recordChart) {
+            recordChart.destroy();
+        }
+
+        try {
+            recordChart = new ApexCharts(chartEl, options);
+            recordChart.render();
+
+            chartEl.onwheel = function (e) {
+                if (e.ctrlKey) {
+                    e.preventDefault();
+                    var zoomIn = e.deltaY < 0;
+                    if (recordChart && recordChart.w && recordChart.w.globals) {
+                        var min = recordChart.w.globals.minX;
+                        var max = recordChart.w.globals.maxX;
+                        var range = max - min;
+                        var factor = 0.15;
+
+                        if (zoomIn) {
+                            if (range > 3) {
+                                recordChart.zoomX(min + range * factor, max - range * factor);
+                            }
+                        } else {
+                            if (min > 1 || max < processed.categories.length - 1) {
+                                recordChart.zoomX(min - range * factor, max + range * factor);
+                            }
+                        }
+                    }
+                }
+            };
+        } catch (renderErr) {
+            console.error("ApexCharts Render Error:", renderErr);
+            chartEl.innerHTML = '<div class="p-4 text-center text-red-500">Gagal render grafik</div>';
+        }
+    }
+
+    function updateChart(period) {
+        currentPeriod = period;
+        try {
+            if (!srvChartData || !srvChartData[period]) {
+                console.warn("No data for period:", period);
+                var chartEl = document.querySelector("#recordChart");
+                if (chartEl) chartEl.innerHTML = '<div class="p-4 text-center text-gray-500">Data tidak tersedia untuk periode ini</div>';
+                return;
+            }
+
+            renderChart(period, srvChartData[period]);
+
+            ['daily', 'monthly', 'yearly'].forEach(function (p) {
+                var btn = document.getElementById('btn-' + p);
+                if (!btn) return;
+                if (p === period) {
+                    btn.className = 'px-4 py-2 text-sm font-medium rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition-colors';
+                } else {
+                    btn.className = 'px-4 py-2 text-sm font-medium rounded-lg border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors';
+                }
+            });
+        } catch (updateErr) {
+            console.error("Update Chart Error:", updateErr);
+        }
+    }
+</script>
+
+<!-- Secret Shortcut Modal -->
+<div id="secretModal" class="fixed inset-0 z-[100] hidden overflow-y-auto" aria-labelledby="modal-title" role="dialog"
+    aria-modal="true">
+    <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+        <!-- Backdrop -->
+        <div id="secretModalBackdrop" class="fixed inset-0 transition-opacity bg-gray-900/75 backdrop-blur-sm"
+            aria-hidden="true"></div>
+
+        <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+
+        <!-- Modal Content -->
+        <div
+            class="inline-block overflow-hidden text-left align-bottom transition-all transform bg-white dark:bg-gray-800 rounded-2xl shadow-2xl sm:my-8 sm:align-middle sm:max-w-lg sm:w-full border border-gray-200 dark:border-gray-700">
+            <div class="px-6 pt-8 pb-6 text-center">
+                <!-- Logo -->
+                <div class="mb-4 flex justify-center">
+                    <img src="/img/logo_simpell.png" alt="Logo website SIMPELL" class="h-24 object-contain">
+                </div>
+
+                <h3 class="text-2xl font-black text-gray-900 dark:text-white mb-4 tracking-tighter">
+                    SIMPELL
+                </h3>
+
+                <div class="space-y-1">
+                    <p class="text-sm text-gray-500 dark:text-gray-400">Website developed by</p>
+                    <p class="text-lg font-semibold text-blue-600 dark:text-blue-400">ANDRE PUTRA DEWANSYAH</p>
+                </div>
+
+                <div class="mt-8">
+                    <button type="button" onclick="closeSecretModal()"
+                        class="w-full inline-flex justify-center px-4 py-2.5 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-900 dark:text-white font-semibold rounded-xl transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
+                        Tutup
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    (function () {
+        let keys = [];
+        const secretSequence = ['a', 'p', 'd'];
+        let lastCtrlTime = 0;
+
+        function showSecretModal() {
+            const modal = document.getElementById('secretModal');
+            if (modal) {
+                modal.classList.remove('hidden');
+            }
+        }
+
+        window.closeSecretModal = function () {
+            const modal = document.getElementById('secretModal');
+            if (modal) {
+                modal.classList.add('hidden');
+            }
+        };
+
+        // Close on backdrop click
+        document.getElementById('secretModalBackdrop').addEventListener('click', closeSecretModal);
+
+        // Close on Escape key
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') closeSecretModal();
+        });
+
+        document.addEventListener('keydown', function (e) {
+            const key = e.key.toLowerCase();
+
+            // If CTRL is held
+            if (e.ctrlKey) {
+                // Prevent Default for CTRL+A/D to avoid Select All / Bookmark
+                if (key === 'a' || key === 'd') {
+                    e.preventDefault();
+                }
+
+                // Prevent Default for CTRL+P to avoid browser print dialog
+                if (key === 'p') {
+                    // Check if 'a' was pressed recently under CTRL
+                    const lastKey = keys[keys.length - 1];
+                    if (lastKey === 'a') {
+                        e.preventDefault();
+                    }
+                }
+
+                // Prevent Default for CTRL+A/D if we are in sequence
+                if (key === 'a' || key === 'd') {
+                    // Although ctrl+a and ctrl+d usually have their meanings,
+                    // we might want to prevent them if we are specifically hunting for the sequence.
+                    // But usually, ctrl+a (select all) is okay to happen.
+                }
+
+                if (['a', 'p', 'd'].includes(key)) {
+                    // If it's the next key in the sequence
+                    const nextIndex = keys.length;
+                    if (key === secretSequence[nextIndex]) {
+                        keys.push(key);
+
+                        if (keys.length === secretSequence.length) {
+                            showSecretModal();
+                            keys = []; // Reset
+                        }
+                    } else {
+                        // Reset if wrong key but still holding CTRL
+                        if (key === 'a') {
+                            keys = ['a']; // Start over
+                        } else {
+                            keys = [];
+                        }
+                    }
+                }
+            } else {
+                // If CTRL is released or not held, reset sequence
+                keys = [];
+            }
+        });
+
+        // Also reset on keyup of Control
+        document.addEventListener('keyup', function (e) {
+            if (e.key === 'Control') {
+                keys = [];
+            }
+        });
+    })();
+</script>

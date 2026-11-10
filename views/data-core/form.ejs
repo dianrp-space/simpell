@@ -1,0 +1,81 @@
+<!-- Data Core Form - Jaringan -->
+<div class="max-w-2xl mx-auto space-y-6">
+    <!-- Page Header -->
+    <div class="flex items-center gap-4">
+        <a href="/data-core"
+            class="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 dark:hover:text-white dark:hover:bg-gray-700 rounded-lg transition-colors">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18">
+                </path>
+            </svg>
+        </a>
+        <div>
+            <h1 class="text-2xl font-bold text-gray-900 dark:text-white">
+                <%= data ? 'Edit' : 'Tambah' %> Data Jaringan
+            </h1>
+            <p class="text-gray-500 dark:text-gray-400">Data lokasi jaringan FO</p>
+        </div>
+    </div>
+
+    <!-- Form Card -->
+    <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-6 shadow-sm">
+        <form action="<%= data ? '/data-core/' + data.id + '?_method=PUT' : '/data-core' %>" method="POST"
+            class="space-y-5">
+            <input type="hidden" name="return_url" value="<%= typeof return_url !== 'undefined' ? return_url : '' %>">
+
+            <!-- No Jaringan -->
+            <div>
+                <label for="no_jaringan" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    No Jaringan / ID <span class="text-red-500">*</span>
+                </label>
+                <input type="text" id="no_jaringan" name="no_jaringan" required
+                    value="<%= data ? data.no_jaringan : '' %>"
+                    class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all font-mono"
+                    placeholder="Contoh: 2024422410-HYDRA-PUNGGUR">
+                <p class="mt-1 text-xs text-gray-500">Nomor identifikasi jaringan atau kode referensi</p>
+            </div>
+
+            <!-- Nama Lokasi -->
+            <div>
+                <label for="nama_lokasi" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Nama Lokasi <span class="text-red-500">*</span>
+                </label>
+                <input type="text" id="nama_lokasi" name="nama_lokasi" required
+                    value="<%= data ? data.nama_lokasi : '' %>"
+                    class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                    placeholder="Contoh: HH PANRIL, CLOSURE GGN MUKA KUNING">
+                <p class="mt-1 text-xs text-gray-500">Nama lokasi perangkat atau nama customer</p>
+            </div>
+
+            <!-- Info Box -->
+            <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+                <div class="flex items-start gap-3">
+                    <svg class="w-5 h-5 text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" fill="none"
+                        stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <div class="text-sm text-blue-700 dark:text-blue-300">
+                        <p class="font-medium mb-1">Tentang Sector</p>
+                        <p>Setelah menyimpan data jaringan, Anda dapat menambahkan beberapa sector untuk jaringan ini di
+                            halaman detail.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
+                <button type="submit"
+                    class="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-medium rounded-lg shadow-lg shadow-blue-500/25 transition-all transform hover:scale-[1.02]">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                    <%= data ? 'Simpan Perubahan' : 'Simpan' %>
+                </button>
+                <a href="<%= typeof return_url !== 'undefined' && return_url ? return_url : '/data-core' %>"
+                    class="inline-flex items-center px-5 py-2.5 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 font-medium rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                    Batal
+                </a>
+            </div>
+        </form>
+    </div>
+</div>

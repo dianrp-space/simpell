@@ -1,0 +1,137 @@
+<!-- PKS CSO Form -->
+<div class="max-w-2xl mx-auto space-y-6">
+    <!-- Page Header -->
+    <div class="flex items-center gap-4">
+        <a href="/pks-cso"
+            class="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 dark:hover:text-white dark:hover:bg-gray-700 rounded-lg transition-colors">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18">
+                </path>
+            </svg>
+        </a>
+        <div>
+            <h1 class="text-2xl font-bold text-gray-900 dark:text-white">
+                <%= data ? 'Edit' : 'Tambah' %> Item PKS CSO
+            </h1>
+            <p class="text-gray-500 dark:text-gray-400">Manajemen Item Pekerjaan & Cost Structure</p>
+        </div>
+    </div>
+
+    <!-- Form Card -->
+    <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-6 shadow-sm">
+        <form action="<%= data ? '/pks-cso/' + data.id + '?_method=PUT' : '/pks-cso' %>" method="POST"
+            class="space-y-6">
+
+            <!-- No Item & Satuan -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label for="no_item" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        No Item Pekerjaan <span class="text-red-500">*</span>
+                    </label>
+                    <input type="text" id="no_item" name="no_item" required value="<%= data ? data.no_item : '' %>"
+                        class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                        placeholder="Contoh: A.1.1">
+                </div>
+                <div>
+                    <label for="satuan"
+                        class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Satuan</label>
+                    <input type="text" id="satuan" name="satuan" value="<%= data ? data.satuan || '' : '' %>"
+                        class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                        placeholder="Unit, Meter, Ls, dll">
+                </div>
+            </div>
+
+            <!-- Deskripsi -->
+            <div>
+                <label for="deskripsi_item" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Deskripsi Item Pekerjaan <span class="text-red-500">*</span>
+                </label>
+                <textarea id="deskripsi_item" name="deskripsi_item" required rows="3"
+                    class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                    placeholder="Deskripsi detail pekerjaan..."><%= data ? data.deskripsi_item : '' %></textarea>
+            </div>
+
+            <!-- Jenis -->
+            <div>
+                <label for="jenisSelect" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Jenis <span class="text-red-500">*</span>
+                </label>
+                <select id="jenisSelect" name="jenis" required onchange="toggleCsoFields()"
+                    class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+                    <% jenisOptions.forEach(j=> { %>
+                        <option value="<%= j %>" <%=data && data.jenis===j ? 'selected' : '' %>>
+                            <%= j %>
+                        </option>
+                        <% }); %>
+                </select>
+            </div>
+
+            <!-- CSO Fields -->
+            <div id="csoFields"
+                class="grid grid-cols-1 md:grid-cols-2 gap-6 p-4 bg-gray-50 dark:bg-gray-900/50 rounded-xl border border-gray-100 dark:border-gray-700/50">
+                <div id="jasaField">
+                    <label for="cso_jasa" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">CSO
+                        Jasa (Rp)</label>
+                    <div class="relative">
+                        <span
+                            class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400">Rp</span>
+                        <input type="number" id="cso_jasa" name="cso_jasa"
+                            value="<%= data ? data.cso_jasa || '' : '' %>"
+                            class="w-full pl-10 pr-4 py-3 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                            placeholder="0">
+                    </div>
+                </div>
+                <div id="materialField">
+                    <label for="cso_material"
+                        class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">CSO Material
+                        (Rp)</label>
+                    <div class="relative">
+                        <span
+                            class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400">Rp</span>
+                        <input type="number" id="cso_material" name="cso_material"
+                            value="<%= data ? data.cso_material || '' : '' %>"
+                            class="w-full pl-10 pr-4 py-3 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                            placeholder="0">
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
+                <button type="submit"
+                    class="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-medium rounded-lg shadow-lg shadow-blue-500/25 transition-all transform hover:scale-[1.02]">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                    <%= data ? 'Simpan Perubahan' : 'Simpan' %>
+                </button>
+                <a href="/pks-cso"
+                    class="inline-flex items-center px-5 py-2.5 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 font-medium rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                    Batal
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    function toggleCsoFields() {
+        const jenis = document.getElementById('jenisSelect').value;
+        const jasaField = document.getElementById('jasaField');
+        const materialField = document.getElementById('materialField');
+
+        // Animation classes could be added here for smoother transitions
+        if (jenis === 'Jasa') {
+            jasaField.style.display = 'block';
+            materialField.style.display = 'none';
+        } else if (jenis === 'Material') {
+            jasaField.style.display = 'none';
+            materialField.style.display = 'block';
+        } else {
+            jasaField.style.display = 'block';
+            materialField.style.display = 'block';
+        }
+    }
+
+    // Run on load
+    document.addEventListener('DOMContentLoaded', toggleCsoFields);
+</script>

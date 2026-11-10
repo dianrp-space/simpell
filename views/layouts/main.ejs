@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <%- include('../partials/favicon') %>
+  <title>
+    <%= typeof title !=='undefined' ? title : 'SIMPELL' %>
+  </title>
+
+  <script>
+    (function () {
+      const serverTheme = '<%= locals.user && locals.user.theme ? locals.user.theme : "" %>';
+      const localTheme = localStorage.getItem('theme');
+      const theme = serverTheme || localTheme || 'system';
+
+      if (theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+    })();
+  </script>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.8.1/flowbite.min.js"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/data-tables.css">
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* Desktop Sidebar Collapse Styles */
+    @media (min-width: 1024px) {
+      body.sidebar-collapsed #sidebar {
+        width: 5rem;
+      }
+
+      body.sidebar-collapsed #main-content {
+        padding-left: 5rem;
+      }
+
+      body.sidebar-collapsed .sidebar-text,
+      body.sidebar-collapsed .sidebar-label,
+      body.sidebar-collapsed .group-label {
+        display: none;
+      }
+
+      body.sidebar-collapsed #sidebar nav ul li a {
+        justify-content: center;
+        padding-left: 0;
+        padding-right: 0;
+      }
+
+      body.sidebar-collapsed #sidebar .logo-text {
+        display: none;
+      }
+
+      /* Center tooltip or adjustments */
+      body.sidebar-collapsed #sidebar nav ul li a svg {
+        margin: 0;
+      }
+
+      body.sidebar-collapsed .nav-group.is-collapsed .nav-group-items {
+        display: block;
+      }
+    }
+
+    .nav-group.is-collapsed .nav-group-chevron {
+      transform: rotate(-90deg);
+    }
+
+    .nav-group.is-collapsed .nav-group-items {
+      display: none;
+    }
+  </style>
+</head>
+
+<body class="bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 font-sans antialiased">
+  <!-- Sidebar -->
+  <% if (typeof sidebar==='undefined' || sidebar !==false) { %>
+    <%- include('../partials/sidebar') %>
+      <% } %>
+
+        <!-- Main Content -->
+        <div id="main-content"
+          class="<%= (typeof sidebar === 'undefined' || sidebar !== false) ? 'lg:pl-64' : '' %> pt-14 lg:pt-0 transition-all duration-300">
+          <!-- Header -->
+          <% if (typeof header==='undefined' || header !==false) { %>
+            <%- include('../partials/header') %>
+              <% } %>
+
+                <!-- Page Content -->
+                <main class="py-4 px-3 sm:py-6 sm:px-4 lg:px-8">
+                  <!-- Flash Messages -->
+                  <% if (success_msg && success_msg.length> 0) { %>
+                    <div class="mb-4 bg-teal-500/10 border border-teal-500 text-teal-500 rounded-lg p-4" role="alert">
+                      <div class="flex">
+                        <svg class="flex-shrink-0 h-4 w-4 mt-0.5" xmlns="http://www.w3.org/2000/svg" fill="none"
+                          stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                          <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                        </svg>
+                        <div class="ml-3">
+                          <p class="text-sm">
+                            <%= success_msg %>
+                          </p>
+                        </div>
+                        <button type="button" class="ml-auto" onclick="this.parentElement.parentElement.remove()">
+                          <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M18 6L6 18M6 6l12 12">
+                            </path>
+                          </svg>
+                        </button>
+                      </div>
+                    </div>
+                    <% } %>
+
+                      <% if (error_msg && error_msg.length> 0) { %>
+                        <div class="mb-4 bg-red-500/10 border border-red-500 text-red-500 rounded-lg p-4" role="alert">
+                          <div class="flex">
+                            <svg class="flex-shrink-0 h-4 w-4 mt-0.5" xmlns="http://www.w3.org/2000/svg" fill="none"
+                              stroke="currentColor" viewBox="0 0 24 24">
+                              <circle cx="12" cy="12" r="10"></circle>
+                              <line x1="12" y1="8" x2="12" y2="12"></line>
+                              <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                            </svg>
+                            <div class="ml-3">
+                              <p class="text-sm">
+                                <%= error_msg %>
+                              </p>
+                            </div>
+                            <button type="button" class="ml-auto" onclick="this.parentElement.parentElement.remove()">
+                              <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M18 6L6 18M6 6l12 12">
+                                </path>
+                              </svg>
+                            </button>
+                          </div>
+                        </div>
+                        <% } %>
+
+                          <%- body %>
+                </main>
+        </div>
+
+        <!-- Custom JS -->
+        <script src="/js/main.js"></script>
+        <script src="/js/table-scroll.js"></script>
+
+        <!-- Admin Notifications -->
+        <% if (locals.isAdmin) { %>
+          <script src="/socket.io/socket.io.js"></script>
+          <script src="/js/notifications.js"></script>
+          <% } %>
+
+            <!-- Global Confirmation Modal -->
+            <div id="confirm-modal" tabindex="-1"
+              class="fixed top-0 left-0 right-0 z-[60] hidden p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-full max-h-full flex items-center justify-center bg-gray-900/50 dark:bg-gray-900/80 transition-opacity duration-300">
+              <div class="relative w-full max-w-md max-h-full transform transition-all duration-300 scale-95 opacity-0"
+                id="confirm-modal-content">
+                <div
+                  class="relative bg-white rounded-2xl shadow-2xl dark:bg-gray-800 border border-gray-100 dark:border-gray-700 overflow-hidden">
+                  <div class="p-6 text-center">
+                    <div
+                      class="w-16 h-16 bg-red-50 dark:bg-red-900/20 rounded-full flex items-center justify-center mx-auto mb-4 border border-red-100 dark:border-red-800">
+                      <svg class="w-8 h-8 text-red-600 dark:text-red-500 animated-pulse" fill="none"
+                        stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
+                        </path>
+                      </svg>
+                    </div>
+                    <h3 class="mb-2 text-xl font-bold text-gray-900 dark:text-white">Konfirmasi Hapus</h3>
+                    <p class="mb-6 text-sm text-gray-500 dark:text-gray-400 leading-relaxed" id="confirm-modal-message">
+                      Apakah Anda yakin ingin menghapus data ini? Tindakan ini tidak dapat dibatalkan.</p>
+                    <div class="flex justify-center gap-3">
+                      <button type="button"
+                        class="flex-1 px-5 py-2.5 text-sm font-semibold text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-xl transition-all duration-200"
+                        onclick="closeConfirmModal()">
+                        Batal
+                      </button>
+                      <button id="confirm-modal-ok" type="button"
+                        class="flex-1 px-5 py-2.5 text-sm font-semibold text-white bg-red-600 hover:bg-red-700 rounded-xl shadow-lg shadow-red-500/30 transition-all duration-200">
+                        Ya, Hapus
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <style>
+              @keyframes modalPulse {
+
+                0%,
+                100% {
+                  transform: scale(1);
+                  opacity: 1;
+                }
+
+                50% {
+                  transform: scale(1.05);
+                  opacity: 0.8;
+                }
+              }
+
+              .animated-pulse {
+                animation: modalPulse 2s infinite ease-in-out;
+              }
+            </style>
+
+            <script>
+              let pendingAction = null;
+              function openConfirmModal(message, action) {
+                const modal = document.getElementById('confirm-modal');
+                const content = document.getElementById('confirm-modal-content');
+                document.getElementById('confirm-modal-message').innerText = message || 'Apakah Anda yakin ingin menghapus data ini?';
+                pendingAction = action;
+
+                modal.classList.remove('hidden');
+                setTimeout(() => {
+                  content.classList.remove('scale-95', 'opacity-0');
+                  content.classList.add('scale-100', 'opacity-100');
+                }, 10);
+                document.body.classList.add('overflow-hidden');
+              }
+
+              function closeConfirmModal() {
+                const modal = document.getElementById('confirm-modal');
+                const content = document.getElementById('confirm-modal-content');
+
+                content.classList.remove('scale-100', 'opacity-100');
+                content.classList.add('scale-95', 'opacity-0');
+
+                setTimeout(() => {
+                  modal.classList.add('hidden');
+                }, 300);
+                document.body.classList.remove('overflow-hidden');
+                pendingAction = null;
+              }
+
+              document.getElementById('confirm-modal-ok').addEventListener('click', () => {
+                if (typeof pendingAction === 'function') {
+                  pendingAction();
+                } else if (pendingAction instanceof HTMLFormElement) {
+                  pendingAction.submit();
+                }
+                closeConfirmModal();
+              });
+
+              window.confirmSubmit = function (form, message) {
+                openConfirmModal(message, form);
+                return false;
+              }
+            </script>
+  <% if (user) { %>
+    <script>
+      setInterval(function () {
+        fetch('/auth/ping', { credentials: 'same-origin' }).catch(function () {});
+      }, 4 * 60 * 1000);
+    </script>
+  <% } %>
+</body>
+
+</html>

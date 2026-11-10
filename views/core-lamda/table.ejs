@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <%- include('../partials/favicon') %>
+    <title>
+        <%= title %>
+    </title>
+    <link href="/css/output.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/data-tables.css">
+    <script src="/js/table-scroll.js" defer></script>
+    <style>
+        /* Mobile card view styles */
+        @media (max-width: 768px) {
+            .desktop-table {
+                display: none;
+            }
+
+            .mobile-cards {
+                display: block;
+            }
+        }
+
+        @media (min-width: 769px) {
+            .desktop-table {
+                display: block;
+            }
+
+            .mobile-cards {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 dark:bg-gray-900 min-h-screen">
+    <div class="p-4 md:p-6">
+        <!-- Header -->
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+            <div class="flex items-center gap-3">
+                <a href="/core-lamda"
+                    class="p-2 text-gray-500 hover:text-gray-700 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                    </svg>
+                </a>
+                <div>
+                    <h1 class="text-lg md:text-xl font-bold text-gray-900 dark:text-white">
+                        <%= data.lokasi %>
+                    </h1>
+                    <p class="text-xs md:text-sm text-gray-500">
+                        <%= data.cable_capacity %> Core &bull; <%= data.tube_count %> Tube
+                    </p>
+                </div>
+            </div>
+            <% if (isEditor) { %>
+                <div class="flex gap-2 flex-wrap">
+                    <a href="/core-lamda/<%= data.id %>/segment-names"
+                        class="inline-flex items-center gap-1 px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                        </svg>
+                        <span class="hidden sm:inline">Kelola</span> Segment
+                    </a>
+                    <a href="/core-lamda/<%= data.id %>/edit?return_to=/core-lamda/<%= data.id %>"
+                        class="inline-flex items-center gap-1 px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 text-sm font-medium rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z">
+                            </path>
+                        </svg>
+                        Edit
+                    </a>
+                </div>
+                <% } %>
+        </div>
+
+        <% if (segmentNames.length===0) { %>
+            <div
+                class="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-xl p-6 text-center">
+                <p class="text-yellow-800 dark:text-yellow-200 mb-4">Belum ada segment names. Tambahkan segment names
+                    terlebih dahulu.</p>
+                <a href="/core-lamda/<%= data.id %>/segment-names"
+                    class="inline-flex items-center gap-2 px-4 py-2 bg-yellow-600 hover:bg-yellow-700 text-white font-medium rounded-lg transition-colors">
+                    Tambah Segment Names
+                </a>
+            </div>
+            <% } else { %>
+
+                <% var colorMapCSS={}; colorMapCSS['Blue']='bg-blue-500' ; colorMapCSS['Orange']='bg-orange-500' ;
+                    colorMapCSS['Green']='bg-green-500' ; colorMapCSS['Brown']='bg-amber-700' ;
+                    colorMapCSS['Gray']='bg-gray-400' ; colorMapCSS['White']='bg-gray-100 border border-gray-300' ;
+                    colorMapCSS['Red']='bg-red-500' ; colorMapCSS['Black']='bg-gray-900' ;
+                    colorMapCSS['Yellow']='bg-yellow-400' ; colorMapCSS['Purple']='bg-purple-500' ;
+                    colorMapCSS['Pink']='bg-pink-400' ; colorMapCSS['Aqua']='bg-cyan-400' ; %>
+
+                    <!-- Desktop Table View -->
+                    <!-- Desktop Table View -->
+
+                    <div id="table-container"
+                        class="desktop-table bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700">
+                        <div class="overflow-auto max-h-[80vh] relative">
+                            <table id="main-table" class="w-full text-sm border-collapse">
+                                <thead class="sticky top-0 z-50 bg-white dark:bg-gray-800 shadow-md">
+                                    <tr
+                                        class="bg-gradient-to-r from-blue-600 to-blue-700 text-white uppercase text-xs font-semibold tracking-wider">
+                                        <th class="p-3 text-left border-r border-blue-500">Tube</th>
+                                        <th class="p-3 text-center border-r border-blue-500 w-16">Core</th>
+                                        <% segmentNames.forEach(function(sn) { %>
+                                            <th class="p-3 text-center border-r border-blue-500 min-w-[200px]">
+                                                <span class="font-normal normal-case text-xs">
+                                                    <%= sn.name %>
+                                                </span>
+                                            </th>
+                                            <% }); %>
+                                                <th class="p-3 text-left min-w-[200px]">Description</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% for (var t=1; t <=data.tube_count; t++) { %>
+                                        <% var tubeColor=coreColors[(t - 1) % 12]; var tubeClass=colorMapCSS[tubeColor]
+                                            || 'bg-gray-200' ; var isWhite=tubeColor==='White' ; %>
+                                            <% for (var c=1; c <=12; c++) { %>
+                                                <% var coreColor=coreColors[(c - 1) % 12]; var
+                                                    coreClass=colorMapCSS[coreColor] || 'bg-gray-200' ; var
+                                                    isCoreWhite=coreColor==='White' ; var segKey=String(t) + '-' +
+                                                    String(c); var coreData=coreMap[segKey] || { segments: {},
+                                                    description: null }; var isLastCore=(c===12); %>
+                                                    <tr
+                                                        class="border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors <%= isLastCore ? 'border-b-2 border-b-gray-300 dark:border-b-gray-600' : '' %>">
+                                                        <% if (c===1) { %>
+                                                            <td rowspan="12"
+                                                                class="p-0 border-r border-gray-200 dark:border-gray-700 align-top <%= tubeClass %> <%= isWhite ? 'text-gray-800' : 'text-white' %> sticky left-0 z-20">
+                                                                <div
+                                                                    class="sticky top-12 flex flex-col items-center justify-center h-full max-h-full py-4 px-3">
+                                                                    <span class="font-bold text-[22px]">T<%= t %></span>
+                                                                    <span class="text-xs opacity-80">
+                                                                        <%= tubeColor %>
+                                                                    </span>
+                                                                </div>
+                                                            </td>
+                                                            <% } %>
+                                                                <td
+                                                                    class="p-2 border-r border-gray-200 dark:border-gray-700">
+                                                                    <div class="flex items-center gap-2 justify-center">
+                                                                        <div
+                                                                            class="w-6 h-6 rounded-full <%= coreClass %> flex items-center justify-center shadow-sm">
+                                                                            <span
+                                                                                class="text-xs font-bold <%= isCoreWhite ? 'text-gray-800' : 'text-white' %>">
+                                                                                <%= c %>
+                                                                            </span>
+                                                                        </div>
+                                                                    </div>
+                                                                </td>
+                                                                <% segmentNames.forEach(function(sn) { %>
+                                                                    <% var seg=coreData.segments[sn.id]; %>
+                                                                        <td
+                                                                            class="p-2 border-r border-gray-200 dark:border-gray-700 text-center">
+                                                                            <% if (isEditor) { %>
+                                                                                <button type="button"
+                                                                                    onclick="openSegmentModal('<%= data.id %>', '<%= t %>', '<%= c %>', '<%= sn.id %>', '<%= seg ? seg.segmen_length || '' : '' %>', '<%= sn.name %>')"
+                                                                                    class="w-full h-full block hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded p-1 -m-1 transition-colors text-center">
+                                                                                    <% if (seg && seg.segmen_length) {
+                                                                                        %>
+                                                                                        <span
+                                                                                            class="font-medium text-gray-900 dark:text-white">
+                                                                                            <%= seg.segmen_length %>
+                                                                                        </span>
+                                                                                        <% } else { %>
+                                                                                            <span
+                                                                                                class="text-gray-300 dark:text-gray-600 hover:text-blue-400">+
+                                                                                                Add</span>
+                                                                                            <% } %>
+                                                                                </button>
+                                                                                <% } else { %>
+                                                                                    <span
+                                                                                        class="font-medium text-gray-900 dark:text-white">
+                                                                                        <%= seg ? seg.segmen_length
+                                                                                            || '-' : '-' %>
+                                                                                    </span>
+                                                                                    <% } %>
+                                                                        </td>
+                                                                        <% }); %>
+                                                                            <td
+                                                                                class="p-2 border-r border-gray-200 dark:border-gray-700 min-w-[200px] text-left align-top text-sm">
+                                                                                <% if (isEditor) { %>
+                                                                                    <button type="button"
+                                                                                        onclick="openDescriptionModal(this.dataset.id, this.dataset.tube, this.dataset.core, this.dataset.description)" data-id="<%= data.id %>" data-tube="<%= t %>" data-core="<%= c %>" data-description="<%= coreData.description || '' %>"
+                                                                                        class="w-full text-left block hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded p-1 -m-1 transition-colors min-h-[1.5rem]">
+                                                                                        <% if (coreData.description) {
+                                                                                            %>
+                                                                                            <span
+                                                                                                class="text-gray-700 dark:text-gray-300">
+                                                                                                <%- formatText(coreData.description) %>
+                                                                                            </span>
+                                                                                            <% } else { %>
+                                                                                                <span
+                                                                                                    class="text-gray-300 dark:text-gray-600 hover:text-blue-400 text-xs">+
+                                                                                                    Add
+                                                                                                    Description</span>
+                                                                                                <% } %>
+                                                                                    </button>
+                                                                                    <% } else { %>
+                                                                                        <span
+                                                                                            class="text-gray-700 dark:text-gray-300">
+                                                                                            <%- formatText(coreData.description) %>
+                                                                                        </span>
+                                                                                        <% } %>
+                                                                            </td>
+                                                    </tr>
+                                                    <% } %>
+                                                        <% } %>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Mobile Card View -->
+                    <div class="mobile-cards space-y-4">
+                        <% for (var t=1; t <=data.tube_count; t++) { %>
+                            <% var tubeColor=coreColors[(t - 1) % 12]; var tubeClass=colorMapCSS[tubeColor]
+                                || 'bg-gray-200' ; var isWhite=tubeColor==='White' ; %>
+                                <div
+                                    class="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
+                                    <!-- Tube Header -->
+                                    <div
+                                        class="<%= tubeClass %> <%= isWhite ? 'text-gray-800' : 'text-white' %> px-4 py-3">
+                                        <div class="flex items-center justify-between">
+                                            <span class="font-bold">Tube <%= t %></span>
+                                            <span class="text-sm opacity-80">
+                                                <%= tubeColor %>
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Cores List -->
+                                    <div class="divide-y divide-gray-100 dark:divide-gray-700">
+                                        <% for (var c=1; c <=12; c++) { %>
+                                            <% var coreColor=coreColors[(c - 1) % 12]; var
+                                                coreClass=colorMapCSS[coreColor] || 'bg-gray-200' ; var
+                                                isCoreWhite=coreColor==='White' ; var segKey=String(t) + '-' +
+                                                String(c); var coreData=coreMap[segKey] || { segments: {}, description:
+                                                null }; %>
+                                                <div class="p-3">
+                                                    <div class="flex items-start gap-3">
+                                                        <!-- Core Badge -->
+                                                        <div
+                                                            class="w-8 h-8 rounded-full <%= coreClass %> flex items-center justify-center shadow-sm flex-shrink-0">
+                                                            <span
+                                                                class="text-sm font-bold <%= isCoreWhite ? 'text-gray-800' : 'text-white' %>">
+                                                                <%= c %>
+                                                            </span>
+                                                        </div>
+
+                                                        <!-- Core Content -->
+                                                        <div class="flex-1 min-w-0">
+                                                            <!-- Segments -->
+                                                            <div class="space-y-1 mb-2">
+                                                                <% segmentNames.forEach(function(sn) { %>
+                                                                    <% var seg=coreData.segments[sn.id]; %>
+                                                                        <% if (isEditor) { %>
+                                                                            <button type="button"
+                                                                                onclick="openSegmentModal('<%= data.id %>', '<%= t %>', '<%= c %>', '<%= sn.id %>', '<%= seg ? seg.segmen_length || '' : '' %>', '<%= sn.name %>')"
+                                                                                class="w-full flex items-center justify-between p-2 bg-gray-50 dark:bg-gray-900 rounded hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors">
+                                                                                <span
+                                                                                    class="text-xs text-gray-500 truncate flex-1 mr-2 text-left">
+                                                                                    <%= sn.name %>
+                                                                                </span>
+                                                                                <% if (seg && seg.segmen_length) { %>
+                                                                                    <span
+                                                                                        class="text-sm font-medium text-gray-900 dark:text-white">
+                                                                                        <%= seg.segmen_length %>
+                                                                                    </span>
+                                                                                    <% } else { %>
+                                                                                        <span
+                                                                                            class="text-xs text-blue-500">+
+                                                                                            Add</span>
+                                                                                        <% } %>
+                                                                            </button>
+                                                                            <% } else { %>
+                                                                                <div
+                                                                                    class="w-full flex items-center justify-between p-2 bg-gray-50 dark:bg-gray-900 rounded">
+                                                                                    <span
+                                                                                        class="text-xs text-gray-500 truncate flex-1 mr-2 text-left">
+                                                                                        <%= sn.name %>
+                                                                                    </span>
+                                                                                    <span
+                                                                                        class="text-sm font-medium text-gray-900 dark:text-white">
+                                                                                        <%= seg ? seg.segmen_length
+                                                                                            || '-' : '-' %>
+                                                                                    </span>
+                                                                                </div>
+                                                                                <% } %>
+                                                                                    <% }); %>
+                                                            </div>
+
+                                                            <!-- Description -->
+                                                            <div class="flex items-center gap-2">
+                                                                <% if (coreData.description) { %>
+                                                                    <span
+                                                                        class="text-xs text-gray-600 dark:text-gray-400 flex-1 truncate">
+                                                                        <%= coreData.description %>
+                                                                    </span>
+                                                                    <% } %>
+                                                                        <% if (isEditor) { %>
+                                                                            <button type="button"
+                                                                                onclick="openDescriptionModal(this.dataset.id, this.dataset.tube, this.dataset.core, this.dataset.description)" data-id="<%= data.id %>" data-tube="<%= t %>" data-core="<%= c %>" data-description="<%= coreData.description || '' %>"
+                                                                                class="text-xs px-2 py-1 <%= coreData.description ? 'bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-400' : 'bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400' %> rounded">
+                                                                                <%= coreData.description ? 'Edit'
+                                                                                    : '+ Add' %> Desc
+                                                                            </button>
+                                                                            <% } %>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <% } %>
+                                    </div>
+                                </div>
+                                <% } %>
+                    </div>
+                    <% } %>
+    </div>
+
+
+    <!-- Generic Modal for Editing -->
+    <div id="editModal" class="fixed inset-0 z-[100] hidden overflow-y-auto" aria-labelledby="modal-title" role="dialog"
+        aria-modal="true">
+        <!-- Backdrop -->
+        <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true"
+                onclick="closeEditModal()"></div>
+
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+
+            <div
+                class="inline-block align-bottom bg-white dark:bg-gray-800 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg w-full">
+                <form id="editForm" method="POST" action="">
+                    <input type="hidden" id="methodInput" name="_method" value="">
+
+                    <div class="bg-white dark:bg-gray-800 px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                        <div class="sm:flex sm:items-start">
+                            <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
+                                <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-white"
+                                    id="modal-title">
+                                    Edit Data
+                                </h3>
+                                <div class="mt-4">
+                                    <!-- Length Input -->
+                                    <div id="lengthInputGroup" class="hidden">
+                                        <label for="segmen_length"
+                                            class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Panjang
+                                            Segment</label>
+                                        <input type="text" name="segmen_length" id="segmen_length"
+                                            class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md p-2"
+                                            placeholder="Contoh: 150m">
+                                    </div>
+
+                                    <!-- Description Input -->
+                                    <div id="descInputGroup" class="hidden">
+                                        <label for="description"
+                                            class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Description</label>
+                                        <textarea name="description" id="description" rows="3"
+                                            class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md p-2"
+                                            placeholder="Masukkan deskripsi..."></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-gray-50 dark:bg-gray-700 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                        <button type="submit"
+                            class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm">
+                            Simpan
+                        </button>
+                        <button type="button" onclick="closeEditModal()"
+                            class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 dark:border-gray-500 shadow-sm px-4 py-2 bg-white dark:bg-gray-800 text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
+                            Batal
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openSegmentModal(coreLamdaId, tubeNum, coreNum, segmentNameId, currentLength, segmentName) {
+            const modal = document.getElementById('editModal');
+            const form = document.getElementById('editForm');
+            const title = document.getElementById('modal-title');
+            const methodInput = document.getElementById('methodInput');
+            const lengthGroup = document.getElementById('lengthInputGroup');
+            const descGroup = document.getElementById('descInputGroup');
+            const lengthInput = document.getElementById('segmen_length');
+
+            // Configure Form
+            form.action = `/core-lamda/${coreLamdaId}/cores/${tubeNum}/${coreNum}/segment/${segmentNameId}`;
+            methodInput.disabled = true; // Use normal POST
+
+            // Configure UI
+            title.textContent = `Edit Panjang Segment - ${segmentName}`;
+            lengthGroup.classList.remove('hidden');
+            descGroup.classList.add('hidden');
+
+            // Set Value
+            lengthInput.value = currentLength;
+
+            // Show Modal
+            modal.classList.remove('hidden');
+
+            // Focus
+            setTimeout(() => lengthInput.focus(), 100);
+        }
+
+        function openDescriptionModal(coreLamdaId, tubeNum, coreNum, currentDesc) {
+            const modal = document.getElementById('editModal');
+            const form = document.getElementById('editForm');
+            const title = document.getElementById('modal-title');
+            const methodInput = document.getElementById('methodInput');
+            const lengthGroup = document.getElementById('lengthInputGroup');
+            const descGroup = document.getElementById('descInputGroup');
+            const descInput = document.getElementById('description');
+
+            // Configure Form
+            // Use query parameter for method override to ensure consistency and avoid 404s
+            form.action = `/core-lamda/${coreLamdaId}/cores/${tubeNum}/${coreNum}/description?_method=PUT`;
+            methodInput.disabled = true; // Disable body input as we use query param
+
+            // Configure UI
+            title.textContent = `Edit Description`;
+            lengthGroup.classList.add('hidden');
+            descGroup.classList.remove('hidden');
+
+            // Set Value
+            descInput.value = currentDesc;
+
+            // Show Modal
+            modal.classList.remove('hidden');
+
+            // Focus
+            setTimeout(() => descInput.focus(), 100);
+        }
+
+        function closeEditModal() {
+            document.getElementById('editModal').classList.add('hidden');
+        }
+
+        // Close on Escape
+        document.addEventListener('keydown', function (event) {
+            if (event.key === "Escape") {
+                closeEditModal();
+            }
+        });
+    </script>
+</body>
+
+</html>

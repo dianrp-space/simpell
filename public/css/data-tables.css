@@ -1,0 +1,54 @@
+.overflow-auto > table th:not(.sticky),
+.overflow-x-auto > table th:not(.sticky) {
+    position: relative;
+}
+
+.col-resized th,
+.col-resized td {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    border-right: 1px solid #e5e7eb;
+}
+
+.dark .col-resized th,
+.dark .col-resized td {
+    border-right-color: #374151;
+}
+
+.col-resizer {
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 4;
+    width: 10px;
+    height: 100%;
+    transform: translateX(50%);
+    cursor: col-resize;
+}
+
+.col-resizer::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    width: 2px;
+    transform: translateX(-50%);
+    background: #9ca3af;
+}
+
+.dark .col-resizer::before {
+    background: #9ca3af;
+}
+
+.col-resizer:hover::before,
+.col-resizer.is-active::before {
+    width: 3px;
+    background: #0171d3;
+}
+
+body.is-col-resizing {
+    cursor: col-resize;
+    user-select: none;
+}

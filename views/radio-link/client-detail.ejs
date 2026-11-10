@@ -1,0 +1,177 @@
+<!-- Radio Link Client Detail -->
+<div class="max-w-4xl mx-auto space-y-6">
+    <!-- Page Header -->
+    <div class="flex items-center gap-4">
+        <a href="javascript:history.back()"
+            class="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 dark:hover:text-white dark:hover:bg-gray-700 rounded-lg transition-colors">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18">
+                </path>
+            </svg>
+        </a>
+        <div>
+            <h1 class="text-2xl font-bold text-gray-900 dark:text-white">
+                Detail Client
+            </h1>
+            <p class="text-sm text-gray-500">AP: <%= ap ? ap.nama_ap : '-' %>
+            </p>
+        </div>
+    </div>
+
+    <!-- Form Card -->
+    <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-6 shadow-sm">
+        <div class="space-y-6">
+
+            <!-- Customer Display -->
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Customer</label>
+                <div
+                    class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900/50 border border-gray-100 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white">
+                    <%= clientData && clientData.pelanggan ? (clientData.pelanggan.no_jaringan + ' - ' +
+                        clientData.pelanggan.nama_pelanggan) : '-' %>
+                </div>
+            </div>
+
+            <!-- Detail Network 1 -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">IP NMS</label>
+                    <div
+                        class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900/50 border border-gray-100 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white font-mono">
+                        <%= clientData ? clientData.ip_nms : '-' %>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">MAC Address</label>
+                    <div
+                        class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900/50 border border-gray-100 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white font-mono">
+                        <%= clientData ? clientData.mac_address : '-' %>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Detail Network 2 -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">SSID</label>
+                    <div
+                        class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900/50 border border-gray-100 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white font-mono">
+                        <%= clientData ? clientData.ssid : '-' %>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Frequency (CH
+                        FRQ)</label>
+                    <div
+                        class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900/50 border border-gray-100 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white font-mono">
+                        <%= clientData ? clientData.frequency : '-' %>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Technical Stats -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Power</label>
+                    <div
+                        class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900/50 border border-gray-100 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white font-mono">
+                        <%= clientData ? clientData.power : '-' %>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Antenna Gain</label>
+                    <div
+                        class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900/50 border border-gray-100 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white font-mono">
+                        <%= clientData ? clientData.antenna_gain : '-' %>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Bandwidth</label>
+                    <div
+                        class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900/50 border border-gray-100 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white font-mono">
+                        <%= clientData ? clientData.channel_bandwidth : '-' %>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mode & Region -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Network Mode</label>
+                    <div
+                        class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900/50 border border-gray-100 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white font-mono">
+                        <%= clientData ? clientData.network_mode : '-' %>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Module Mode</label>
+                    <div
+                        class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900/50 border border-gray-100 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white font-mono">
+                        <%= clientData ? clientData.module_mode : '-' %>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Country</label>
+                    <div
+                        class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900/50 border border-gray-100 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white font-mono">
+                        <%= clientData ? clientData.country : '-' %>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Auth -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Username</label>
+                    <div
+                        class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900/50 border border-gray-100 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white font-mono">
+                        <%= clientData ? clientData.username : '-' %>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Password</label>
+                    <div
+                        class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900/50 border border-gray-100 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white font-mono">
+                        <%= clientData ? clientData.password : '-' %>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Coordinate -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Latitude</label>
+                    <div
+                        class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900/50 border border-gray-100 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white font-mono">
+                        <%= clientData ? clientData.latitude : '-' %>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Longitude</label>
+                    <div
+                        class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900/50 border border-gray-100 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white font-mono">
+                        <%= clientData ? clientData.longitude : '-' %>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
+                <a href="javascript:history.back()"
+                    class="inline-flex items-center px-5 py-2.5 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 font-medium rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                    Kembali
+                </a>
+                <% if (isEditor && clientData) { %>
+                    <a href="/radio-link/<%= ap ? ap.id : '#' %>/client/<%= clientData.id %>/edit"
+                        class="inline-flex items-center px-5 py-2.5 bg-amber-500 hover:bg-amber-600 text-white font-medium rounded-lg transition-colors shadow-lg shadow-amber-500/25">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z">
+                            </path>
+                        </svg>
+                        Edit Data
+                    </a>
+                    <% } %>
+            </div>
+        </div>
+    </div>
+</div>

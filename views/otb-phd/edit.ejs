@@ -1,0 +1,125 @@
+<!-- OTB PHD Core Edit Form -->
+<div class="space-y-6">
+    <!-- Page Header -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div class="flex items-center gap-4">
+            <a href="/otb-phd/sector/<%= encodeURIComponent(data.sector) %>"
+                class="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 dark:hover:text-white dark:hover:bg-gray-700 rounded-lg transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                </svg>
+            </a>
+            <div>
+                <h1 class="text-xl md:text-2xl font-bold text-gray-900 dark:text-white">
+                    Edit Core
+                </h1>
+                <p class="text-sm text-gray-500 dark:text-gray-400">
+                    <%= data.sector %> • Tube <%= data.tube_number %> (<%= data.tube_color %>) • Core <%=
+                                    data.core_number %> (<%= data.core_color %>)
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Form -->
+    <div
+        class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-6 shadow-sm max-w-2xl mx-auto">
+        <form action="/otb-phd/<%= data.id %>?_method=PUT" method="POST" class="space-y-6">
+
+            <!-- Location Info (Readonly) -->
+            <div
+                class="grid grid-cols-3 gap-4 p-4 bg-gray-50 dark:bg-gray-900/50 rounded-lg border border-gray-100 dark:border-gray-700">
+                <div>
+                    <span class="block text-xs font-medium text-gray-500 uppercase">Sector</span>
+                    <span class="font-bold text-gray-900 dark:text-white">
+                        <%= data.sector %>
+                    </span>
+                </div>
+                <div>
+                    <span class="block text-xs font-medium text-gray-500 uppercase">Tube</span>
+                    <span class="font-bold text-gray-900 dark:text-white"
+                        style="color: <%= data.tube_color.toLowerCase() === 'white' || data.tube_color.toLowerCase() === 'yellow' ? '#D97706' : data.tube_color.toLowerCase() %>">
+                        <%= data.tube_number %> (<%= data.tube_color %>)
+                    </span>
+                </div>
+                <div>
+                    <span class="block text-xs font-medium text-gray-500 uppercase">Core</span>
+                    <span class="font-bold text-gray-900 dark:text-white"
+                        style="color: <%= data.core_color.toLowerCase() === 'white' || data.core_color.toLowerCase() === 'yellow' ? '#D97706' : data.core_color.toLowerCase() %>">
+                        <%= data.core_number %> (<%= data.core_color %>)
+                    </span>
+                </div>
+            </div>
+
+            <div class="grid gap-6">
+                <!-- Status -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Status</label>
+                    <select name="status" required
+                        class="w-full px-4 py-2 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500">
+                        <% statuses.forEach(function(s) { %>
+                            <option value="<%= s %>" <%=data.status===s ? 'selected' : '' %>>
+                                <%= s %>
+                            </option>
+                            <% }); %>
+                    </select>
+                </div>
+
+                <!-- Description Core -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Description
+                        Core</label>
+                    <input type="text" name="description_core" value="<%= data.description_core || '' %>"
+                        class="w-full px-4 py-2 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500">
+                </div>
+
+                <!-- Destination -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Destination</label>
+                    <input type="text" name="destination" value="<%= data.destination || '' %>"
+                        class="w-full px-4 py-2 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500">
+                </div>
+
+                <!-- Customer -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Customer</label>
+                    <input type="text" name="customer" value="<%= data.customer || '' %>"
+                        class="w-full px-4 py-2 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500">
+                </div>
+
+                <!-- Keterangan -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Keterangan</label>
+                    <textarea name="keterangan" rows="3"
+                        class="w-full px-4 py-2 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"><%= data.keterangan || '' %></textarea>
+                </div>
+            </div>
+
+            <!-- Submit -->
+            <div class="flex items-center justify-end gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
+                <a href="/otb-phd/sector/<%= encodeURIComponent(data.sector) %>"
+                    class="px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-medium rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                    Batal
+                </a>
+                <button type="submit"
+                    class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors">
+                    Simpan Perubahan
+                </button>
+            </div>
+
+            <div class="mt-4 pt-4 border-t border-gray-100 dark:border-gray-800">
+                <div class="flex justify-between items-center">
+                    <span class="text-xs text-gray-400">ID: <%= data.id %></span>
+                    <button type="button"
+                        onclick="return confirmSubmit(document.getElementById('deleteCoreForm'), 'Hapus core ini? Tindakan ini berbahaya dan dapat merusak urutan.')"
+                        class="text-xs text-red-500 hover:text-red-700 hover:underline">
+                        Hapus Core (Danger Zone)
+                    </button>
+                </div>
+            </div>
+        </form>
+
+        <form id="deleteCoreForm" action="/otb-phd/<%= data.id %>?_method=DELETE" method="POST" class="hidden"></form>
+    </div>
+</div>

@@ -1,0 +1,62 @@
+<!-- OTB PHD Sector Edit Form -->
+<div class="space-y-6">
+    <!-- Page Header -->
+    <div class="flex items-center gap-4">
+        <a href="/otb-phd"
+            class="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 dark:hover:text-white dark:hover:bg-gray-700 rounded-lg transition-colors">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18">
+                </path>
+            </svg>
+        </a>
+        <div>
+            <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Edit Sector</h1>
+            <p class="text-gray-500 dark:text-gray-400">Ubah nama sector</p>
+        </div>
+    </div>
+
+    <!-- Form -->
+    <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-6 shadow-sm">
+        <form
+            action="/otb-phd/sector/<%= encodeURIComponent(sectorName) %>?_method=PUT<%= (typeof returnTo !== 'undefined' && returnTo) ? '&return_to=' + encodeURIComponent(returnTo) : '' %>"
+            method="POST" class="space-y-6">
+            <div class="grid gap-6 md:grid-cols-1">
+                <!-- Sector Name -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Nama Sector <span class="text-red-500">*</span>
+                    </label>
+                    <input type="text" name="newSectorName" value="<%= sectorName %>" required
+                        class="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="Contoh: Sector A, OTB PHD-1, dll">
+                </div>
+
+                <!-- Tube Count -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Jumlah Tube <span class="text-red-500">*</span>
+                    </label>
+                    <input type="number" name="tube_count" value="<%= currentTubeCount %>" required min="1"
+                        class="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="Masukkan jumlah tube">
+                    <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                        Jika mengurangi jumlah tube, pastikan tube yang akan dihapus kosong (tidak ada status
+                        Active/Bad/Cut/Alokasi dan data lainnya).
+                    </p>
+                </div>
+            </div>
+
+            <!-- Submit -->
+            <div class="flex items-center justify-end gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
+                <a href="<%= (typeof returnTo !== 'undefined' && returnTo) ? returnTo : '/otb-phd' %>"
+                    class="px-4 py-2.5 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-medium rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                    Batal
+                </a>
+                <button type="submit"
+                    class="px-6 py-2.5 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-medium rounded-lg shadow-lg shadow-blue-500/25 transition-all">
+                    Simpan Perubahan
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

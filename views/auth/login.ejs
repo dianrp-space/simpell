@@ -1,0 +1,142 @@
+<div
+    class="max-w-5xl w-full bg-white dark:bg-gray-800 rounded-3xl shadow-2xl overflow-hidden grid grid-cols-1 md:grid-cols-2 min-h-[600px] border border-gray-100 dark:border-gray-700">
+    <!-- Left Side: Image Carousel -->
+    <div class="relative bg-gray-900 hidden md:block">
+        <div id="authCarousel" class="absolute inset-0 w-full h-full">
+            <!-- Image 1: Gedung -->
+            <img src="/img/lintasarta_gedung.jpg"
+                class="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 opacity-0"
+                alt="Lintasarta Gedung">
+            <!-- Image 2: Portal Logo -->
+            <div
+                class="absolute inset-0 w-full h-full flex items-center justify-center bg-white transition-opacity duration-1000 opacity-0">
+                <img src="/img/lintasarta_logo.png" class="w-2/3 object-contain" alt="Lintasarta Logo">
+            </div>
+            <!-- Image 3: POLA Portal -->
+            <img src="/img/pola_portal.jpg"
+                class="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 opacity-0"
+                alt="POLA Portal">
+            <!-- Image 4: Simpell Portal -->
+            <img src="/img/simpell_portal.jpg"
+                class="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 opacity-0"
+                alt="Simpell Portal">
+
+        </div>
+
+        <!-- Overlay Content -->
+        <div
+            class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent z-10 flex flex-col justify-end p-12">
+            <blockquote class="text-white">
+                <p class="text-base font-medium mb-4">"Menjadi perusahaan Indonesia yang paling dipilih dalam layanan
+                    digital dan teknologi"</p>
+                <footer class="text-gray-300 text-sm">Lintasarta</footer>
+            </blockquote>
+        </div>
+    </div>
+
+    <!-- Right Side: Login Form -->
+    <div class="p-12 flex flex-col justify-center relative bg-white dark:bg-gray-800">
+        <div class="text-center md:text-left mb-10">
+            <div class="flex justify-center md:justify-start mb-6">
+                <img src="/img/pola_logo.png" class="h-10 w-auto" alt="POLA Logo">
+            </div>
+            <h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">Welcome to <span
+                    class="animate-gradient-text">POLA</span></h2>
+            <p class="text-gray-500 dark:text-gray-400">Please enter your details to sign in.</p>
+        </div>
+
+        <!-- Alerts -->
+        <% if (typeof success_msg !=='undefined' && success_msg && success_msg.length> 0) { %>
+            <div
+                class="alert-auto-hide mb-6 bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400 px-4 py-3 rounded-lg text-sm flex items-center border border-green-100 dark:border-green-800/10">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+                <%= success_msg %>
+            </div>
+            <% } %>
+
+                <% if (typeof error_msg !=='undefined' && error_msg && error_msg.length> 0) { %>
+                    <div
+                        class="alert-auto-hide mb-6 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 px-4 py-3 rounded-lg text-sm flex items-center border border-red-100 dark:border-red-800/10">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        <%= error_msg %>
+                    </div>
+                    <% } %>
+
+                        <form action="/auth/login" method="POST" class="space-y-5">
+                            <div>
+                                <label for="email"
+                                    class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Email</label>
+                                <input type="email" name="email" id="email" required
+                                    class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all outline-none"
+                                    placeholder="Enter your email">
+                            </div>
+
+                            <div>
+                                <div class="flex items-center justify-between mb-1">
+                                    <label for="password"
+                                        class="block text-sm font-medium text-gray-700 dark:text-gray-300">Password</label>
+                                    <a href="/auth/forgot-password"
+                                        class="text-xs font-semibold text-blue-600 hover:text-blue-500 transition-colors">
+                                        Lupa Password?
+                                    </a>
+                                </div>
+                                <div class="relative">
+                                    <input type="password" name="password" id="password" required
+                                        class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all outline-none"
+                                        placeholder="Enter your password">
+                                    <button type="button" onclick="togglePassword('password')"
+                                        class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z">
+                                            </path>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <button type="submit"
+                                class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-xl transition-colors duration-200 shadow-lg shadow-blue-600/30">
+                                Sign in
+                            </button>
+                        </form>
+
+                        <div class="mt-8 text-center text-sm text-gray-500 dark:text-gray-400">
+                            Don't have an account?
+                            <a href="/auth/register" class="font-semibold text-blue-600 hover:text-blue-500">Sign up</a>
+                        </div>
+    </div>
+</div>
+
+<style>
+    .animate-gradient-text {
+        background: linear-gradient(to right, #001F99, #0171D3, #01B0FF, #001F99);
+        background-size: 200% auto;
+        color: transparent;
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        animation: shine 3s linear infinite;
+    }
+
+    @keyframes shine {
+        to {
+            background-position: 200% center;
+        }
+    }
+</style>
+
+<script src="/js/auth-carousel.js"></script>
+<script>
+    function togglePassword(inputId) {
+        const input = document.getElementById(inputId);
+        input.type = input.type === 'password' ? 'text' : 'password';
+    }
+</script>

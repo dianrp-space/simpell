@@ -1,0 +1,56 @@
+<!-- Node Edit Form - Rename existing node -->
+<div class="max-w-md mx-auto space-y-6">
+    <!-- Page Header -->
+    <div class="flex items-center gap-4">
+        <a href="<%= aksesBase %>/node/<%= nodeId %>"
+            class="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 dark:hover:text-white dark:hover:bg-gray-700 rounded-lg transition-colors">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18">
+                </path>
+            </svg>
+        </a>
+        <div>
+            <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Edit Node</h1>
+            <p class="text-gray-500 dark:text-gray-400">Ubah nama node</p>
+        </div>
+    </div>
+
+    <!-- Form Card -->
+    <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-6 shadow-sm">
+        <form action="<%= aksesBase %>/node-update/<%= node.id %>?_method=PUT" method="POST" class="space-y-5">
+            <div>
+                <label for="node" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Nama Node <span class="text-red-500">*</span>
+                </label>
+                <input type="text" id="node" name="node" required value="<%= nodeName %>"
+                    class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all uppercase text-lg font-mono"
+                    placeholder="LST01">
+                <p class="mt-1 text-xs text-gray-500">Contoh: LST01, POP02, BKS01</p>
+            </div>
+            <div>
+                <label for="jenis" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Menu</label>
+                <select id="jenis" name="jenis"
+                    class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    <option value="FO" <%= node.jenis==='FO' ? 'selected' : '' %>>Fiber Optic</option>
+                    <option value="FO_P2P" <%= node.jenis==='FO_P2P' ? 'selected' : '' %>>P2P/FO Core</option>
+                    <option value="DIRECT_LAN" <%= node.jenis==='DIRECT_LAN' ? 'selected' : '' %>>Direct LAN</option>
+                </select>
+                <p class="mt-1 text-xs text-gray-500">Pindahkan node ke menu lain tanpa mengubah isian port.</p>
+            </div>
+
+            <div class="flex gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
+                <button type="submit"
+                    class="flex-1 inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-medium rounded-lg shadow-lg shadow-blue-500/25 transition-all">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                    Simpan Perubahan
+                </button>
+                <a href="<%= aksesBase %>/node/<%= nodeId %>"
+                    class="inline-flex items-center px-5 py-2.5 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 font-medium rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                    Batal
+                </a>
+            </div>
+        </form>
+    </div>
+</div>

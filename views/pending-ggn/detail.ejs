@@ -1,0 +1,137 @@
+<!-- Pending GGN Detail -->
+<div class="max-w-3xl mx-auto space-y-6">
+        <!-- Page Header -->
+        <div class="flex items-center gap-4">
+                <a href="javascript:history.back()"
+                        class="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 dark:hover:text-white dark:hover:bg-gray-700 rounded-lg transition-colors">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M10 19l-7-7m0 0l7-7m-7 7h18">
+                                </path>
+                        </svg>
+                </a>
+                <div>
+                        <h1 class="text-2xl font-bold text-gray-900 dark:text-white">
+                                Detail Pending GGN & PM
+                        </h1>
+                        <p class="text-gray-500 dark:text-gray-400">Detail Tiket Gangguan & PM</p>
+                </div>
+        </div>
+
+        <!-- Form Card -->
+        <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-6 shadow-sm">
+                <div class="space-y-6">
+
+                        <!-- Tanggal & Case -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                        <label
+                                                class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Tanggal</label>
+                                        <input type="date" disabled
+                                                value="<%= data && data.tanggal ? moment(data.tanggal).format('YYYY-MM-DD') : '' %>"
+                                                class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white opacity-70 cursor-not-allowed">
+                                </div>
+                                <div>
+                                        <label
+                                                class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Case</label>
+                                        <input type="text" disabled value="<%= data ? data.case_type || '' : '' %>"
+                                                class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white opacity-70 cursor-not-allowed">
+                                </div>
+                        </div>
+
+                        <!-- Ticket & No Jaringan -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">No
+                                                Ticket</label>
+                                        <input type="text" disabled value="<%= data ? data.no_ticket || '' : '' %>"
+                                                class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white opacity-70 cursor-not-allowed">
+                                </div>
+                                <div>
+                                        <label
+                                                class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Customer</label>
+                                        <input type="text" disabled
+                                                value="<%= data && data.pelanggan ? (data.pelanggan.no_jaringan + ' - ' + data.pelanggan.nama_pelanggan) : '-' %>"
+                                                class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white opacity-70 cursor-not-allowed">
+                                </div>
+                        </div>
+
+                        <!-- Rincian -->
+                        <div class="space-y-6">
+                                <div>
+                                        <label
+                                                class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Rincian</label>
+                                        <textarea disabled rows="5"
+                                                class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white opacity-70 cursor-not-allowed"><%= data ? data.rincian || '' : '' %></textarea>
+                                </div>
+                        </div>
+
+                        <!-- Akses, PJ, Status -->
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                <div>
+                                        <label
+                                                class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Akses</label>
+                                        <input type="text" disabled value="<%= data ? data.akses || '' : '' %>"
+                                                class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white opacity-70 cursor-not-allowed">
+                                </div>
+                                <div>
+                                        <label
+                                                class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">PJ</label>
+                                        <input type="text" disabled value="<%= data ? data.pj || '' : '' %>"
+                                                class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white opacity-70 cursor-not-allowed">
+                                </div>
+                                <div>
+                                        <label
+                                                class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Status</label>
+                                        <input type="text" disabled value="<%= data ? data.status || '' : '' %>"
+                                                class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white opacity-70 cursor-not-allowed">
+                                </div>
+                        </div>
+
+                        <!-- Coordinates -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                        <label
+                                                class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Latitude</label>
+                                        <input type="text" disabled value="<%= data ? data.latitude || '' : '' %>"
+                                                class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white opacity-70 cursor-not-allowed">
+                                </div>
+                                <div>
+                                        <label
+                                                class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Longitude</label>
+                                        <input type="text" disabled value="<%= data ? data.longitude || '' : '' %>"
+                                                class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white opacity-70 cursor-not-allowed">
+                                </div>
+                        </div>
+
+                        <!-- Keterangan -->
+                        <div>
+                                <label
+                                        class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Keterangan</label>
+                                <textarea disabled rows="5"
+                                        class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white opacity-70 cursor-not-allowed"><%= data ? data.keterangan || '' : '' %></textarea>
+                        </div>
+
+                        <div class="flex gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
+                                <a href="javascript:history.back()"
+                                        class="inline-flex items-center px-5 py-2.5 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 font-medium rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                                        Kembali
+                                </a>
+                                <% if (isEditor && data) { %>
+                                        <a href="/pending-ggn/<%= data.id %>/edit"
+                                                class="inline-flex items-center px-5 py-2.5 bg-amber-500 hover:bg-amber-600 text-white font-medium rounded-lg transition-colors shadow-lg shadow-amber-500/25">
+                                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor"
+                                                        viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                                                stroke-width="2"
+                                                                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z">
+                                                        </path>
+                                                </svg>
+                                                Edit Data
+                                        </a>
+                                        <% } %>
+                        </div>
+                </div>
+        </div>
+</div>
+<script src="/js/coordinate-converter.js"></script>

@@ -1,0 +1,120 @@
+<div class="space-y-6">
+    <!-- Header -->
+    <div class="flex items-center gap-4">
+        <a href="/pelanggan" class="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
+            <svg class="w-5 h-5 text-gray-600 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+            </svg>
+        </a>
+        <div>
+            <h1 class="text-2xl font-bold text-gray-900 dark:text-white">
+                <%= isEdit ? 'Edit Customer' : 'Tambah Customer' %>
+            </h1>
+            <p class="text-sm text-gray-500 dark:text-gray-400">
+                <%= isEdit ? 'Ubah data customer' : 'Isi form untuk menambahkan customer baru' %>
+            </p>
+        </div>
+    </div>
+
+    <!-- Form -->
+    <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm">
+        <form action="/pelanggan/<%= isEdit ? pelanggan.id + '/edit' : 'create' %>" method="POST" class="p-6 space-y-6">
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- No Jaringan -->
+                <div>
+                    <label for="no_jaringan" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        No Jaringan <span class="text-red-500">*</span>
+                    </label>
+                    <input type="text" name="no_jaringan" id="no_jaringan" required
+                        value="<%= pelanggan ? pelanggan.no_jaringan : '' %>"
+                        class="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="Masukkan no jaringan">
+                </div>
+
+                <!-- Nama Pelanggan -->
+                <div>
+                    <label for="nama_pelanggan" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Customer <span class="text-red-500">*</span>
+                    </label>
+                    <input type="text" name="nama_pelanggan" id="nama_pelanggan" required
+                        value="<%= pelanggan ? pelanggan.nama_pelanggan : '' %>"
+                        class="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="Masukkan nama customer">
+                </div>
+
+                <!-- Kontak -->
+                <div>
+                    <label for="kontak" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Kontak (No HP/Telp)
+                    </label>
+                    <input type="text" name="kontak" id="kontak" value="<%= pelanggan ? pelanggan.kontak : '' %>"
+                        class="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="Contoh: 08123456789">
+                </div>
+
+                <!-- Email -->
+                <div>
+                    <label for="email" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Email
+                    </label>
+                    <input type="text" name="email" id="email" value="<%= pelanggan ? pelanggan.email : '' %>"
+                        class="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="Contoh: email@domain.com">
+                </div>
+
+
+
+                <!-- Status -->
+                <div>
+                    <label for="status" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Status
+                    </label>
+                    <select name="status" id="status"
+                        class="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg text-sm focus:ring-2 focus:ring-blue-500">
+                        <option value="Active" <%=!pelanggan || pelanggan.status==='Active' ? 'selected' : '' %>>Active
+                        </option>
+                        <option value="Inactive" <%=pelanggan && pelanggan.status==='Inactive' ? 'selected' : '' %>
+                            >Inactive</option>
+                        <option value="Suspended" <%=pelanggan && pelanggan.status==='Suspended' ? 'selected' : '' %>
+                            >Suspended</option>
+                    </select>
+                </div>
+
+
+
+                <!-- Alamat -->
+                <div class="md:col-span-2">
+                    <label for="alamat" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Alamat
+                    </label>
+                    <textarea name="alamat" id="alamat" rows="3"
+                        class="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                        placeholder="Masukkan alamat lengkap"><%= pelanggan ? pelanggan.alamat : '' %></textarea>
+                </div>
+
+                <!-- Keterangan -->
+                <div class="md:col-span-2">
+                    <label for="keterangan" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Keterangan
+                    </label>
+                    <textarea name="keterangan" id="keterangan" rows="3"
+                        class="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                        placeholder="Catatan tambahan"><%= pelanggan ? pelanggan.keterangan : '' %></textarea>
+                </div>
+            </div>
+
+            <!-- Buttons -->
+            <div class="flex justify-end gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
+                <a href="<%= isEdit ? '/pelanggan/' + pelanggan.id : '/pelanggan' %>"
+                    class="px-4 py-2.5 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 text-sm font-medium rounded-lg transition-colors">
+                    Batal
+                </a>
+                <button type="submit"
+                    class="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors shadow-sm">
+                    <%= isEdit ? 'Simpan Perubahan' : 'Tambah Customer' %>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

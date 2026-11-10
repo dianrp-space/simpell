@@ -1,0 +1,283 @@
+<!-- Record GGN Form -->
+<div class="max-w-3xl mx-auto space-y-6">
+        <!-- Page Header -->
+        <div class="flex items-center gap-4">
+                <a href="/record-ggn"
+                        class="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 dark:hover:text-white dark:hover:bg-gray-700 rounded-lg transition-colors">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M10 19l-7-7m0 0l7-7m-7 7h18">
+                                </path>
+                        </svg>
+                </a>
+                <div>
+                        <h1 class="text-2xl font-bold text-gray-900 dark:text-white">
+                                <%= data ? 'Edit' : 'Tambah' %> Record GGN
+                        </h1>
+                        <p class="text-gray-500 dark:text-gray-400">Manajemen Arsip Tiket Gangguan & PM</p>
+                </div>
+        </div>
+
+        <!-- Form Card -->
+        <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-6 shadow-sm">
+                <form action="<%= data ? '/record-ggn/' + data.id + '?_method=PUT' + (typeof returnUrl !== 'undefined' && returnUrl ? '&return_url=' + encodeURIComponent(returnUrl) : '') : '/record-ggn' %>"
+                        method="POST" class="space-y-6">
+
+                        <!-- Tanggal & Case -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                        <label for="tanggal"
+                                                class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Tanggal
+                                                <span class="text-red-500">*</span></label>
+                                        <input type="date" id="tanggal" name="tanggal" required
+                                                value="<%= data && data.tanggal ? moment(data.tanggal).format('YYYY-MM-DD') : moment().format('YYYY-MM-DD') %>"
+                                                class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+                                </div>
+                                <div>
+                                        <label for="case_type"
+                                                class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Case</label>
+                                        <div class="relative">
+                                                <input list="case_types" type="text" id="case_type" name="case_type"
+                                                        value="<%= data ? data.case_type || '' : '' %>"
+                                                        class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                                                        placeholder="Pilih atau ketik baru">
+                                                <datalist id="case_types">
+                                                        <% caseTypes.forEach(c=> { %>
+                                                                <option value="<%= c %>">
+                                                                        <% }); %>
+                                                </datalist>
+                                        </div>
+                                </div>
+                        </div>
+
+                        <!-- Ticket & Jaringan -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                        <label for="no_ticket"
+                                                class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">No
+                                                Ticket</label>
+                                        <input type="text" id="no_ticket" name="no_ticket"
+                                                value="<%= data ? data.no_ticket || '' : '' %>"
+                                                class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                                                placeholder="Nomor tiket">
+                                </div>
+                                <div>
+                                        <label for="pelanggan_select"
+                                                class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Customer
+                                                <span class="text-blue-500 text-xs">(Cari & Pilih)</span></label>
+                                        <div class="relative">
+                                                <input type="text" id="pelanggan_search"
+                                                        placeholder="Cari berdasarkan No Jaringan atau Customer..."
+                                                        autocomplete="off"
+                                                        class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+                                                <!-- Hidden inputs `no_jaringan` & `nama_pelanggan` removed -->
+                                                <input type="hidden" id="pelanggan_id" name="pelanggan_id"
+                                                        value="<%= data ? data.pelanggan_id || '' : '' %>">
+
+                                                <!-- Dropdown Results -->
+                                                <div id="pelanggan_dropdown"
+                                                        class="absolute z-50 w-full mt-1 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-xl shadow-lg max-h-60 overflow-y-auto hidden">
+                                                </div>
+                                        </div>
+                                        <!-- Selected Pelanggan Display -->
+                                        <div id="selected_pelanggan"
+                                                class="mt-2 <%= data && data.no_jaringan ? '' : 'hidden' %>">
+                                                <div
+                                                        class="flex items-center gap-2 p-2 bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-700 rounded-lg">
+                                                        <svg class="w-4 h-4 text-blue-500" fill="none"
+                                                                stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                                        stroke-width="2"
+                                                                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z">
+                                                                </path>
+                                                        </svg>
+                                                        <span id="selected_text"
+                                                                class="text-sm text-blue-700 dark:text-blue-300">
+                                                                <% if (data && data.pelanggan) { %>
+                                                                        <%= data.pelanggan.no_jaringan %> - <%=
+                                                                                        data.pelanggan.nama_pelanggan %>
+                                                                                        <% } %>
+                                                        </span>
+                                                        <button type="button" id="clear_pelanggan"
+                                                                class="ml-auto text-blue-500 hover:text-blue-700">
+                                                                <svg class="w-4 h-4" fill="none" stroke="currentColor"
+                                                                        viewBox="0 0 24 24">
+                                                                        <path stroke-linecap="round"
+                                                                                stroke-linejoin="round" stroke-width="2"
+                                                                                d="M6 18L18 6M6 6l12 12"></path>
+                                                                </svg>
+                                                        </button>
+                                                </div>
+                                        </div>
+                                </div>
+                        </div>
+
+                        <!-- Pelanggan & History -->
+                        <div class="space-y-6">
+                                <!-- Old Nama Pelanggan Input Removed (Handled by Search) -->
+                                <div>
+                                        <label for="history_kontak_pic"
+                                                class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">History
+                                                dan Kontak
+                                                PIC</label>
+                                        <textarea id="history_kontak_pic" name="history_kontak_pic" rows="3"
+                                                class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                                                placeholder="Kronologi dan kontak PIC..."><%= data ? data.history_kontak_pic || '' : '' %></textarea>
+                                </div>
+                                <div>
+                                        <label for="rfo"
+                                                class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">RFO
+                                                (Reason
+                                                For Outage)</label>
+                                        <textarea id="rfo" name="rfo" rows="3"
+                                                class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                                                placeholder="Penyebab gangguan..."><%= data ? data.rfo || '' : '' %></textarea>
+                                </div>
+                        </div>
+
+                        <!-- Akses, PJ, Durasi -->
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                <div>
+                                        <label for="akses"
+                                                class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Akses</label>
+                                        <input type="text" id="akses" name="akses"
+                                                value="<%= data ? data.akses || '' : '' %>"
+                                                class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                                                placeholder="Jenis akses">
+                                </div>
+                                <input type="hidden" id="pelanggan_data_json"
+                                        value="<%= (typeof pelangganList !== 'undefined' && pelangganList) ? JSON.stringify(pelangganList) : '[]' %>">
+
+                                <script>
+                                        document.addEventListener('DOMContentLoaded', function () {
+                                                const pelangganDataEl = document.getElementById('pelanggan_data_json');
+                                                const pelangganList = pelangganDataEl ? JSON.parse(pelangganDataEl.value || '[]') : [];
+
+                                                const searchInput = document.getElementById('pelanggan_search');
+                                                const dropdown = document.getElementById('pelanggan_dropdown');
+                                                // const noJaringanInput = document.getElementById('no_jaringan'); // Removed
+                                                // const namaPelangganInput = document.getElementById('nama_pelanggan'); // Removed
+                                                const pelangganIdInput = document.getElementById('pelanggan_id');
+                                                const selectedContainer = document.getElementById('selected_pelanggan');
+                                                const selectedText = document.getElementById('selected_text');
+                                                const clearButton = document.getElementById('clear_pelanggan');
+
+                                                function filterPelanggan(query) {
+                                                        const filtered = pelangganList.filter(p =>
+                                                                (p.no_jaringan && p.no_jaringan.toLowerCase().includes(query.toLowerCase())) ||
+                                                                (p.nama_pelanggan && p.nama_pelanggan.toLowerCase().includes(query.toLowerCase()))
+                                                        ).slice(0, 10);
+
+                                                        if (filtered.length === 0) {
+                                                                dropdown.innerHTML = '<div class="px-4 py-3 text-sm text-gray-500">Tidak ada pelanggan ditemukan</div>';
+                                                        } else {
+                                                                dropdown.innerHTML = filtered.map(p => `
+                                                                        <div class="pelanggan-item px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer border-b border-gray-100 dark:border-gray-700 last:border-0"
+                                                                             data-id="${p.id}" data-no="${p.no_jaringan}" data-nama="${p.nama_pelanggan}">
+                                                                                <div class="font-medium text-sm text-gray-900 dark:text-white">${p.no_jaringan}</div>
+                                                                                <div class="text-sm text-gray-500 dark:text-gray-400">${p.nama_pelanggan}</div>
+                                                                        </div>
+                                                                `).join('');
+                                                        }
+                                                        dropdown.classList.remove('hidden');
+                                                }
+
+                                                searchInput.addEventListener('input', function () {
+                                                        const query = this.value.trim();
+                                                        if (query.length >= 1) {
+                                                                filterPelanggan(query);
+                                                        } else {
+                                                                dropdown.classList.add('hidden');
+                                                        }
+                                                });
+
+                                                searchInput.addEventListener('focus', function () {
+                                                        if (this.value.trim().length >= 1) {
+                                                                filterPelanggan(this.value.trim());
+                                                        }
+                                                });
+
+                                                dropdown.addEventListener('click', function (e) {
+                                                        const item = e.target.closest('.pelanggan-item');
+                                                        if (item) {
+                                                                const id = item.dataset.id;
+                                                                const no = item.dataset.no;
+                                                                const nama = item.dataset.nama;
+
+                                                                // noJaringanInput.value = no; // Removed
+                                                                // namaPelangganInput.value = nama; // Removed
+                                                                pelangganIdInput.value = id;
+
+                                                                selectedText.textContent = `${no} - ${nama}`;
+                                                                selectedContainer.classList.remove('hidden');
+
+                                                                searchInput.value = '';
+                                                                dropdown.classList.add('hidden');
+                                                        }
+                                                });
+
+                                                clearButton.addEventListener('click', function () {
+                                                        // noJaringanInput.value = ''; // Removed
+                                                        // namaPelangganInput.value = ''; // Removed
+                                                        pelangganIdInput.value = '';
+                                                        selectedContainer.classList.add('hidden');
+                                                        searchInput.focus();
+                                                });
+
+                                                document.addEventListener('click', function (e) {
+                                                        if (!searchInput.contains(e.target) && !dropdown.contains(e.target)) {
+                                                                dropdown.classList.add('hidden');
+                                                        }
+                                                });
+                                        });
+                                </script>
+                                <div>
+                                        <label for="pj"
+                                                class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">PJ</label>
+                                        <input type="text" id="pj" name="pj" value="<%= data ? data.pj || '' : '' %>"
+                                                class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                                                placeholder="Penanggung jawab">
+                                </div>
+                                <div>
+                                        <label for="durasi_progress"
+                                                class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Durasi
+                                                Progress</label>
+                                        <input type="text" id="durasi_progress" name="durasi_progress"
+                                                value="<%= data ? data.durasi_progress || '' : '' %>"
+                                                class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                                                placeholder="Contoh: 2 jam 30 menit">
+                                </div>
+                                <div>
+                                        <label for="status"
+                                                class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Status
+                                                <span class="text-red-500">*</span></label>
+                                        <select id="status" name="status" required
+                                                class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+                                                <% const statuses=['Pending', 'Progress' , 'Done' , 'Cancelled' ]; %>
+                                                        <% statuses.forEach(s=> { %>
+                                                                <option value="<%= s %>" <%=(data && data.status===s)
+                                                                        ? 'selected' : (s==='Done' ? 'selected' : '' )
+                                                                        %>><%= s %>
+                                                                </option>
+                                                                <% }); %>
+                                        </select>
+                                </div>
+                        </div>
+
+                        <div class="flex gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
+                                <button type="submit"
+                                        class="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-medium rounded-lg shadow-lg shadow-blue-500/25 transition-all transform hover:scale-[1.02]">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                        d="M5 13l4 4L19 7"></path>
+                                        </svg>
+                                        <%= data ? 'Simpan Perubahan' : 'Simpan' %>
+                                </button>
+                                <a href="<%= (typeof returnUrl !== 'undefined' && returnUrl) ? returnUrl : '/record-ggn' %>"
+                                        class="inline-flex items-center px-5 py-2.5 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 font-medium rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                                        Batal
+                                </a>
+                        </div>
+                </form>
+        </div>
+</div>

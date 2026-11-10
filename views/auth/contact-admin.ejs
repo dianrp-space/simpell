@@ -1,0 +1,58 @@
+<div class="max-w-md w-full animate-fade-in-up">
+    <!-- Branding -->
+    <div class="text-center mb-10">
+        <img src="/img/pola_logo.png" class="h-12 w-auto mx-auto mb-6" alt="POLA Logo">
+        <h1 class="text-3xl font-extrabold text-gray-900 dark:text-white tracking-tight mb-2">Hubungi Admin</h1>
+        <p class="text-gray-500 dark:text-gray-400 text-sm">Butuh bantuan teknis atau informasi lebih lanjut?</p>
+    </div>
+
+    <!-- Contact Card -->
+    <div
+        class="bg-white dark:bg-gray-800 rounded-[2.5rem] shadow-2xl shadow-gray-200/50 dark:shadow-none p-10 border border-gray-100 dark:border-gray-700/50 text-center">
+        <div class="mb-8 flex justify-center">
+            <div
+                class="w-16 h-16 bg-blue-50 dark:bg-blue-900/30 rounded-2xl flex items-center justify-center text-blue-600 dark:text-blue-400">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                </svg>
+            </div>
+        </div>
+
+        <p class="text-gray-500 dark:text-gray-400 mb-2 text-sm font-medium">Silakan kirim email ke:</p>
+        <div
+            class="bg-gray-50 dark:bg-gray-700/50 p-4 rounded-2xl border border-gray-100 dark:border-gray-600 mb-8 select-all">
+            <span class="text-lg font-bold text-blue-600 dark:text-blue-400">polalintasarta@gmail.com</span>
+        </div>
+
+        <div class="space-y-4">
+            <a href="javascript:history.back()"
+                class="w-full py-4 bg-transparent text-gray-500 dark:text-gray-400 text-sm font-semibold hover:text-blue-600 transition-all flex items-center justify-center gap-2 group">
+                <svg class="w-4 h-4 transform transition-transform group-hover:-translate-x-1" fill="none"
+                    stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+                Kembali
+            </a>
+        </div>
+    </div>
+</div>
+
+<style>
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .animate-fade-in-up {
+        animation: fadeInUp 0.5s ease-out forwards;
+    }
+</style>

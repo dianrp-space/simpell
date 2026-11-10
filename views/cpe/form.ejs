@@ -1,0 +1,217 @@
+<!-- CPE Form -->
+<div class="max-w-2xl mx-auto space-y-6">
+    <!-- Page Header -->
+    <div class="flex items-center gap-4">
+        <a href="/cpe"
+            class="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 dark:hover:text-white dark:hover:bg-gray-700 rounded-lg transition-colors">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18">
+                </path>
+            </svg>
+        </a>
+        <div>
+            <h1 class="text-2xl font-bold text-gray-900 dark:text-white">
+                <%= data ? 'Edit' : 'Tambah' %> CPE
+            </h1>
+            <p class="text-gray-500 dark:text-gray-400">Data Customer Premise Equipment</p>
+        </div>
+    </div>
+
+    <!-- Form Card -->
+    <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-6 shadow-sm">
+        <form
+            action="<%= data ? '/cpe/' + data.id + '?_method=PUT' + (typeof returnUrl !== 'undefined' && returnUrl ? '&return_url=' + encodeURIComponent(returnUrl) : '') : '/cpe' %>"
+            method="POST" class="space-y-5">
+            <!-- Pelanggan Search (Standardized) -->
+            <div class="mb-4">
+                <label for="pelanggan_select"
+                    class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Customer
+                    <span class="text-blue-500 text-xs">(Cari & Pilih)</span></label>
+                <div class="relative">
+                    <input type="text" id="pelanggan_search" placeholder="Cari No Jaringan / Customer..."
+                        autocomplete="off"
+                        class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+
+                    <!-- Backup hidden input to store the name if needed for re-displaying on error, though mostly handled by JS -->
+                    <input type="hidden" id="nama_pelanggan_hidden"
+                        value="<%= data && data.pelanggan ? data.pelanggan.nama_pelanggan : '' %>">
+                    <input type="hidden" id="pelanggan_id" name="pelanggan_id"
+                        value="<%= data ? data.pelanggan_id || '' : '' %>">
+
+                    <!-- Dropdown Results -->
+                    <div id="pelanggan_dropdown"
+                        class="absolute z-50 w-full mt-1 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-xl shadow-lg max-h-60 overflow-y-auto hidden">
+                    </div>
+                </div>
+                <!-- Selected Pelanggan Display -->
+                <div id="selected_pelanggan" class="mt-2 <%= data && data.no_jaringan ? '' : 'hidden' %>">
+                    <div
+                        class="flex items-center gap-2 p-2 bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-700 rounded-lg">
+                        <svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                        </svg>
+                        <span id="selected_text" class="text-sm text-blue-700 dark:text-blue-300">
+                            <% if (data && data.no_jaringan) { %>
+                                <%= data.no_jaringan %> - <%= data.pelanggan ? data.pelanggan.nama_pelanggan
+                                        : 'Loading...' %>
+                                        <% } %>
+                        </span>
+                        <button type="button" id="clear_pelanggan" class="ml-auto text-blue-500 hover:text-blue-700">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label for="sn_perangkat" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">SN
+                        Perangkat</label>
+                    <input type="text" id="sn_perangkat" name="sn_perangkat"
+                        value="<%= data ? data.sn_perangkat || '' : '' %>"
+                        class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                        placeholder="Serial Number">
+                </div>
+                <div>
+                    <label for="mac_address" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Mac
+                        Address</label>
+                    <input type="text" id="mac_address" name="mac_address"
+                        value="<%= data ? data.mac_address || '' : '' %>"
+                        class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                        placeholder="XX:XX:XX:XX:XX:XX">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-1 gap-4">
+                <div>
+                    <label for="ip_wan" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">IP
+                        WAN</label>
+                    <input type="text" id="ip_wan" name="ip_wan" value="<%= data ? data.ip_wan || '' : '' %>"
+                        class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                        placeholder="192.168.1.1">
+                </div>
+            </div>
+
+            <div>
+                <label for="keterangan"
+                    class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Keterangan</label>
+                <textarea id="keterangan" name="keterangan" rows="3"
+                    class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                    placeholder="Catatan tambahan..."><%= data ? data.keterangan || '' : '' %></textarea>
+            </div>
+
+            <div class="flex gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
+                <button type="submit"
+                    class="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-medium rounded-lg shadow-lg shadow-blue-500/25 transition-all transform hover:scale-[1.02]">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                    <%= data ? 'Simpan Perubahan' : 'Simpan' %>
+                </button>
+                <a href="<%= (typeof returnUrl !== 'undefined' && returnUrl) ? returnUrl : '/cpe' %>"
+                    class="inline-flex items-center px-5 py-2.5 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 font-medium rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                    Batal
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Hidden Input for Pelanggan Data -->
+<input type="hidden" id="pelanggan_list_data" value='<%- JSON.stringify(pelangganList || []) %>'>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const pelangganSearch = document.getElementById('pelanggan_search');
+        const pelangganDropdown = document.getElementById('pelanggan_dropdown');
+        // const noJaringanInput = document.getElementById('no_jaringan'); // Removed
+        const pelangganIdInput = document.getElementById('pelanggan_id');
+        const selectedPelangganDiv = document.getElementById('selected_pelanggan');
+        const selectedText = document.getElementById('selected_text');
+        const clearButton = document.getElementById('clear_pelanggan');
+
+        // Initial setup for edit mode
+        const initialNama = "<%= data && data.pelanggan ? data.pelanggan.nama_pelanggan : '' %>";
+        const initialNo = "<%= data ? data.no_jaringan : '' %>";
+
+        if (initialNo && document.getElementById('selected_text').innerText.includes('Loading...')) {
+            document.getElementById('selected_text').innerText = `${initialNo} - ${initialNama}`;
+        }
+
+        // Load data safely
+        let pelangganList = [];
+        try {
+            const rawData = document.getElementById('pelanggan_list_data').value;
+            pelangganList = JSON.parse(rawData);
+        } catch (e) {
+            console.error("Error parsing pelanggan data:", e);
+        }
+
+        // Search Functionality
+        pelangganSearch.addEventListener('input', function () {
+            const query = this.value.toLowerCase();
+            pelangganDropdown.innerHTML = '';
+
+            if (query.length < 1) {
+                pelangganDropdown.classList.add('hidden');
+                return;
+            }
+
+            const filtered = pelangganList.filter(p =>
+                (p.no_jaringan && p.no_jaringan.toLowerCase().includes(query)) ||
+                (p.nama_pelanggan && p.nama_pelanggan.toLowerCase().includes(query))
+            ).slice(0, 10);
+
+            if (filtered.length > 0) {
+                pelangganDropdown.innerHTML = filtered.map(p => `
+                    <div class="pelanggan-item px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer border-b border-gray-100 dark:border-gray-700 last:border-0"
+                         data-id="${p.id}" data-no="${p.no_jaringan}" data-nama="${p.nama_pelanggan}">
+                        <div class="font-medium text-sm text-gray-900 dark:text-white">${p.no_jaringan}</div>
+                        <div class="text-sm text-gray-500 dark:text-gray-400">${p.nama_pelanggan}</div>
+                    </div>
+                `).join('');
+                pelangganDropdown.classList.remove('hidden');
+            } else {
+                pelangganDropdown.innerHTML = '<div class="px-4 py-3 text-sm text-gray-500">Tidak ditemukan</div>';
+                pelangganDropdown.classList.remove('hidden');
+            }
+        });
+
+        // Select Pelanggan (Event Delegation)
+        pelangganDropdown.addEventListener('click', function (e) {
+            const item = e.target.closest('.pelanggan-item');
+            if (item) {
+                const id = item.dataset.id;
+                const noJaringan = item.dataset.no;
+                const nama = item.dataset.nama;
+
+                pelangganIdInput.value = id;
+                // noJaringanInput.value = noJaringan; // Removed
+
+                selectedText.textContent = `${noJaringan} - ${nama}`;
+                selectedPelangganDiv.classList.remove('hidden');
+                pelangganSearch.value = '';
+                pelangganDropdown.classList.add('hidden');
+            }
+        });
+
+        // Clear Selection
+        clearButton.addEventListener('click', function () {
+            // noJaringanInput.value = ''; // Removed
+            pelangganIdInput.value = '';
+            selectedPelangganDiv.classList.add('hidden');
+            pelangganSearch.value = '';
+        });
+
+        // Hide dropdown when clicking outside
+        document.addEventListener('click', function (e) {
+            if (!pelangganSearch.contains(e.target) && !pelangganDropdown.contains(e.target)) {
+                pelangganDropdown.classList.add('hidden');
+            }
+        });
+    });
+</script>

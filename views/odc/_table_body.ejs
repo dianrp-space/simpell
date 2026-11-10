@@ -1,0 +1,328 @@
+<tbody class="divide-y divide-gray-100 dark:divide-gray-700">
+    <% if (!sectors || sectors.length===0) { %>
+        <tr>
+            <td colspan="10" class="px-6 py-12 text-center">
+                <div class="flex flex-col items-center">
+                    <svg class="w-12 h-12 text-gray-300 dark:text-gray-600 mb-4" fill="none" stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4">
+                        </path>
+                    </svg>
+                    <p class="text-gray-500 dark:text-gray-400">Belum ada core yang ditambahkan</p>
+                </div>
+            </td>
+        </tr>
+        <% } else { %>
+            <% /* 1. Flatten Data: Collect all (Sector, Tray) units */ var trayUnits=[];
+                sectors.forEach(function(sectorName) { var sectorData=sectorMap[sectorName]; var
+                trayNumbers=Object.keys(sectorData.trays).map(t=> parseInt(t));
+
+                // If sector has no trays (or is placeholder only), we might miss it if we only look at trays.
+                // But checking logic: if tray=0 exists, it is in trayNumbers.
+                if (trayNumbers.length === 0) {
+                // This is a sector with NO trays at all (not even tray 0)
+                // Check isSectorPlaceholder
+                var isSectorPlaceholder = sectorData.isPlaceholder || trayNumbers.length === 0;
+                if (isSectorPlaceholder && trayNumbers.length === 0) {
+                // Force a dummy tray unit for rendering sector placeholder
+                trayUnits.push({
+                sectorName: sectorName,
+                trayNum: -1, // Special flag for "No Tray"
+                trayData: null,
+                isSectorPlaceholder: true
+                });
+                }
+                }
+
+                trayNumbers.forEach(function(trayNum) {
+                trayUnits.push({
+                sectorName: sectorName,
+                trayNum: trayNum,
+                trayData: sectorData.trays[trayNum],
+                isSectorPlaceholder: false
+                });
+                });
+                });
+
+                // 2. Sort Data: Tray ASC, then Sector ASC
+                trayUnits.sort(function(a, b) {
+                // Handle "No Tray" (-1)
+                if (a.trayNum !== b.trayNum) {
+                return a.trayNum - b.trayNum;
+                }
+                return a.sectorName.localeCompare(b.sectorName);
+                });
+
+                // 3. Render
+                trayUnits.forEach(function(unit) {
+                var sectorName = unit.sectorName;
+                var trayNum = unit.trayNum;
+                var trayData = unit.trayData;
+
+                if (unit.isSectorPlaceholder) {
+                // RENDER SECTOR PLACEHOLDER ROW
+                %>
+                <tr class="bg-gray-50 dark:bg-gray-800/30">
+                    <td class="px-2 py-4 border-r-2 border-gray-400 dark:border-gray-500 bg-blue-50 dark:bg-gray-900/50 align-middle text-center font-bold text-gray-800 dark:text-white"
+                        style="writing-mode: vertical-lr; transform: rotate(180deg);">
+                        <a href="/odc/<%= data.id %>/structure/sector/<%= encodeURIComponent(sectorName) %>/edit"
+                            class="block w-full h-full text-blue-600 hover:text-blue-800 hover:underline cursor-pointer"
+                            title="Edit/Hapus Sector">
+                            <%= sectorName %>
+                        </a>
+                    </td>
+                    <td colspan="9" class="px-6 py-8 text-center text-gray-500 dark:text-gray-400 italic">
+                        <div class="flex items-center justify-center gap-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                            </svg>
+                            Belum ada Tray. Tambahkan Tray terlebih dahulu.
+                        </div>
+                    </td>
+                </tr>
+                <% } else { /* Render Tray */ var tubeNumbers=Object.keys(trayData.tubes).sort(function(a, b) { return
+                    parseInt(a) - parseInt(b); }); var isTrayPlaceholder=trayData.isPlaceholder ||
+                    tubeNumbers.length===0; var totalTrayRows=isTrayPlaceholder ? 1 : tubeNumbers.length * 12; /* Since
+                    we split by (Sector, Tray), Sector row span==Tray row span */ var totalSectorRows=totalTrayRows; var
+                    isFirstTrayRow=true; if (isTrayPlaceholder) { // TRAY PLACEHOLDER %>
+                    <tr class="bg-gray-50 dark:bg-gray-800/30">
+                        <td rowspan="<%= totalSectorRows %>"
+                            class="px-2 py-4 border-r-2 border-gray-400 dark:border-gray-500 bg-blue-50 dark:bg-gray-900/50 align-middle text-center font-bold text-gray-800 dark:text-white uppercase text-lg"
+                            style="writing-mode: vertical-lr; transform: rotate(180deg);">
+                            <a href="/odc/<%= data.id %>/structure/sector/<%= encodeURIComponent(sectorName) %>/edit"
+                                class="block w-full h-full text-blue-600 hover:text-blue-800 hover:underline cursor-pointer"
+                                title="Edit/Hapus Sector">
+                                <%= sectorName %>
+                            </a>
+                        </td>
+
+                        <td class="px-2 py-4 border-r-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 align-middle text-center font-medium text-gray-700 dark:text-gray-300 uppercase text-lg"
+                            style="writing-mode: vertical-lr; transform: rotate(180deg);">
+                            <a href="/odc/<%= data.id %>/structure/tray/<%= encodeURIComponent(sectorName) %>/<%= trayNum %>/edit"
+                                class="block w-full h-full hover:text-blue-600 hover:underline cursor-pointer"
+                                title="Edit/Hapus Tray">
+                                Tray <%= trayNum %>
+                            </a>
+                        </td>
+
+                        <td colspan="8" class="px-6 py-8 text-center text-gray-500 dark:text-gray-400 italic">
+                            <div class="flex items-center justify-center gap-2">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                                </svg>
+                                Belum ada Tube. Tambahkan Tube untuk membuat 12 Core.
+                            </div>
+                        </td>
+                    </tr>
+                    <% } else { /* Render Tubes */ tubeNumbers.forEach(function(tubeNum, tubeIdx) { var
+                        tubeData=trayData.tubes[tubeNum]; var isFirstTubeRow=true; var tubeColorName=coreColors[(tubeNum
+                        - 1) % 12]; var tubeHex=colorCSS[tubeColorName]; var tubeText=(tubeColorName==='White' ||
+                        tubeColorName==='Yellow' || tubeColorName==='Aqua' || tubeColorName==='Pink' ) ? '#000000'
+                        : '#FFFFFF' ; for (var c=1; c <=12; c++) { var core=tubeData[c]; var coreColorName=coreColors[(c
+                        - 1) % 12]; var bgColor=colorCSS[coreColorName]; var textColor=(coreColorName==='White' ||
+                        coreColorName==='Yellow' || coreColorName==='Aqua' || coreColorName==='Pink' ) ? '#000000'
+                        : '#FFFFFF' ; %>
+                        <tr class="group hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
+                            <% if (isFirstTrayRow) { %>
+                                <td rowspan="<%= totalSectorRows %>"
+                                    class="px-2 py-4 border-r-2 border-gray-400 dark:border-gray-500 bg-blue-50 dark:bg-gray-900/50 align-top text-center font-bold text-gray-800 dark:text-white sticky left-0 z-20 uppercase text-lg">
+                                    <div class="sticky top-12 flex justify-center h-full max-h-full">
+                                        <div style="writing-mode: vertical-lr; transform: rotate(180deg);">
+                                            <a href="/odc/<%= data.id %>/structure/sector/<%= encodeURIComponent(sectorName) %>/edit"
+                                                class="block w-full h-full text-blue-600 hover:text-blue-800 hover:underline cursor-pointer"
+                                                title="Edit/Hapus Sector">
+                                                <%= sectorName %>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </td>
+
+                                <td rowspan="<%= totalTrayRows %>"
+                                    class="px-2 py-4 border-r-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 align-top text-center font-medium text-gray-700 dark:text-gray-300 sticky left-[42px] z-20 uppercase text-lg"
+                                    style="border-bottom: 2px solid #D1D5DB;">
+                                    <div class="sticky top-12 flex justify-center h-full max-h-full">
+                                        <div style="writing-mode: vertical-lr; transform: rotate(180deg);">
+                                            <a href="/odc/<%= data.id %>/structure/tray/<%= encodeURIComponent(sectorName) %>/<%= trayNum %>/edit"
+                                                class="block w-full h-full hover:text-blue-600 hover:underline cursor-pointer"
+                                                title="Edit/Hapus Tray">
+                                                Tray <%= trayNum %>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </td>
+                                <% isFirstTrayRow=false; } %>
+
+                                    <% if (isFirstTubeRow) { %>
+                                        <td rowspan="12"
+                                            class="px-2 py-4 border-r-2 border-gray-300 dark:border-gray-600 align-top text-center font-bold tracking-wider sticky left-[84px] z-20 uppercase text-lg"
+                                            style="background-color: <%= tubeHex %>; color: <%= tubeText %>;">
+                                            <div class="sticky top-12 flex justify-center h-full max-h-full">
+                                                <div style="writing-mode: vertical-lr; transform: rotate(180deg);">
+                                                    <a href="/odc/<%= data.id %>/structure/tube/<%= encodeURIComponent(sectorName) %>/<%= trayNum %>/tubeNum/edit"
+                                                        class="block w-full h-full hover:underline cursor-pointer"
+                                                        style="color: <%= tubeText %>;" title="Edit/Hapus Tube">
+                                                        Tube <%= tubeNum %>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <% isFirstTubeRow=false; } %>
+
+                                            <td
+                                                class="px-2 py-2 border-r border-gray-200 dark:border-gray-700 text-center">
+                                                <div class="w-6 h-6 mx-auto rounded-full flex items-center justify-center shadow-sm text-xs font-bold border border-black/10"
+                                                    style="background-color: <%= bgColor %>; color: <%= textColor %>;">
+                                                    <%= c %>
+                                                </div>
+                                            </td>
+
+                                            <% if (core) { %>
+                                                <td
+                                                    class="px-3 py-2 border-r border-gray-200 dark:border-gray-700 text-center">
+                                                    <% if (isEditor) { %>
+                                                        <select onchange="updateCoreStatus(this, '<%= core.id %>')"
+                                                            class="text-xs font-medium rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500 cursor-pointer py-1 pl-2 pr-8 transition-colors <%= core.status === 'Active' ? 'bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-300' : (core.status === 'Bad' ? 'bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-300' : 'bg-white text-gray-800 dark:bg-gray-800 dark:text-gray-300') %>">
+                                                            <% if (typeof statuses !=='undefined' ) { %>
+                                                                <% statuses.forEach(s=> { %>
+                                                                    <option value="<%= s %>"
+                                                                        class="bg-white text-gray-900 dark:bg-gray-800 dark:text-white"
+                                                                        <%=core.status===s ? 'selected' : '' %>><%= s %>
+                                                                    </option>
+                                                                    <% }) %>
+                                                                        <% } else { %>
+                                                                            <option value="Active"
+                                                                                class="bg-white text-gray-900 dark:bg-gray-800 dark:text-white"
+                                                                                <%=core.status==='Active' ? 'selected'
+                                                                                : '' %>>Active</option>
+                                                                            <option value="Bad"
+                                                                                class="bg-white text-gray-900 dark:bg-gray-800 dark:text-white"
+                                                                                <%=core.status==='Bad' ? 'selected' : ''
+                                                                                %>
+                                                                                >Bad</option>
+                                                                            <option value="None"
+                                                                                class="bg-white text-gray-900 dark:bg-gray-800 dark:text-white"
+                                                                                <%=core.status==='None' ? 'selected'
+                                                                                : '' %>
+                                                                                >None</option>
+                                                                            <% } %>
+                                                        </select>
+                                                        <% } else { %>
+                                                            <span
+                                                                class="text-xs font-bold <%= core.status === 'Active' ? 'text-green-600' : (core.status === 'Bad' ? 'text-red-600' : 'text-gray-400') %>">
+                                                                <%= core.status ? core.status.toUpperCase() : 'NONE' %>
+                                                            </span>
+                                                            <% } %>
+                                                </td>
+                                                <td
+                                                    class="px-2 py-2 border-r border-gray-200 dark:border-gray-700 text-sm align-middle">
+                                                    <% if (isEditor) { %>
+                                                        <button type="button"
+                                                            onclick="openOdcEditModal(this.dataset.id, this.dataset.field, this.dataset.value, this.dataset.core)" data-id="<%= core.id %>" data-field="description_core" data-value="<%= core.description_core || '' %>" data-core="<%= c %>"
+                                                            class="w-full text-left block hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded p-1 -m-1 transition-colors min-h-[1.5rem]">
+                                                            <% if (core.description_core) { %>
+                                                                <span class="text-gray-900 dark:text-white">
+                                                                    <%- formatText(core.description_core) %>
+                                                                </span>
+                                                                <% } else { %>
+                                                                    <span
+                                                                        class="text-gray-300 dark:text-gray-600 hover:text-blue-400 text-xs">+
+                                                                        Add Desc Core</span>
+                                                                    <% } %>
+                                                        </button>
+                                                        <% } else { %>
+                                                            <span class="text-gray-900 dark:text-white">
+                                                                <%= core.description_core || '-' %>
+                                                            </span>
+                                                            <% } %>
+                                                </td>
+                                                <td
+                                                    class="px-2 py-2 border-r border-gray-200 dark:border-gray-700 text-sm align-middle">
+                                                    <% if (isEditor) { %>
+                                                        <button type="button"
+                                                            onclick="openOdcEditModal(this.dataset.id, this.dataset.field, this.dataset.value, this.dataset.core)" data-id="<%= core.id %>" data-field="destination" data-value="<%= core.destination || '' %>" data-core="<%= c %>"
+                                                            class="w-full text-left block hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded p-1 -m-1 transition-colors min-h-[1.5rem]">
+                                                            <% if (core.destination) { %>
+                                                                <span class="text-gray-900 dark:text-white">
+                                                                    <%- formatText(core.destination) %>
+                                                                </span>
+                                                                <% } else { %>
+                                                                    <span
+                                                                        class="text-gray-300 dark:text-gray-600 hover:text-blue-400 text-xs">+
+                                                                        Add Dest</span>
+                                                                    <% } %>
+                                                        </button>
+                                                        <% } else { %>
+                                                            <span class="text-gray-900 dark:text-white">
+                                                                <%= core.destination || '-' %>
+                                                            </span>
+                                                            <% } %>
+                                                </td>
+                                                <td
+                                                    class="px-2 py-2 border-r border-gray-200 dark:border-gray-700 text-sm align-middle">
+                                                    <% if (isEditor) { %>
+                                                        <button type="button"
+                                                            onclick="openOdcEditModal(this.dataset.id, this.dataset.field, this.dataset.value, this.dataset.core)" data-id="<%= core.id %>" data-field="customer" data-value="<%= core.customer || '' %>" data-core="<%= c %>"
+                                                            class="w-full text-left block hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded p-1 -m-1 transition-colors min-h-[1.5rem]">
+                                                            <% if (core.customer) { %>
+                                                                <span class="text-gray-900 dark:text-white">
+                                                                    <%- formatText(core.customer) %>
+                                                                </span>
+                                                                <% } else { %>
+                                                                    <span
+                                                                        class="text-gray-300 dark:text-gray-600 hover:text-blue-400 text-xs">+
+                                                                        Add Cust</span>
+                                                                    <% } %>
+                                                        </button>
+                                                        <% } else { %>
+                                                            <span class="text-gray-900 dark:text-white font-medium">
+                                                                <%= core.customer || '-' %>
+                                                            </span>
+                                                            <% } %>
+                                                </td>
+                                                <td
+                                                    class="px-2 py-2 border-r border-gray-200 dark:border-gray-700 text-sm align-middle">
+                                                    <% if (isEditor) { %>
+                                                        <button type="button"
+                                                            onclick="openOdcEditModal(this.dataset.id, this.dataset.field, this.dataset.value, this.dataset.core)" data-id="<%= core.id %>" data-field="description" data-value="<%= core.description || '' %>" data-core="<%= c %>"
+                                                            class="w-full text-left block hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded p-1 -m-1 transition-colors min-h-[1.5rem]">
+                                                            <% if (core.description) { %>
+                                                                <span class="text-gray-900 dark:text-white">
+                                                                    <%- formatText(core.description) %>
+                                                                </span>
+                                                                <% } else { %>
+                                                                    <span
+                                                                        class="text-gray-300 dark:text-gray-600 hover:text-blue-400 text-xs">+
+                                                                        Add Desc</span>
+                                                                    <% } %>
+                                                        </button>
+                                                        <% } else { %>
+                                                            <span class="text-gray-500 dark:text-gray-400 italic">
+                                                                <%= core.description || '-' %>
+                                                            </span>
+                                                            <% } %>
+                                                </td>
+                                                <% } else { %>
+                                                    <td
+                                                        class="px-3 py-2 border-r border-gray-200 dark:border-gray-700 text-center text-gray-400">
+                                                        -</td>
+                                                    <td
+                                                        class="px-3 py-2 border-r border-gray-200 dark:border-gray-700 text-gray-400">
+                                                        -</td>
+                                                    <td
+                                                        class="px-3 py-2 border-r border-gray-200 dark:border-gray-700 text-gray-400">
+                                                        -</td>
+                                                    <td
+                                                        class="px-3 py-2 border-r border-gray-200 dark:border-gray-700 text-gray-400">
+                                                        -</td>
+                                                    <td
+                                                        class="px-3 py-2 border-r border-gray-200 dark:border-gray-700 text-gray-400">
+                                                        -</td>
+
+                                                    <% } %>
+                        </tr>
+                        <% } }); } } }); %>
+                            <% } %>
+</tbody>

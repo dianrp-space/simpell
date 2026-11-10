@@ -1,0 +1,120 @@
+<!-- OTB PHD Edit Core Form -->
+<div class="space-y-6">
+    <!-- Page Header -->
+    <div class="flex items-center gap-4">
+        <a href="/otb-phd/sector/<%= encodeURIComponent(data.sector) %>"
+            class="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 dark:hover:text-white dark:hover:bg-gray-700 rounded-lg transition-colors">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18">
+                </path>
+            </svg>
+        </a>
+        <div>
+            <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Edit Core <%= data.core_number %>
+            </h1>
+            <p class="text-gray-500 dark:text-gray-400">Sector: <%= data.sector %> • Tube <%= data.tube_number || 1 %>
+            </p>
+        </div>
+    </div>
+
+    <!-- Core Info -->
+    <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4 shadow-sm">
+        <div class="flex items-center gap-4">
+            <% const colorCSS={ 'Blue' : '#0000FF' , 'Orange' : '#FF8000' , 'Green' : '#00FF00' , 'Brown' : '#8B4513'
+                , 'Gray' : '#808080' , 'White' : '#FFFFFF' , 'Red' : '#FF0000' , 'Black' : '#000000' , 'Yellow'
+                : '#FFFF00' , 'Purple' : '#800080' , 'Pink' : '#FFC0CB' , 'Aqua' : '#00FFFF' }; const
+                tubeColor=data.tube_color || coreColors[((data.tube_number || 1) - 1) % 12]; const
+                tubeBgColor=colorCSS[tubeColor] || '#808080' ; const tubeTextColor=(['White', 'Yellow' , 'Aqua' , 'Pink'
+                , 'Green' ].includes(tubeColor)) ? '#000000' : '#FFFFFF' ; const coreColor=data.core_color || 'Gray' ;
+                const bgColor=colorCSS[coreColor] || '#808080' ; const textColor=(['White', 'Yellow' , 'Aqua' , 'Pink'
+                , 'Green' ].includes(coreColor)) ? '#000000' : '#FFFFFF' ; %>
+                <div class="w-10 h-10 rounded-lg flex items-center justify-center text-sm font-bold shadow-sm"
+                    style="background-color: <%= tubeBgColor %>; color: <%= tubeTextColor %>;">
+                    T<%= data.tube_number || 1 %>
+                </div>
+                <div class="w-12 h-12 rounded-full flex items-center justify-center text-lg font-bold border-2 border-black/10 shadow-lg"
+                    style="background-color: <%= bgColor %>; color: <%= textColor %>;">
+                    <%= data.core_number %>
+                </div>
+                <div>
+                    <p class="font-medium text-gray-900 dark:text-white">Tube <%= data.tube_number || 1 %> - Core <%=
+                                data.core_number %> (<%= coreColor %>)</p>
+                    <p class="text-sm text-gray-500 dark:text-gray-400">Sector <%= data.sector %>
+                    </p>
+                </div>
+        </div>
+    </div>
+
+    <!-- Form -->
+    <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-6 shadow-sm">
+        <form action="/otb-phd/<%= data.id %>?_method=PUT" method="POST" class="space-y-6">
+            <div class="grid gap-6 md:grid-cols-2">
+                <!-- Status -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Status <span class="text-red-500">*</span>
+                    </label>
+                    <select name="status" required
+                        class="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        <% statuses.forEach(s=> { %>
+                            <option value="<%= s %>" <%=data.status===s ? 'selected' : '' %>><%= s %>
+                            </option>
+                            <% }); %>
+                    </select>
+                </div>
+
+                <!-- Customer -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Customer
+                    </label>
+                    <input type="text" name="customer" value="<%= data.customer || '' %>"
+                        class="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="Nama customer">
+                </div>
+            </div>
+
+            <!-- Destination -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Destination
+                </label>
+                <input type="text" name="destination" value="<%= data.destination || '' %>"
+                    class="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="Contoh: TRAY 1 T1C2">
+            </div>
+
+            <!-- Description Core -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Description Core
+                </label>
+                <textarea name="description_core" rows="2"
+                    class="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="Deskripsi core (opsional)"><%= data.description_core || '' %></textarea>
+            </div>
+
+            <!-- Keterangan -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Keterangan
+                </label>
+                <textarea name="keterangan" rows="2"
+                    class="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="Keterangan tambahan (opsional)"><%= data.keterangan || '' %></textarea>
+            </div>
+
+            <!-- Submit -->
+            <div class="flex items-center justify-end gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
+                <a href="/otb-phd/sector/<%= encodeURIComponent(data.sector) %>"
+                    class="px-4 py-2.5 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-medium rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                    Batal
+                </a>
+                <button type="submit"
+                    class="px-6 py-2.5 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-medium rounded-lg shadow-lg shadow-blue-500/25 transition-all">
+                    Simpan
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
