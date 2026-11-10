@@ -6,9 +6,12 @@
 .col-resized th,
 .col-resized td {
     overflow: hidden;
-    text-overflow: ellipsis;
     white-space: nowrap;
     border-right: 1px solid #e5e7eb;
+}
+
+.col-resized td {
+    text-overflow: ellipsis;
 }
 
 .dark .col-resized th,

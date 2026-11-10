@@ -17,17 +17,44 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    function textWidth(text, style) {
+        const probe = document.createElement('span');
+        probe.style.cssText = 'position:absolute;left:-9999px;top:0;visibility:hidden;white-space:nowrap;';
+        probe.style.fontFamily = style.fontFamily;
+        probe.style.fontSize = style.fontSize;
+        probe.style.fontWeight = style.fontWeight;
+        probe.style.fontStyle = style.fontStyle;
+        probe.style.letterSpacing = style.letterSpacing;
+        probe.style.textTransform = style.textTransform;
+        probe.textContent = text;
+        document.body.appendChild(probe);
+        const width = probe.offsetWidth;
+        probe.remove();
+        return width;
+    }
+
+    function boxExtra(cell) {
+        const style = getComputedStyle(cell);
+        return (parseFloat(style.paddingLeft) || 0)
+            + (parseFloat(style.paddingRight) || 0)
+            + (parseFloat(style.borderLeftWidth) || 0)
+            + (parseFloat(style.borderRightWidth) || 0);
+    }
+
+    function headerWidth(th) {
+        const text = th.innerText.replace(/\s+/g, ' ').trim();
+        const style = getComputedStyle(th);
+        return Math.ceil(textWidth(text, style) + boxExtra(th) + 16);
+    }
+
     function naturalWidth(table, index) {
         let widest = MIN;
         table.querySelectorAll('tr').forEach((row) => {
             const cell = row.children[index];
-            if (!cell || cell.hasAttribute('colspan')) return;
-            const probe = document.createElement('span');
-            probe.style.cssText = 'position:absolute;visibility:hidden;white-space:nowrap;font:inherit';
-            probe.textContent = cell.innerText.replace(/\s+/g, ' ').trim();
-            cell.appendChild(probe);
-            widest = Math.max(widest, probe.offsetWidth + 32);
-            probe.remove();
+            if (!cell || cell.tagName === 'TH' || cell.hasAttribute('colspan')) return;
+            const text = cell.innerText.replace(/\s+/g, ' ').trim();
+            if (!text) return;
+            widest = Math.max(widest, Math.ceil(textWidth(text, getComputedStyle(cell)) + boxExtra(cell)));
         });
         return Math.min(widest, CAP);
     }
@@ -42,12 +69,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const key = storageKey(ths);
         const saved = readSaved(key, ths.length);
+        const floors = ths.map((th) => Math.max(MIN, headerWidth(th)));
         const widths = ths.map((th, index) => {
-            if (saved) return saved[index];
-            if (/aksi/i.test(th.innerText) || th.querySelector('button, a')) {
-                return Math.max(72, naturalWidth(table, index));
+            const floor = floors[index];
+            if (saved) return Math.max(floor, saved[index]);
+            if (/aksi|action/i.test(th.innerText) || th.querySelector('button, a')) {
+                return Math.max(floor, 72, naturalWidth(table, index));
             }
-            return naturalWidth(table, index);
+            return Math.max(floor, naturalWidth(table, index));
         });
 
         let colgroup = table.querySelector(':scope > colgroup');
@@ -84,7 +113,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 document.body.classList.add('is-col-resizing');
 
                 function move(moveEvent) {
-                    widths[index] = Math.max(MIN, Math.round(startWidth + moveEvent.pageX - startX));
+                    widths[index] = Math.max(floors[index], Math.round(startWidth + moveEvent.pageX - startX));
                     apply();
                 }
 
