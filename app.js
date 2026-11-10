@@ -127,6 +127,11 @@ try {
         res.locals.error_msg = req.flash('error_msg');
         res.locals.moment = moment;
         res.locals.currentPath = req.path;
+        const configuredOrigin = (process.env.APP_URL || '').trim().replace(/\/$/, '');
+        const originIsLocal = !configuredOrigin || /localhost|127\.0\.0\.1/i.test(configuredOrigin);
+        const shareOrigin = originIsLocal ? `${req.protocol}://${req.get('host')}` : configuredOrigin;
+        res.locals.shareUrl = shareOrigin + req.path;
+        res.locals.shareImage = `${shareOrigin}/img/share-simpell.jpg`;
         res.locals.user = req.session.user || null;
         res.locals.isEditor = req.session.user ? (req.session.user.role === 'admin' || req.session.user.sub_user === 'editor') : false;
         res.locals.isAdmin = req.session.user ? req.session.user.role === 'admin' : false;
