@@ -20,6 +20,14 @@ Catatan perubahan yang dikerjakan pada kode SIMPELL ini. Belum ada tag versi bar
 - Header punya tombol Logout di samping tombol portal.
 - Logout meminta konfirmasi, lalu langsung membuka halaman login.
 
+### Dashboard
+
+- Dashboard menampilkan dua grafik dari Record GGN & PM, dihitung dari tanggal tiap record.
+- Grafik per tahun menunjukkan jumlah tiket setiap tahun yang punya data.
+- Grafik per bulan menunjukkan Januari sampai Desember. Tahun bisa diganti dari pilihan di kartu grafik.
+- Bulan tanpa tiket tetap tampil dengan nilai nol.
+- Unduhan Excel dashboard ikut memuat angka per tahun dan per bulan.
+
 ## 2026-11-12
 
 ### Menu sesuai workbook

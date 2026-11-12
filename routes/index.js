@@ -104,63 +104,33 @@ async function getDashboardStats() {
         pelanggan_total, pelanggan_active, pelanggan_inactive, pelanggan_suspended
     };
 
-    // --- Chart Data Aggregation (Record GGN & PM) ---
-
-    // Daily (Last 30 days)
-    const dailyData = await RecordGgn.findAll({
-        attributes: [
-            [sequelize.fn('DATE', sequelize.col('tanggal')), 'date'],
-            [sequelize.fn('COUNT', sequelize.col('id')), 'count']
-        ],
-        where: {
-            tanggal: { [Op.gte]: sequelize.literal("DATE_SUB(NOW(), INTERVAL 30 DAY)") }
-        },
-        group: [sequelize.fn('DATE', sequelize.col('tanggal'))],
-        order: [[sequelize.fn('DATE', sequelize.col('tanggal')), 'ASC']],
-        raw: true
+    // Record GGN & PM, grouped by year and month from tanggal
+    const [recordRows] = await sequelize.query(
+        `SELECT YEAR(tanggal) AS year, MONTH(tanggal) AS month, COUNT(id) AS count
+         FROM record_ggn
+         WHERE tanggal IS NOT NULL
+         GROUP BY YEAR(tanggal), MONTH(tanggal)
+         ORDER BY year ASC, month ASC`
+    );
+    const monthLabels = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+    const byYear = new Map();
+    recordRows.forEach((row) => {
+        const year = String(row.year);
+        const month = Number(row.month);
+        if (!byYear.has(year)) byYear.set(year, Array(12).fill(0));
+        if (month >= 1 && month <= 12) byYear.get(year)[month - 1] = Number(row.count) || 0;
     });
-
-    // Monthly (Last 12 months)
-    const monthlyData = await RecordGgn.findAll({
-        attributes: [
-            [sequelize.fn('DATE_FORMAT', sequelize.col('tanggal'), '%Y-%m'), 'month'],
-            [sequelize.fn('COUNT', sequelize.col('id')), 'count']
-        ],
-        where: {
-            tanggal: { [Op.gte]: sequelize.literal("DATE_SUB(NOW(), INTERVAL 12 MONTH)") }
-        },
-        group: [sequelize.fn('DATE_FORMAT', sequelize.col('tanggal'), '%Y-%m')],
-        order: [[sequelize.fn('DATE_FORMAT', sequelize.col('tanggal'), '%Y-%m'), 'ASC']],
-        raw: true
-    });
-
-    // Yearly (Last 5 years)
-    const yearlyData = await RecordGgn.findAll({
-        attributes: [
-            [sequelize.fn('YEAR', sequelize.col('tanggal')), 'year'],
-            [sequelize.fn('COUNT', sequelize.col('id')), 'count']
-        ],
-        where: {
-            tanggal: { [Op.gte]: sequelize.literal("DATE_SUB(NOW(), INTERVAL 5 YEAR)") }
-        },
-        group: [sequelize.fn('YEAR', sequelize.col('tanggal'))],
-        order: [[sequelize.fn('YEAR', sequelize.col('tanggal')), 'ASC']],
-        raw: true
-    });
-
+    const years = [...byYear.keys()];
+    const currentYear = String(new Date().getFullYear());
     const chartData = {
-        daily: {
-            categories: dailyData.map(d => d.date),
-            data: dailyData.map(d => parseInt(d.count))
-        },
-        monthly: {
-            categories: monthlyData.map(d => d.month),
-            data: monthlyData.map(d => parseInt(d.count))
-        },
+        months: monthLabels,
+        years,
+        defaultYear: years.includes(currentYear) ? currentYear : (years[years.length - 1] || currentYear),
         yearly: {
-            categories: yearlyData.map(d => String(d.year)),
-            data: yearlyData.map(d => parseInt(d.count))
-        }
+            categories: years,
+            data: years.map((year) => byYear.get(year).reduce((sum, count) => sum + count, 0))
+        },
+        monthly: Object.fromEntries(years.map((year) => [year, byYear.get(year)]))
     };
 
     return { stats, chartData };
@@ -185,7 +155,7 @@ router.get('/dashboard', async (req, res) => {
         res.render('dashboard', {
             title: 'Dashboard - SIMPELL',
             stats: {},
-            chartData: { daily: { categories: [], data: [] }, monthly: { categories: [], data: [] }, yearly: { categories: [], data: [] } },
+            chartData: { months: [], years: [], defaultYear: '', yearly: { categories: [], data: [] }, monthly: {} },
             error_msg: 'Gagal memuat statistik dashboard'
         });
     }
@@ -282,21 +252,17 @@ router.get('/export-dashboard', async (req, res) => {
             row.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF2563EB' } }; // Blue
         };
 
-        addChartHeader('Grafik Harian (30 Hari Terakhir)');
-        chartData.daily.categories.forEach((date, i) => {
-            sheetChart.addRow({ period: date, count: chartData.daily.data[i] });
-        });
-
-        sheetChart.addRow(['', '']);
-        addChartHeader('Grafik Bulanan (12 Bulan Terakhir)');
-        chartData.monthly.categories.forEach((month, i) => {
-            sheetChart.addRow({ period: month, count: chartData.monthly.data[i] });
-        });
-
-        sheetChart.addRow(['', '']);
-        addChartHeader('Grafik Tahunan (5 Tahun Terakhir)');
+        addChartHeader('Per Tahun');
         chartData.yearly.categories.forEach((year, i) => {
             sheetChart.addRow({ period: year, count: chartData.yearly.data[i] });
+        });
+
+        chartData.years.forEach((year) => {
+            sheetChart.addRow(['', '']);
+            addChartHeader('Per Bulan ' + year);
+            chartData.months.forEach((month, i) => {
+                sheetChart.addRow({ period: month + ' ' + year, count: chartData.monthly[year][i] });
+            });
         });
 
 

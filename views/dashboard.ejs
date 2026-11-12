@@ -334,25 +334,26 @@
     </div>
 
     <!-- Chart Section -->
-    <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-6 shadow-sm">
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 gap-3">
-            <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Statistik Record GGN & PM</h2>
-            <div class="flex gap-2">
-                <button onclick="updateChart('daily')" id="btn-daily"
-                    class="px-4 py-2 text-sm font-medium rounded-lg border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
-                    Hari
-                </button>
-                <button onclick="updateChart('monthly')" id="btn-monthly"
-                    class="px-4 py-2 text-sm font-medium rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition-colors">
-                    Bulan
-                </button>
-                <button onclick="updateChart('yearly')" id="btn-yearly"
-                    class="px-4 py-2 text-sm font-medium rounded-lg border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
-                    Tahun
-                </button>
+    <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
+        <section class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-6 shadow-sm">
+            <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Record GGN & PM per Tahun</h2>
+            <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Jumlah tiket menurut tahun tanggal record.</p>
+            <div id="chart-yearly" class="mt-4 min-h-[280px]"></div>
+        </section>
+        <section class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-6 shadow-sm">
+            <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
+                <div>
+                    <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Record GGN & PM per Bulan</h2>
+                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Januari sampai Desember untuk tahun yang dipilih.</p>
+                </div>
+                <label class="text-sm text-gray-600 dark:text-gray-300">
+                    <span class="sr-only">Tahun</span>
+                    <select id="chart-year"
+                        class="px-3 py-2 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg text-sm"></select>
+                </label>
             </div>
-        </div>
-        <div id="recordChart"></div>
+            <div id="chart-monthly" class="mt-4 min-h-[280px]"></div>
+        </section>
     </div>
 
     <!-- Info Section -->
@@ -398,249 +399,108 @@
 </div>
 
 <!-- Chart Data Payload -->
-<div id="chart-data-payload"
-    data-json="<%= (typeof chartData !== 'undefined' && chartData) ? JSON.stringify(chartData) : 'null' %>"
-    style="display:none;"></div>
-
+<script id="record-chart-data" type="application/json"><%- JSON.stringify(typeof chartData !== 'undefined' && chartData ? chartData : {}).replace(/</g, '\\u003c') %></script>
 <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 <script>
-    // Chart Data from Server
-    var srvChartData = null;
-    try {
-        var payloadEl = document.getElementById('chart-data-payload');
-        if (payloadEl) {
-            var rawData = payloadEl.getAttribute('data-json');
-            if (rawData && rawData !== 'null') {
-                srvChartData = JSON.parse(rawData);
-            }
-        }
-    } catch (e) {
-        console.error("Error parsing chart data from payload", e);
-    }
-
-    var recordChart = null;
-    var currentPeriod = 'monthly';
-
-    document.addEventListener('DOMContentLoaded', function () {
-        console.log("Dashboard Chart Loaded", srvChartData);
-
-        var chartEl = document.getElementById('recordChart');
-        if (!chartEl) return;
-
-        // CHECK 1: ApexCharts Library
-        if (typeof ApexCharts === 'undefined') {
-            console.error("ApexCharts not loaded");
-            chartEl.innerHTML = `
-                <div class="p-6 text-center text-red-500 bg-red-50 rounded-lg border border-red-200">
-                    <p class="font-bold">Gagal Memuat Grafik</p>
-                    <p class="text-sm mt-1">Library ApexCharts tidak dapat dimuat. Periksa koneksi internet Anda.</p>
-                </div>
-            `;
-            return;
-        }
-
-        // CHECK 2: Data Availability
-        if (!srvChartData || (!srvChartData.daily && !srvChartData.monthly)) {
-            console.warn("Chart data missing or empty");
-            chartEl.innerHTML = `
-                <div class="p-6 text-center text-gray-500 custom-bg rounded-lg border border-dashed border-gray-300">
-                    <p class="font-medium">Tidak Ada Data Statistik</p>
-                    <p class="text-sm mt-1">Data statistik Record GGN & PM belum tersedia.</p>
-                </div>
-            `;
-            return;
-        }
-
-        // Initial Render
+    (function () {
+        var payload = {};
         try {
-            updateChart('monthly');
-        } catch (err) {
-            console.error("Error rendering chart:", err);
-            chartEl.innerHTML = `
-                <div class="p-4 text-center text-red-500 text-sm">
-                    Terjadi kesalahan saat merender grafik: ${err.message}
-                </div>
-            `;
-        }
-    });
-
-    function generatePadding(period, categories, data, count) {
-        if (!categories || !data) return { categories: [], data: [] };
-
-        var paddedCategories = [...categories];
-        var paddedData = [...data];
-
-        for (var i = 1; i <= count; i++) {
-            paddedCategories.push(`+${i}`);
-            paddedData.push(0);
-        }
-        for (var i = 1; i <= count; i++) {
-            paddedCategories.unshift(`-${i}`);
-            paddedData.unshift(0);
+            payload = JSON.parse(document.getElementById('record-chart-data').textContent || '{}');
+        } catch (error) {
+            payload = {};
         }
 
-        return { categories: paddedCategories, data: paddedData };
-    }
+        var yearlyEl = document.getElementById('chart-yearly');
+        var monthlyEl = document.getElementById('chart-monthly');
+        var yearSelect = document.getElementById('chart-year');
+        var monthlyChart = null;
 
-    function renderChart(period, rawData) {
-        var chartEl = document.querySelector("#recordChart");
-        if (!chartEl) return;
-
-        if (!rawData || !rawData.categories || !rawData.data) {
-            console.error("Invalid data for period:", period);
-            chartEl.innerHTML = '<div class="p-4 text-center text-gray-500">Data tidak valid untuk periode ini</div>';
-            return;
+        function emptyMessage(el, text) {
+            if (!el) return;
+            el.innerHTML = '<div class="h-[280px] flex items-center justify-center text-sm text-gray-500 dark:text-gray-400 text-center px-4">' + text + '</div>';
         }
 
-        // Ensure data are numbers
-        var numericData = rawData.data.map(function (x) { return parseInt(x) || 0; });
-        var cleanCategories = rawData.categories;
-
-        var paddingCount = 15;
-        var processed = generatePadding(period, cleanCategories, numericData, paddingCount);
-
-        var initialMin = paddingCount;
-        var initialMax = processed.categories.length - paddingCount - 1;
-
-        if (initialMax - initialMin < 5) {
-            initialMin = Math.max(0, initialMin - 2);
-            initialMax = Math.min(processed.categories.length - 1, initialMax + 2);
-        }
-
-        var options = {
-            series: [{
-                name: 'Record GGN',
-                data: processed.data
-            }],
-            chart: {
-                id: 'main-chart',
-                type: 'area',
-                height: 350,
-                fontFamily: 'Inter, sans-serif',
-                animations: { enabled: false },
-                toolbar: { show: false, autoSelected: 'pan' },
-                zoom: { enabled: true, type: 'x', autoScaleYaxis: true },
-                pan: { enabled: true, mode: 'x' }
-            },
-            dataLabels: { enabled: false },
-            stroke: { curve: 'smooth', width: 2 },
-            markers: {
-                size: 5,
-                colors: ['#fff'],
-                strokeColors: '#3B82F6',
-                strokeWidth: 2,
-                hover: { size: 7 }
-            },
-            fill: {
-                type: 'gradient',
-                gradient: {
-                    shadeIntensity: 1,
-                    opacityFrom: 0.7,
-                    opacityTo: 0.1,
-                    stops: [0, 90, 100]
-                }
-            },
-            colors: ['#3B82F6'],
-            xaxis: {
-                categories: processed.categories,
-                type: 'category',
-                tickPlacement: 'on',
-                min: initialMin,
-                max: initialMax,
-                labels: {
-                    style: { colors: '#6B7280' },
-                    rotate: -45,
-                    formatter: function (value) {
-                        if (value && (value.toString().startsWith('+') || value.toString().startsWith('-'))) return '';
-                        return value;
+        function chartOptions(categories, data, color) {
+            var dark = document.documentElement.classList.contains('dark');
+            return {
+                series: [{ name: 'Tiket', data: data }],
+                chart: {
+                    type: 'bar',
+                    height: 320,
+                    fontFamily: 'Inter, sans-serif',
+                    toolbar: { show: false }
+                },
+                plotOptions: {
+                    bar: { borderRadius: 6, columnWidth: '55%', dataLabels: { position: 'top' } }
+                },
+                dataLabels: {
+                    enabled: true,
+                    offsetY: -18,
+                    style: { fontSize: '11px', colors: [dark ? '#E5E7EB' : '#374151'] },
+                    formatter: function (value) { return value ? value : ''; }
+                },
+                colors: [color],
+                xaxis: {
+                    categories: categories,
+                    labels: { style: { colors: dark ? '#9CA3AF' : '#6B7280' } },
+                    axisBorder: { show: false },
+                    axisTicks: { show: false }
+                },
+                yaxis: {
+                    min: 0,
+                    forceNiceScale: true,
+                    labels: {
+                        style: { colors: dark ? '#9CA3AF' : '#6B7280' },
+                        formatter: function (value) { return Math.round(value); }
                     }
                 },
-                tooltip: { enabled: false }
-            },
-            yaxis: {
-                min: 0,
-                forceNiceScale: true,
-                stepSize: 1,
-                labels: {
-                    style: { colors: '#6B7280' },
-                    formatter: function (val) { return val.toFixed(0); }
-                }
-            },
-            grid: {
-                show: true,
-                borderColor: '#E5E7EB',
-                strokeDashArray: 0,
-                xaxis: { lines: { show: true } },
-                yaxis: { lines: { show: true } }
-            },
-            tooltip: {
-                theme: 'light',
-                x: { show: true },
-                y: { formatter: function (val) { return val + " Tiket"; } }
-            }
-        };
-
-        if (recordChart) {
-            recordChart.destroy();
-        }
-
-        try {
-            recordChart = new ApexCharts(chartEl, options);
-            recordChart.render();
-
-            chartEl.onwheel = function (e) {
-                if (e.ctrlKey) {
-                    e.preventDefault();
-                    var zoomIn = e.deltaY < 0;
-                    if (recordChart && recordChart.w && recordChart.w.globals) {
-                        var min = recordChart.w.globals.minX;
-                        var max = recordChart.w.globals.maxX;
-                        var range = max - min;
-                        var factor = 0.15;
-
-                        if (zoomIn) {
-                            if (range > 3) {
-                                recordChart.zoomX(min + range * factor, max - range * factor);
-                            }
-                        } else {
-                            if (min > 1 || max < processed.categories.length - 1) {
-                                recordChart.zoomX(min - range * factor, max + range * factor);
-                            }
-                        }
-                    }
-                }
+                grid: { borderColor: dark ? '#374151' : '#E5E7EB', strokeDashArray: 4 },
+                tooltip: { y: { formatter: function (value) { return value + ' tiket'; } } }
             };
-        } catch (renderErr) {
-            console.error("ApexCharts Render Error:", renderErr);
-            chartEl.innerHTML = '<div class="p-4 text-center text-red-500">Gagal render grafik</div>';
         }
-    }
 
-    function updateChart(period) {
-        currentPeriod = period;
-        try {
-            if (!srvChartData || !srvChartData[period]) {
-                console.warn("No data for period:", period);
-                var chartEl = document.querySelector("#recordChart");
-                if (chartEl) chartEl.innerHTML = '<div class="p-4 text-center text-gray-500">Data tidak tersedia untuk periode ini</div>';
+        function renderYearly() {
+            if (!yearlyEl) return;
+            if (!payload.years || !payload.years.length) {
+                emptyMessage(yearlyEl, 'Belum ada data Record GGN & PM.');
                 return;
             }
-
-            renderChart(period, srvChartData[period]);
-
-            ['daily', 'monthly', 'yearly'].forEach(function (p) {
-                var btn = document.getElementById('btn-' + p);
-                if (!btn) return;
-                if (p === period) {
-                    btn.className = 'px-4 py-2 text-sm font-medium rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition-colors';
-                } else {
-                    btn.className = 'px-4 py-2 text-sm font-medium rounded-lg border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors';
-                }
-            });
-        } catch (updateErr) {
-            console.error("Update Chart Error:", updateErr);
+            new ApexCharts(yearlyEl, chartOptions(payload.yearly.categories, payload.yearly.data, '#4F46E5')).render();
         }
-    }
+
+        function renderMonthly(year) {
+            if (!monthlyEl) return;
+            var series = payload.monthly && payload.monthly[year];
+            if (!series) {
+                emptyMessage(monthlyEl, 'Belum ada data Record GGN & PM untuk tahun ini.');
+                return;
+            }
+            if (monthlyChart) monthlyChart.destroy();
+            monthlyEl.innerHTML = '';
+            monthlyChart = new ApexCharts(monthlyEl, chartOptions(payload.months, series, '#2563EB'));
+            monthlyChart.render();
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            if (typeof ApexCharts === 'undefined') {
+                emptyMessage(yearlyEl, 'Grafik tidak dapat dimuat. Periksa koneksi internet.');
+                emptyMessage(monthlyEl, 'Grafik tidak dapat dimuat. Periksa koneksi internet.');
+                return;
+            }
+            var years = payload.years || [];
+            years.forEach(function (year) {
+                var option = document.createElement('option');
+                option.value = year;
+                option.textContent = year;
+                if (year === payload.defaultYear) option.selected = true;
+                yearSelect.appendChild(option);
+            });
+            if (!years.length && yearSelect) yearSelect.disabled = true;
+            if (yearSelect) yearSelect.addEventListener('change', function () { renderMonthly(yearSelect.value); });
+            renderYearly();
+            renderMonthly(payload.defaultYear);
+        });
+    })();
 </script>
 
 <!-- Secret Shortcut Modal -->
