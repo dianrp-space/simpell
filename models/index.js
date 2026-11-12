@@ -19,6 +19,7 @@ const DataOdp = require('./DataOdp');
 const OtbCentral = require('./OtbCentral');
 const OtbPhd = require('./OtbPhd');
 const PendingGgn = require('./PendingGgn');
+const QcPsb = require('./QcPsb');
 const RecordGgn = require('./RecordGgn');
 const { DataCore, DataCoreSector } = require('./DataCore');
 const Pelanggan = require('./Pelanggan');
@@ -148,6 +149,7 @@ module.exports = {
     OtbCentral,
     OtbPhd,
     PendingGgn,
+    QcPsb,
     RecordGgn,
     DataCore,
     DataCoreSector,

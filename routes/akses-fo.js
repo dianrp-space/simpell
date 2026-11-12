@@ -9,17 +9,20 @@ const { pageState, pageMeta } = require('../utils/paginate');
 const JENIS_BY_BASE = {
     '/akses-fo': 'FO',
     '/akses-fo-p2p': 'FO_P2P',
-    '/akses-direct-lan': 'DIRECT_LAN'
+    '/akses-direct-lan': 'DIRECT_LAN',
+    '/akses-fo-xconnect': 'FO_XCONNECT'
 };
 const BASE_BY_JENIS = {
     FO: '/akses-fo',
     FO_P2P: '/akses-fo-p2p',
-    DIRECT_LAN: '/akses-direct-lan'
+    DIRECT_LAN: '/akses-direct-lan',
+    FO_XCONNECT: '/akses-fo-xconnect'
 };
 const TITLE_BY_JENIS = {
-    FO: 'Fiber Optic',
+    FO: 'Akses FO',
     FO_P2P: 'P2P/FO Core',
-    DIRECT_LAN: 'Direct LAN'
+    DIRECT_LAN: 'Direct LAN',
+    FO_XCONNECT: 'FO Xconnect'
 };
 
 router.use((req, res, next) => {

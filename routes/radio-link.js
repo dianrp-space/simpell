@@ -173,20 +173,22 @@ router.get('/', async (req, res) => {
         }] : [];
         const total = await RadioLinkAp.count({
             where,
-            include: filterInclude,
+            include: filterInclude.length ? filterInclude : undefined,
             distinct: true,
-            col: 'RadioLinkAp.id'
+            col: 'id'
         });
         const idQuery = {
             attributes: ['id', 'nama_ap'],
             where,
-            include: filterInclude,
             order: [['nama_ap', 'ASC']],
-            subQuery: false,
             limit,
             offset
         };
-        if (search) idQuery.group = ['RadioLinkAp.id', 'RadioLinkAp.nama_ap'];
+        if (filterInclude.length) {
+            idQuery.include = filterInclude;
+            idQuery.subQuery = false;
+            idQuery.group = ['RadioLinkAp.id', 'RadioLinkAp.nama_ap'];
+        }
         const idRows = await RadioLinkAp.findAll(idQuery);
         const ids = idRows.map(row => row.id);
         const data = ids.length ? await RadioLinkAp.findAll({
@@ -208,7 +210,8 @@ router.get('/', async (req, res) => {
         });
     } catch (error) {
         console.error(error);
-        res.redirect('/');
+        req.flash('error_msg', 'Gagal memuat data Radio Link');
+        res.redirect('/dashboard');
     }
 });
 

@@ -37,6 +37,32 @@ const Pelanggan = sequelize.define('Pelanggan', {
         allowNull: true,
         comment: 'Jenis layanan utama (FO, VSAT, M2M, dll)'
     },
+    service: {
+        type: DataTypes.STRING(100),
+        allowNull: true,
+        comment: 'Service dari data customer, contoh VPN, INET'
+    },
+    bandwidth: {
+        type: DataTypes.STRING(50),
+        allowNull: true
+    },
+    akses: {
+        type: DataTypes.STRING(100),
+        allowNull: true,
+        comment: 'Jenis akses, contoh Akses FO, CPE, M2M'
+    },
+    node: {
+        type: DataTypes.STRING(100),
+        allowNull: true
+    },
+    kota: {
+        type: DataTypes.STRING(100),
+        allowNull: true
+    },
+    koordinat: {
+        type: DataTypes.STRING(255),
+        allowNull: true
+    },
     status: {
         type: DataTypes.ENUM('Active', 'Inactive', 'Suspended'),
         allowNull: false,

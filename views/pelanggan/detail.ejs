@@ -90,6 +90,30 @@
                             <% } %>
             </div>
             <div class="p-4 bg-gray-50 dark:bg-gray-900/50 rounded-lg">
+                <p class="text-xs text-gray-500 dark:text-gray-400 mb-1">Service</p>
+                <p class="font-medium text-gray-900 dark:text-white"><%= pelanggan.service || '-' %></p>
+            </div>
+            <div class="p-4 bg-gray-50 dark:bg-gray-900/50 rounded-lg">
+                <p class="text-xs text-gray-500 dark:text-gray-400 mb-1">Bandwidth</p>
+                <p class="font-medium text-gray-900 dark:text-white"><%= pelanggan.bandwidth || '-' %></p>
+            </div>
+            <div class="p-4 bg-gray-50 dark:bg-gray-900/50 rounded-lg">
+                <p class="text-xs text-gray-500 dark:text-gray-400 mb-1">Akses</p>
+                <p class="font-medium text-gray-900 dark:text-white"><%= pelanggan.akses || '-' %></p>
+            </div>
+            <div class="p-4 bg-gray-50 dark:bg-gray-900/50 rounded-lg">
+                <p class="text-xs text-gray-500 dark:text-gray-400 mb-1">Node</p>
+                <p class="font-medium text-gray-900 dark:text-white"><%= pelanggan.node || '-' %></p>
+            </div>
+            <div class="p-4 bg-gray-50 dark:bg-gray-900/50 rounded-lg">
+                <p class="text-xs text-gray-500 dark:text-gray-400 mb-1">Kota</p>
+                <p class="font-medium text-gray-900 dark:text-white"><%= pelanggan.kota || '-' %></p>
+            </div>
+            <div class="p-4 bg-gray-50 dark:bg-gray-900/50 rounded-lg">
+                <p class="text-xs text-gray-500 dark:text-gray-400 mb-1">Koordinat</p>
+                <p class="font-medium text-gray-900 dark:text-white"><%= pelanggan.koordinat || '-' %></p>
+            </div>
+            <div class="p-4 bg-gray-50 dark:bg-gray-900/50 rounded-lg">
                 <p class="text-xs text-gray-500 dark:text-gray-400 mb-1">Kontak</p>
                 <p class="font-medium text-gray-900 dark:text-white">
                     <%= pelanggan.kontak || '-' %>
@@ -256,7 +280,7 @@
                                 <td
                                     class="px-4 py-3 text-sm text-gray-700 dark:text-gray-300 sticky right-0 bg-white dark:bg-gray-800 z-20 shadow-[-4px_0_8px_-4px_rgba(0,0,0,0.1)] w-1 whitespace-nowrap">
                                     <div class="flex items-center justify-center gap-2">
-                                        <a href="<%= (item.nodeInfo && item.nodeInfo.jenis === 'FO_P2P') ? '/akses-fo-p2p' : ((item.nodeInfo && item.nodeInfo.jenis === 'DIRECT_LAN') ? '/akses-direct-lan' : '/akses-fo') %>/node/<%= item.nodeInfo ? item.nodeInfo.id : '' %>?search=<%= encodeURIComponent(pelanggan.nama_pelanggan) %>"
+                                        <a href="<%= (item.nodeInfo && item.nodeInfo.jenis === 'FO_P2P') ? '/akses-fo-p2p' : ((item.nodeInfo && item.nodeInfo.jenis === 'DIRECT_LAN') ? '/akses-direct-lan' : ((item.nodeInfo && item.nodeInfo.jenis === 'FO_XCONNECT') ? '/akses-fo-xconnect' : '/akses-fo')) %>/node/<%= item.nodeInfo ? item.nodeInfo.id : '' %>?search=<%= encodeURIComponent(pelanggan.nama_pelanggan) %>"
                                             class="text-blue-600 hover:text-blue-700 bg-blue-50 hover:bg-blue-100 p-1.5 rounded transition-colors"
                                             title="Detail">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -268,7 +292,7 @@
                                             </svg>
                                         </a>
                                         <% if (isEditor) { %>
-                                            <a href="<%= (item.nodeInfo && item.nodeInfo.jenis === 'FO_P2P') ? '/akses-fo-p2p' : ((item.nodeInfo && item.nodeInfo.jenis === 'DIRECT_LAN') ? '/akses-direct-lan' : '/akses-fo') %>/<%= item.id %>/edit?return_url=/pelanggan/<%= pelanggan.id %>"
+                                            <a href="<%= (item.nodeInfo && item.nodeInfo.jenis === 'FO_P2P') ? '/akses-fo-p2p' : ((item.nodeInfo && item.nodeInfo.jenis === 'DIRECT_LAN') ? '/akses-direct-lan' : ((item.nodeInfo && item.nodeInfo.jenis === 'FO_XCONNECT') ? '/akses-fo-xconnect' : '/akses-fo')) %>/<%= item.id %>/edit?return_url=/pelanggan/<%= pelanggan.id %>"
                                                 class="text-amber-600 hover:text-amber-700 bg-amber-50 hover:bg-amber-100 p-1.5 rounded transition-colors"
                                                 title="Edit">
                                                 <svg class="w-4 h-4" fill="none" stroke="currentColor"
@@ -280,7 +304,7 @@
                                                 </svg>
                                             </a>
                                             <form
-                                                action="<%= (item.nodeInfo && item.nodeInfo.jenis === 'FO_P2P') ? '/akses-fo-p2p' : ((item.nodeInfo && item.nodeInfo.jenis === 'DIRECT_LAN') ? '/akses-direct-lan' : '/akses-fo') %>/<%= item.id %>?_method=DELETE&return_url=/pelanggan/<%= pelanggan.id %>"
+                                                action="<%= (item.nodeInfo && item.nodeInfo.jenis === 'FO_P2P') ? '/akses-fo-p2p' : ((item.nodeInfo && item.nodeInfo.jenis === 'DIRECT_LAN') ? '/akses-direct-lan' : ((item.nodeInfo && item.nodeInfo.jenis === 'FO_XCONNECT') ? '/akses-fo-xconnect' : '/akses-fo')) %>/<%= item.id %>?_method=DELETE&return_url=/pelanggan/<%= pelanggan.id %>"
                                                 method="POST" class="inline"
                                                 onsubmit="return confirmSubmit(this, 'Yakin hapus data ini?');">
                                                 <button type="submit"

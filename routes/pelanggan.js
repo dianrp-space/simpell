@@ -17,7 +17,11 @@ router.get('/', async (req, res) => {
             searchWhere[Op.or] = [
                 { no_jaringan: { [Op.like]: `%${search}%` } },
                 { nama_pelanggan: { [Op.like]: `%${search}%` } },
-                { alamat: { [Op.like]: `%${search}%` } }
+                { alamat: { [Op.like]: `%${search}%` } },
+                { service: { [Op.like]: `%${search}%` } },
+                { akses: { [Op.like]: `%${search}%` } },
+                { node: { [Op.like]: `%${search}%` } },
+                { kota: { [Op.like]: `%${search}%` } }
             ];
         }
         const where = { ...searchWhere };
@@ -104,13 +108,18 @@ router.get('/export', async (req, res) => {
 
         sheet.columns = [
             { header: 'No Jaringan', key: 'no_jaringan', width: 20 },
-            { header: 'Nama Pelanggan', key: 'nama_pelanggan', width: 30 },
+            { header: 'Customer', key: 'nama_pelanggan', width: 30 },
+            { header: 'Service', key: 'service', width: 18 },
+            { header: 'Bandwidth', key: 'bandwidth', width: 15 },
+            { header: 'Akses', key: 'akses', width: 18 },
+            { header: 'Node', key: 'node', width: 18 },
+            { header: 'Status', key: 'status', width: 15 },
+            { header: 'Kota', key: 'kota', width: 18 },
+            { header: 'Koordinat', key: 'koordinat', width: 28 },
+            { header: 'Keterangan', key: 'keterangan', width: 30 },
             { header: 'Alamat', key: 'alamat', width: 40 },
             { header: 'Kontak', key: 'kontak', width: 20 },
-            { header: 'Email', key: 'email', width: 25 },
-            { header: 'Status', key: 'status', width: 15 },
-            { header: 'Layanan Digunakan', key: 'services', width: 40 },
-            { header: 'Keterangan', key: 'keterangan', width: 30 }
+            { header: 'Email', key: 'email', width: 25 }
         ];
 
         // Style header
@@ -119,25 +128,21 @@ router.get('/export', async (req, res) => {
 
         pelangganList.forEach(p => {
             const item = p.toJSON();
-            const services = [];
-
-            if (item.aksesFoList?.length > 0) services.push('Akses FO');
-            if (item.vsatStarlinkList?.length > 0) services.push('VSAT Starlink');
-            if (item.m2mList?.length > 0) services.push('M2M');
-            if (item.vsatTdmaList?.length > 0) services.push('VSAT TDMA');
-            if (item.cpeList?.length > 0) services.push('CPE');
-            if (item.radioLinkList?.length > 0) services.push('Radio Link');
-            if (item.aksesThirdPartyList?.length > 0) services.push('3rd Party');
 
             sheet.addRow({
                 no_jaringan: item.no_jaringan,
                 nama_pelanggan: item.nama_pelanggan,
+                service: item.service || '-',
+                bandwidth: item.bandwidth || '-',
+                akses: item.akses || '-',
+                node: item.node || '-',
+                status: item.status,
+                kota: item.kota || '-',
+                koordinat: item.koordinat || '-',
+                keterangan: item.keterangan || '-',
                 alamat: item.alamat || '-',
                 kontak: item.kontak || '-',
-                email: item.email || '-',
-                status: item.status,
-                services: services.join(', ') || '-',
-                keterangan: item.keterangan || '-'
+                email: item.email || '-'
             });
         });
 
@@ -166,7 +171,7 @@ router.get('/create', isEditor, (req, res) => {
 // Create Pelanggan
 router.post('/create', isEditor, async (req, res) => {
     try {
-        const { no_jaringan, nama_pelanggan, alamat, kontak, email, status, keterangan } = req.body;
+        const { no_jaringan, nama_pelanggan, service, bandwidth, akses, node, kota, koordinat, alamat, kontak, email, status, keterangan } = req.body;
 
         // Check if no_jaringan already exists
         const existing = await Pelanggan.findOne({ where: { no_jaringan } });
@@ -178,6 +183,12 @@ router.post('/create', isEditor, async (req, res) => {
         const newPelanggan = await Pelanggan.create({
             no_jaringan,
             nama_pelanggan,
+            service: service || null,
+            bandwidth: bandwidth || null,
+            akses: akses || null,
+            node: node || null,
+            kota: kota || null,
+            koordinat: koordinat || null,
             alamat,
             kontak: (kontak && kontak.trim()) ? kontak : '-',
             email: (email && email.trim()) ? email : '-',
@@ -515,7 +526,7 @@ router.post('/:id/edit', isEditor, async (req, res) => {
             return res.redirect('/pelanggan');
         }
 
-        const { no_jaringan, nama_pelanggan, alamat, kontak, email, status, keterangan } = req.body;
+        const { no_jaringan, nama_pelanggan, service, bandwidth, akses, node, kota, koordinat, alamat, kontak, email, status, keterangan } = req.body;
 
         // Check if new no_jaringan conflicts with another record
         if (no_jaringan !== pelanggan.no_jaringan) {
@@ -529,6 +540,12 @@ router.post('/:id/edit', isEditor, async (req, res) => {
         await pelanggan.update({
             no_jaringan,
             nama_pelanggan,
+            service: service || null,
+            bandwidth: bandwidth || null,
+            akses: akses || null,
+            node: node || null,
+            kota: kota || null,
+            koordinat: koordinat || null,
             alamat,
             kontak: (kontak && kontak.trim()) ? kontak : '-',
             email: (email && email.trim()) ? email : '-',

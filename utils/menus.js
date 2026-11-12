@@ -3,9 +3,14 @@ const MENUS = [
     { key: 'pelanggan', label: 'Data Customer', prefix: '/pelanggan', group: 'Menu Dashboard' },
     { key: 'record-ggn', label: 'Record GGN & PM', prefix: '/record-ggn', group: 'Ticket & Monitoring' },
     { key: 'pending-ggn', label: 'Pendingan GGN & PM', prefix: '/pending-ggn', group: 'Ticket & Monitoring' },
-    { key: 'akses-fo', label: 'Fiber Optic', prefix: '/akses-fo', group: 'Akses Network' },
+    { key: 'qc-psb', label: 'QC PSB & Project', prefix: '/qc-psb', group: 'Ticket & Monitoring' },
+    { key: 'ms-fo', label: 'Data MS FO Kepri', prefix: '/ms-fo', group: 'Manage Service FO Kepri' },
+    { key: 'pending-ms-fo', label: 'Pendingan MS FO Kepri', prefix: '/pending-ms-fo', group: 'Manage Service FO Kepri' },
+    { key: 'pm-ms-fo', label: 'Data PM MS FO Kepri', prefix: '/pm-ms-fo', group: 'Manage Service FO Kepri' },
+    { key: 'akses-fo', label: 'Akses FO', prefix: '/akses-fo', group: 'Akses Network' },
     { key: 'akses-fo-p2p', label: 'P2P/FO Core', prefix: '/akses-fo-p2p', group: 'Akses Network' },
     { key: 'akses-direct-lan', label: 'Direct LAN', prefix: '/akses-direct-lan', group: 'Akses Network' },
+    { key: 'akses-fo-xconnect', label: 'FO Xconnect', prefix: '/akses-fo-xconnect', group: 'Akses Network' },
     { key: 'akses-vsat-starlink', label: 'Starlink', prefix: '/akses-vsat-starlink', group: 'Akses Network' },
     { key: 'akses-vsat-tdma', label: 'VSAT TDMA / SCPC', prefix: '/akses-vsat-tdma', group: 'Akses Network' },
     { key: 'radio-link', label: 'Radio Link', prefix: '/radio-link', group: 'Akses Network' },
@@ -13,15 +18,14 @@ const MENUS = [
     { key: 'akses-soltem', label: 'Soltemp', prefix: '/akses-soltem', group: 'Akses Network' },
     { key: 'cpe', label: 'CPE/SDWAN', prefix: '/cpe', group: 'Akses Network' },
     { key: 'akses-third-party', label: '3rd Party', prefix: '/akses-third-party', group: 'Akses Network' },
-    { key: 'odc', label: 'Data ODC', prefix: '/odc', group: 'Data FO Kepri' },
-    { key: 'data-hh', label: 'Data HH', prefix: '/data-hh', group: 'Data FO Kepri' },
     { key: 'data-odp', label: 'Data ODP', prefix: '/data-odp', group: 'Data FO Kepri' },
-    { key: 'patroli', label: 'Patroli', prefix: '/patroli', group: 'Modul Lain' },
-    { key: 'core-lamda', label: 'Core Lamda', prefix: '/core-lamda', group: 'Modul Lain' },
-    { key: 'otb-phd', label: 'OTB', prefix: '/otb-phd', group: 'Modul Lain' },
-    { key: 'data-core', label: 'Data Core', prefix: '/data-core', group: 'Modul Lain' },
-    { key: 'aset-fo', label: 'Aset FO', prefix: '/aset-fo', group: 'Modul Lain' },
-    { key: 'data-closure', label: 'Data Closure', prefix: '/data-closure', group: 'Modul Lain' }
+    { key: 'data-hh', label: 'Data HH', prefix: '/data-hh', group: 'Data FO Kepri' },
+    { key: 'data-closure', label: 'Data Closure', prefix: '/data-closure', group: 'Data FO Kepri' },
+    { key: 'otb-phd', label: 'Data OTB', prefix: '/otb-phd', group: 'Data FO Kepri' },
+    { key: 'odc', label: 'Data ODC', prefix: '/odc', group: 'Data FO Kepri' },
+    { key: 'data-spliter', label: 'Data Spliter', prefix: '/data-spliter', group: 'Data FO Kepri' },
+    { key: 'data-core-remote', label: 'Data Core Remote', prefix: '/data-core-remote', group: 'Data FO Kepri' },
+    { key: 'data-core-trunk', label: 'Data Core Trunk', prefix: '/data-core-trunk', group: 'Data FO Kepri' }
 ];
 
 const MENU_KEYS = new Set(MENUS.map((menu) => menu.key));

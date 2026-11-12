@@ -15,7 +15,7 @@ const AksesFoNode = sequelize.define('AksesFoNode', {
         comment: 'Node code (combination of numbers and capital letters)'
     },
     jenis: {
-        type: DataTypes.ENUM('FO', 'FO_P2P', 'DIRECT_LAN'),
+        type: DataTypes.ENUM('FO', 'FO_P2P', 'DIRECT_LAN', 'FO_XCONNECT'),
         allowNull: false,
         defaultValue: 'FO'
     }

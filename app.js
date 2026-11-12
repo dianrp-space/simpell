@@ -54,6 +54,9 @@ try {
     const profileRoutes = require('./routes/profile');
     const pelangganRoutes = require('./routes/pelanggan');
     const activityLogRoutes = require('./routes/activity-log');
+    const modulKosongRoutes = require('./routes/modul-kosong');
+    const qcPsbRoutes = require('./routes/qc-psb');
+    const importQcPsbIfEmpty = require('./utils/importQcPsb');
 
     const app = express();
     const server = http.createServer(app);
@@ -198,7 +201,15 @@ try {
     app.use('/odc', isStaff, odcRoutes);
     app.use('/akses-fo-p2p', isStaff, aksesFoRoutes);
     app.use('/akses-direct-lan', isStaff, aksesFoRoutes);
+    app.use('/akses-fo-xconnect', isStaff, aksesFoRoutes);
     app.use('/akses-fo', isStaff, aksesFoRoutes);
+    app.use('/qc-psb', isStaff, qcPsbRoutes);
+    app.use('/ms-fo', isStaff, modulKosongRoutes);
+    app.use('/pending-ms-fo', isStaff, modulKosongRoutes);
+    app.use('/pm-ms-fo', isStaff, modulKosongRoutes);
+    app.use('/data-spliter', isStaff, modulKosongRoutes);
+    app.use('/data-core-remote', isStaff, modulKosongRoutes);
+    app.use('/data-core-trunk', isStaff, modulKosongRoutes);
     app.use('/akses-vsat-starlink', isStaff, aksesVsatStarlinkRoutes);
     app.use('/akses-soltem', isStaff, aksesM2mRoutes);
     app.use('/akses-m2m', isStaff, aksesM2mRoutes);
@@ -246,6 +257,7 @@ try {
             // 2. Sinkronisasi Tabel
             await sequelize.sync();
             await ensureSchema(sequelize);
+            await importQcPsbIfEmpty();
             await backfillAdminNotifications();
             await ensureAdmin();
             // 3. Jalankan Server

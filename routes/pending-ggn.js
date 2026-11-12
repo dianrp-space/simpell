@@ -5,6 +5,12 @@ const { Op } = require('sequelize');
 const { isEditor } = require('../middleware/auth');
 
 const STATUSES = ['Pending', 'Progress', 'Done', 'Cancelled'];
+
+function blankCoord(value) {
+    if (value === undefined || value === null) return null;
+    const text = String(value).trim();
+    return text === '' ? null : text;
+}
 const AKSES_TYPES = ['FO', 'VSAT Starlink', 'M2M', 'VSAT TDMA', 'SCPC'];
 
 const ExcelJS = require('exceljs');
@@ -121,7 +127,9 @@ router.post('/', isEditor, async (req, res) => {
     try {
         const payload = {
             ...req.body,
-            pelanggan_id: req.body.pelanggan_id || null
+            pelanggan_id: req.body.pelanggan_id || null,
+            latitude: blankCoord(req.body.latitude),
+            longitude: blankCoord(req.body.longitude)
         };
 
         if (payload.pelanggan_id === '') payload.pelanggan_id = null;
@@ -197,7 +205,9 @@ router.put('/:id', isEditor, async (req, res) => {
     try {
         const payload = {
             ...req.body,
-            pelanggan_id: req.body.pelanggan_id || null
+            pelanggan_id: req.body.pelanggan_id || null,
+            latitude: blankCoord(req.body.latitude),
+            longitude: blankCoord(req.body.longitude)
         };
 
         if (payload.pelanggan_id === '') payload.pelanggan_id = null;

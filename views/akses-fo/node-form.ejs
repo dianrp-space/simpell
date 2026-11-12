@@ -31,9 +31,10 @@
                 <label for="jenis" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Menu</label>
                 <select id="jenis" name="jenis"
                     class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                    <option value="FO" <%= aksesJenis==='FO' ? 'selected' : '' %>>Fiber Optic</option>
+                    <option value="FO" <%= aksesJenis==='FO' ? 'selected' : '' %>>Akses FO</option>
                     <option value="FO_P2P" <%= aksesJenis==='FO_P2P' ? 'selected' : '' %>>P2P/FO Core</option>
                     <option value="DIRECT_LAN" <%= aksesJenis==='DIRECT_LAN' ? 'selected' : '' %>>Direct LAN</option>
+                    <option value="FO_XCONNECT" <%= aksesJenis==='FO_XCONNECT' ? 'selected' : '' %>>FO Xconnect</option>
                 </select>
                 <p class="mt-1 text-xs text-gray-500">Isian port tetap sama. Pilihan ini hanya menentukan menu.</p>
             </div>

@@ -43,27 +43,42 @@
                         placeholder="Masukkan nama customer">
                 </div>
 
-                <!-- Kontak -->
                 <div>
-                    <label for="kontak" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        Kontak (No HP/Telp)
-                    </label>
-                    <input type="text" name="kontak" id="kontak" value="<%= pelanggan ? pelanggan.kontak : '' %>"
+                    <label for="service" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Service</label>
+                    <input type="text" name="service" id="service" value="<%= pelanggan ? pelanggan.service || '' : '' %>"
                         class="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        placeholder="Contoh: 08123456789">
+                        placeholder="Contoh: VPN, INET">
                 </div>
-
-                <!-- Email -->
                 <div>
-                    <label for="email" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        Email
-                    </label>
-                    <input type="text" name="email" id="email" value="<%= pelanggan ? pelanggan.email : '' %>"
+                    <label for="bandwidth" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Bandwidth</label>
+                    <input type="text" name="bandwidth" id="bandwidth" value="<%= pelanggan ? pelanggan.bandwidth || '' : '' %>"
                         class="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        placeholder="Contoh: email@domain.com">
+                        placeholder="Contoh: 20 MB">
                 </div>
-
-
+                <div>
+                    <label for="akses" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Akses</label>
+                    <input type="text" name="akses" id="akses" value="<%= pelanggan ? pelanggan.akses || '' : '' %>"
+                        class="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="Contoh: Akses FO, CPE, M2M">
+                </div>
+                <div>
+                    <label for="node" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Node</label>
+                    <input type="text" name="node" id="node" value="<%= pelanggan ? pelanggan.node || '' : '' %>"
+                        class="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="Contoh: BTMGPNXR01">
+                </div>
+                <div>
+                    <label for="kota" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Kota</label>
+                    <input type="text" name="kota" id="kota" value="<%= pelanggan ? pelanggan.kota || '' : '' %>"
+                        class="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="Contoh: BATAM">
+                </div>
+                <div>
+                    <label for="koordinat" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Koordinat</label>
+                    <input type="text" name="koordinat" id="koordinat" value="<%= pelanggan ? pelanggan.koordinat || '' : '' %>"
+                        class="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="Lat, long">
+                </div>
 
                 <!-- Status -->
                 <div>
@@ -82,6 +97,19 @@
                 </div>
 
 
+
+                <div>
+                    <label for="kontak" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Kontak (No HP/Telp)</label>
+                    <input type="text" name="kontak" id="kontak" value="<%= pelanggan ? pelanggan.kontak : '' %>"
+                        class="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="Contoh: 08123456789">
+                </div>
+                <div>
+                    <label for="email" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Email</label>
+                    <input type="text" name="email" id="email" value="<%= pelanggan ? pelanggan.email : '' %>"
+                        class="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="Contoh: email@domain.com">
+                </div>
 
                 <!-- Alamat -->
                 <div class="md:col-span-2">

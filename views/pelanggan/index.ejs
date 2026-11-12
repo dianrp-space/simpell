@@ -166,10 +166,10 @@
                     <th class="px-6 py-3 text-left text-sm font-semibold text-gray-600 dark:text-gray-400">No
                         Jaringan</th>
                     <th class="px-6 py-3 text-left text-sm font-semibold text-gray-600 dark:text-gray-400">Customer</th>
-                    <th class="px-6 py-3 text-left text-sm font-semibold text-gray-600 dark:text-gray-400">Kontak
-                    </th>
-                    <th class="px-6 py-3 text-left text-sm font-semibold text-gray-600 dark:text-gray-400">Jenis
-                        Layanan</th>
+                    <th class="px-6 py-3 text-left text-sm font-semibold text-gray-600 dark:text-gray-400">Service</th>
+                    <th class="px-6 py-3 text-left text-sm font-semibold text-gray-600 dark:text-gray-400">Akses</th>
+                    <th class="px-6 py-3 text-left text-sm font-semibold text-gray-600 dark:text-gray-400">Node</th>
+                    <th class="px-6 py-3 text-left text-sm font-semibold text-gray-600 dark:text-gray-400">Kota</th>
                     <th class="px-6 py-3 text-left text-sm font-semibold text-gray-600 dark:text-gray-400">Status
                     </th>
                     <th
@@ -188,23 +188,10 @@
                             <td class="px-6 py-4 text-sm text-gray-700 dark:text-gray-300">
                                 <%= item.nama_pelanggan %>
                             </td>
-                            <td class="px-6 py-4 text-sm text-gray-700 dark:text-gray-300">
-                                <%= item.kontak || '-' %>
-                            </td>
-                            <td class="px-6 py-4 text-sm text-gray-700 dark:text-gray-300">
-                                <% if (item.activeServices && item.activeServices.length> 0) { %>
-                                    <div class="flex flex-wrap gap-1">
-                                        <% item.activeServices.forEach(svc=> { %>
-                                            <span
-                                                class="inline-flex px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300">
-                                                <%= svc %>
-                                            </span>
-                                            <% }); %>
-                                    </div>
-                                    <% } else { %>
-                                        <span class="text-gray-400">-</span>
-                                        <% } %>
-                            </td>
+                            <td class="px-6 py-4 text-sm text-gray-700 dark:text-gray-300"><%= item.service || '-' %></td>
+                            <td class="px-6 py-4 text-sm text-gray-700 dark:text-gray-300"><%= item.akses || '-' %></td>
+                            <td class="px-6 py-4 text-sm text-gray-700 dark:text-gray-300"><%= item.node || '-' %></td>
+                            <td class="px-6 py-4 text-sm text-gray-700 dark:text-gray-300"><%= item.kota || '-' %></td>
                             <td class="px-6 py-4">
                                 <% if (item.status==='Active' ) { %>
                                     <span

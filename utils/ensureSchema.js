@@ -14,8 +14,33 @@ async function ensureSchema(sequelize) {
     );
     if (tables.length && !(await columnExists(sequelize, 'akses_fo_nodes', 'jenis'))) {
         await sequelize.query(
-            "ALTER TABLE akses_fo_nodes ADD COLUMN jenis ENUM('FO','FO_P2P','DIRECT_LAN') NOT NULL DEFAULT 'FO'"
+            "ALTER TABLE akses_fo_nodes ADD COLUMN jenis ENUM('FO','FO_P2P','DIRECT_LAN','FO_XCONNECT') NOT NULL DEFAULT 'FO'"
         );
+    }
+    if (tables.length) {
+        await sequelize.query(
+            "ALTER TABLE akses_fo_nodes MODIFY COLUMN jenis ENUM('FO','FO_P2P','DIRECT_LAN','FO_XCONNECT') NOT NULL DEFAULT 'FO'"
+        );
+    }
+
+    const pelangganColumns = {
+        service: 'VARCHAR(100) NULL',
+        bandwidth: 'VARCHAR(50) NULL',
+        akses: 'VARCHAR(100) NULL',
+        node: 'VARCHAR(100) NULL',
+        kota: 'VARCHAR(100) NULL',
+        koordinat: 'VARCHAR(255) NULL'
+    };
+    const [pelangganTables] = await sequelize.query(
+        `SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES
+         WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'pelanggan'`
+    );
+    if (pelangganTables.length) {
+        for (const [column, definition] of Object.entries(pelangganColumns)) {
+            if (!(await columnExists(sequelize, 'pelanggan', column))) {
+                await sequelize.query(`ALTER TABLE pelanggan ADD COLUMN ${column} ${definition}`);
+            }
+        }
     }
 
     const [userTables] = await sequelize.query(
