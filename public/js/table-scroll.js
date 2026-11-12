@@ -2,8 +2,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const MIN = 48;
     const CAP = 220;
 
+    function headerLabel(th) {
+        const label = th.querySelector('[data-col-label]');
+        if (label) return label.textContent.replace(/\s+/g, ' ').trim();
+        const clone = th.cloneNode(true);
+        clone.querySelectorAll('input, select, .col-resizer').forEach((el) => el.remove());
+        return clone.innerText.replace(/\s+/g, ' ').trim();
+    }
+
     function storageKey(ths) {
-        const heads = ths.map((th) => th.innerText.replace(/\s+/g, ' ').trim()).join('|');
+        const heads = ths.map(headerLabel).join('|');
         return 'simpell-col:' + location.pathname + ':' + heads;
     }
 
@@ -42,9 +50,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function headerWidth(th) {
-        const text = th.innerText.replace(/\s+/g, ' ').trim();
+        const text = headerLabel(th);
         const style = getComputedStyle(th);
-        return Math.ceil(textWidth(text, style) + boxExtra(th) + 16);
+        return Math.ceil(textWidth(text, style) + boxExtra(th) + 28);
     }
 
     function naturalWidth(table, index) {
@@ -69,12 +77,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const key = storageKey(ths);
         const saved = readSaved(key, ths.length);
-        const floors = ths.map((th) => Math.max(MIN, headerWidth(th)));
+        const floors = ths.map((th) => {
+            const floor = Math.max(MIN, headerWidth(th));
+            if (th.querySelector('[data-col-filter], select')) return Math.max(floor, 168);
+            return floor;
+        });
         const widths = ths.map((th, index) => {
             const floor = floors[index];
             if (saved) return Math.max(floor, saved[index]);
-            if (/aksi|action/i.test(th.innerText) || th.querySelector('button, a')) {
-                return Math.max(floor, 72, naturalWidth(table, index));
+            if (/^(aksi|action)$/i.test(headerLabel(th))) {
+                return Math.max(floor, 88);
             }
             return Math.max(floor, naturalWidth(table, index));
         });

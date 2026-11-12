@@ -187,31 +187,33 @@
                 class="sticky top-0 z-50 bg-gray-50 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 shadow-sm">
                 <tr>
                     <% columns.forEach(function (column) { %>
-                        <th class="px-4 py-3 text-left align-top min-w-[150px]"<% if (column.active) { %> aria-sort="<%= column.direction === 'asc' ? 'ascending' : 'descending' %>"<% } %>>
-                            <a href="<%= column.href %>"
-                                class="inline-flex items-center gap-1 text-sm font-semibold <%= column.active ? 'text-blue-600 dark:text-blue-400' : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white' %>">
-                                <%= column.label %>
-                                <% if (column.direction === 'asc') { %>
-                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg>
-                                <% } else if (column.direction === 'desc') { %>
-                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        <th class="px-3 py-3 text-left align-top"<% if (column.active) { %> aria-sort="<%= column.direction === 'asc' ? 'ascending' : 'descending' %>"<% } %>>
+                            <div class="col-head">
+                                <a href="<%= column.href %>" data-col-label
+                                    class="inline-flex items-center gap-1 text-sm font-semibold <%= column.active ? 'text-blue-600 dark:text-blue-400' : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white' %>">
+                                    <%= column.label %>
+                                    <% if (column.direction === 'asc') { %>
+                                        <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg>
+                                    <% } else if (column.direction === 'desc') { %>
+                                        <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                    <% } else { %>
+                                        <svg class="w-3.5 h-3.5 shrink-0 opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l4-4 4 4M8 15l4 4 4-4"></path></svg>
+                                    <% } %>
+                                </a>
+                                <% if (column.key === 'status') { %>
+                                    <select form="columnFilters" name="status" id="columnStatus"
+                                        class="h-8 w-full px-2 bg-white dark:bg-gray-950 border <%= status ? 'border-blue-500' : 'border-gray-200 dark:border-gray-700' %> rounded-lg text-xs text-gray-700 dark:text-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                        <option value="">Semua</option>
+                                        <option value="Active" <%= status === 'Active' ? 'selected' : '' %>>Active</option>
+                                        <option value="Inactive" <%= status === 'Inactive' ? 'selected' : '' %>>Inactive</option>
+                                        <option value="Suspended" <%= status === 'Suspended' ? 'selected' : '' %>>Suspended</option>
+                                    </select>
                                 <% } else { %>
-                                    <svg class="w-3.5 h-3.5 opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"></path></svg>
+                                    <input form="columnFilters" type="search" name="f_<%= column.key %>" data-col-filter
+                                        value="<%= filters[column.key] || '' %>" placeholder="Cari"
+                                        class="h-8 w-full px-2.5 bg-white dark:bg-gray-950 border <%= filters[column.key] ? 'border-blue-500' : 'border-gray-200 dark:border-gray-700' %> rounded-lg text-xs text-gray-800 dark:text-gray-100 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                                 <% } %>
-                            </a>
-                            <% if (column.key === 'status') { %>
-                                <select form="columnFilters" name="status" id="columnStatus"
-                                    class="mt-2 w-full px-2 py-1.5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md text-xs text-gray-700 dark:text-gray-200 focus:ring-2 focus:ring-blue-500">
-                                    <option value="">Semua</option>
-                                    <option value="Active" <%= status === 'Active' ? 'selected' : '' %>>Active</option>
-                                    <option value="Inactive" <%= status === 'Inactive' ? 'selected' : '' %>>Inactive</option>
-                                    <option value="Suspended" <%= status === 'Suspended' ? 'selected' : '' %>>Suspended</option>
-                                </select>
-                            <% } else { %>
-                                <input form="columnFilters" type="text" name="f_<%= column.key %>" data-col-filter
-                                    value="<%= filters[column.key] || '' %>" placeholder="Filter"
-                                    class="mt-2 w-full px-2 py-1.5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md text-xs text-gray-700 dark:text-gray-200 placeholder-gray-400 focus:ring-2 focus:ring-blue-500">
-                            <% } %>
+                            </div>
                         </th>
                     <% }) %>
                     <th
