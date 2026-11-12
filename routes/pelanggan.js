@@ -15,6 +15,80 @@ const {
     resultMessage
 } = require('../utils/importPelanggan');
 
+const CUSTOMER_COLUMNS = [
+    { key: 'no_jaringan', label: 'No Jaringan' },
+    { key: 'nama_pelanggan', label: 'Customer' },
+    { key: 'service', label: 'Service' },
+    { key: 'akses', label: 'Akses' },
+    { key: 'node', label: 'Node' },
+    { key: 'kota', label: 'Kota' },
+    { key: 'status', label: 'Status' }
+];
+const CUSTOMER_STATUSES = ['Active', 'Inactive', 'Suspended'];
+
+function customerListState(query) {
+    const sortKey = CUSTOMER_COLUMNS.some((column) => column.key === query.sort) ? query.sort : 'nama_pelanggan';
+    const dir = String(query.dir || 'asc').toLowerCase() === 'desc' ? 'DESC' : 'ASC';
+    const status = CUSTOMER_STATUSES.includes(query.status) ? query.status : '';
+    const search = String(query.search || '').trim();
+    const filters = {};
+    CUSTOMER_COLUMNS.forEach((column) => {
+        if (column.key === 'status') return;
+        filters[column.key] = String(query['f_' + column.key] || '').trim();
+    });
+    const sorting = Boolean(query.sort) && CUSTOMER_COLUMNS.some((column) => column.key === query.sort);
+    return { sortKey, dir, status, search, filters, sorting };
+}
+
+function likePattern(value) {
+    return `%${String(value).replace(/[\\%_]/g, '\\$&')}%`;
+}
+
+function customerWhere(state, withStatus) {
+    const and = [];
+    if (state.search) {
+        const pattern = likePattern(state.search);
+        and.push({
+            [Op.or]: [
+                { no_jaringan: { [Op.like]: pattern } },
+                { nama_pelanggan: { [Op.like]: pattern } },
+                { alamat: { [Op.like]: pattern } },
+                { service: { [Op.like]: pattern } },
+                { akses: { [Op.like]: pattern } },
+                { node: { [Op.like]: pattern } },
+                { kota: { [Op.like]: pattern } }
+            ]
+        });
+    }
+    Object.entries(state.filters).forEach(([field, value]) => {
+        if (!value) return;
+        if (value === '-') {
+            and.push({ [Op.or]: [{ [field]: null }, { [field]: '' }, { [field]: '-' }] });
+            return;
+        }
+        and.push({ [field]: { [Op.like]: likePattern(value) } });
+    });
+    if (withStatus && state.status) and.push({ status: state.status });
+    return and.length ? { [Op.and]: and } : {};
+}
+
+function customerHref(state, overrides = {}) {
+    const params = new URLSearchParams();
+    const next = {
+        search: state.search,
+        status: state.status,
+        sort: state.sorting ? state.sortKey : '',
+        dir: state.sorting ? state.dir.toLowerCase() : '',
+        ...Object.fromEntries(Object.entries(state.filters).filter(([, value]) => value).map(([key, value]) => ['f_' + key, value])),
+        ...overrides
+    };
+    Object.entries(next).forEach(([key, value]) => {
+        if (value) params.set(key, String(value));
+    });
+    const query = params.toString();
+    return query ? `/pelanggan?${query}` : '/pelanggan';
+}
+
 const uploadExcel = multer({
     storage: multer.memoryStorage(),
     limits: { fileSize: 20 * 1024 * 1024 },
@@ -28,26 +102,11 @@ const uploadExcel = multer({
 // List all Pelanggan
 router.get('/', async (req, res) => {
     try {
-        const { search, status } = req.query;
+        const listState = customerListState(req.query);
+        const { search, status, sortKey, dir, filters, sorting } = listState;
+        const where = customerWhere(listState, true);
 
-        const searchWhere = {};
-        if (search) {
-            searchWhere[Op.or] = [
-                { no_jaringan: { [Op.like]: `%${search}%` } },
-                { nama_pelanggan: { [Op.like]: `%${search}%` } },
-                { alamat: { [Op.like]: `%${search}%` } },
-                { service: { [Op.like]: `%${search}%` } },
-                { akses: { [Op.like]: `%${search}%` } },
-                { node: { [Op.like]: `%${search}%` } },
-                { kota: { [Op.like]: `%${search}%` } }
-            ];
-        }
-        const where = { ...searchWhere };
-        if (status) {
-            where.status = status;
-        }
-
-        const grouped = await Pelanggan.count({ where: searchWhere, group: ['status'] });
+        const grouped = await Pelanggan.count({ where: customerWhere(listState, false), group: ['status'] });
         const counts = { Active: 0, Inactive: 0, Suspended: 0 };
         let totalCustomers = 0;
         grouped.forEach((row) => {
@@ -68,7 +127,7 @@ router.get('/', async (req, res) => {
         const { rows, pagination } = await paginate(Pelanggan, req, {
             where,
             include: serviceInclude,
-            order: [['nama_pelanggan', 'ASC']]
+            order: [[sortKey, dir], ['id', 'ASC']]
         });
 
         const processedList = rows.map(p => {
@@ -92,8 +151,21 @@ router.get('/', async (req, res) => {
             activeCustomers: counts.Active,
             inactiveCustomers: counts.Inactive,
             suspendedCustomers: counts.Suspended,
-            search: search || '',
-            status: status || ''
+            search,
+            status,
+            sort: sorting ? sortKey : '',
+            dir: sorting ? dir.toLowerCase() : '',
+            filters,
+            columns: CUSTOMER_COLUMNS.map((column) => {
+                const active = sorting && sortKey === column.key;
+                const nextDir = active && dir === 'ASC' ? 'desc' : 'asc';
+                return {
+                    ...column,
+                    active,
+                    direction: active ? dir.toLowerCase() : '',
+                    href: customerHref(listState, { sort: column.key, dir: nextDir })
+                };
+            })
         });
     } catch (error) {
         console.error('Pelanggan List Error:', error);
@@ -250,10 +322,9 @@ router.post('/create', isEditor, async (req, res) => {
     try {
         const { no_jaringan, nama_pelanggan, service, bandwidth, akses, node, kota, koordinat, alamat, kontak, email, status, keterangan } = req.body;
 
-        // Check if no_jaringan already exists
-        const existing = await Pelanggan.findOne({ where: { no_jaringan } });
+        const existing = await Pelanggan.findOne({ where: { no_jaringan, nama_pelanggan } });
         if (existing) {
-            req.flash('error_msg', 'No Jaringan sudah terdaftar');
+            req.flash('error_msg', 'Customer dengan No Jaringan dan nama yang sama sudah terdaftar');
             return res.redirect('/pelanggan/create');
         }
 
@@ -605,13 +676,16 @@ router.post('/:id/edit', isEditor, async (req, res) => {
 
         const { no_jaringan, nama_pelanggan, service, bandwidth, akses, node, kota, koordinat, alamat, kontak, email, status, keterangan } = req.body;
 
-        // Check if new no_jaringan conflicts with another record
-        if (no_jaringan !== pelanggan.no_jaringan) {
-            const existing = await Pelanggan.findOne({ where: { no_jaringan } });
-            if (existing) {
-                req.flash('error_msg', 'No Jaringan sudah terdaftar');
-                return res.redirect(`/pelanggan/${req.params.id}/edit`);
+        const existing = await Pelanggan.findOne({
+            where: {
+                no_jaringan,
+                nama_pelanggan,
+                id: { [Op.ne]: pelanggan.id }
             }
+        });
+        if (existing) {
+            req.flash('error_msg', 'Customer dengan No Jaringan dan nama yang sama sudah terdaftar');
+            return res.redirect(`/pelanggan/${req.params.id}/edit`);
         }
 
         await pelanggan.update({

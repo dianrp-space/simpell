@@ -7,6 +7,26 @@ async function columnExists(sequelize, table, column) {
     return rows.length > 0;
 }
 
+async function dropNetworkNumberUnique(sequelize) {
+    const [indexes] = await sequelize.query(
+        `SELECT INDEX_NAME AS name, NON_UNIQUE AS nonUnique, COLUMN_NAME AS columnName
+         FROM INFORMATION_SCHEMA.STATISTICS
+         WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'pelanggan' AND INDEX_NAME <> 'PRIMARY'`
+    );
+    const grouped = new Map();
+    indexes.forEach((row) => {
+        if (!grouped.has(row.name)) grouped.set(row.name, []);
+        grouped.get(row.name).push(row);
+    });
+    for (const [name, columns] of grouped) {
+        const onlyNetwork = columns.length === 1 && columns[0].columnName === 'no_jaringan';
+        const unique = columns.every((column) => Number(column.nonUnique) === 0);
+        if (onlyNetwork && unique) {
+            await sequelize.query(`ALTER TABLE pelanggan DROP INDEX \`${name}\``);
+        }
+    }
+}
+
 async function ensureSchema(sequelize) {
     const [tables] = await sequelize.query(
         `SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES
@@ -41,6 +61,7 @@ async function ensureSchema(sequelize) {
                 await sequelize.query(`ALTER TABLE pelanggan ADD COLUMN ${column} ${definition}`);
             }
         }
+        await dropNetworkNumberUnique(sequelize);
     }
 
     const [userTables] = await sequelize.query(
@@ -63,3 +84,4 @@ async function ensureSchema(sequelize) {
 }
 
 module.exports = ensureSchema;
+module.exports.dropNetworkNumberUnique = dropNetworkNumberUnique;

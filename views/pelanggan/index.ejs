@@ -125,7 +125,16 @@
                         <option value="Suspended" <%=status==='Suspended' ? 'selected' : '' %>>Suspended</option>
                     </select>
                 </div>
-                <% if (search || status) { %>
+                <% Object.entries(filters).forEach(function (entry) { %>
+                    <% if (entry[1]) { %>
+                        <input type="hidden" name="f_<%= entry[0] %>" value="<%= entry[1] %>">
+                    <% } %>
+                <% }) %>
+                <% if (sort) { %>
+                    <input type="hidden" name="sort" value="<%= sort %>">
+                    <input type="hidden" name="dir" value="<%= dir %>">
+                <% } %>
+                <% if (search || status || sort || Object.values(filters).some(Boolean)) { %>
                     <a href="/pelanggan"
                         class="px-4 py-2.5 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 text-sm font-medium rounded-lg transition-colors text-center">
                         Reset
@@ -164,21 +173,47 @@
 </div>
 
 <!-- Table -->
+<form id="columnFilters" action="/pelanggan" method="GET">
+    <% if (search) { %><input type="hidden" name="search" value="<%= search %>"><% } %>
+    <% if (sort) { %>
+        <input type="hidden" name="sort" value="<%= sort %>">
+        <input type="hidden" name="dir" value="<%= dir %>">
+    <% } %>
+</form>
 <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm overflow-hidden">
     <div class="overflow-auto max-h-[80vh] relative">
         <table class="w-full">
             <thead
                 class="sticky top-0 z-50 bg-gray-50 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 shadow-sm">
                 <tr>
-                    <th class="px-6 py-3 text-left text-sm font-semibold text-gray-600 dark:text-gray-400">No
-                        Jaringan</th>
-                    <th class="px-6 py-3 text-left text-sm font-semibold text-gray-600 dark:text-gray-400">Customer</th>
-                    <th class="px-6 py-3 text-left text-sm font-semibold text-gray-600 dark:text-gray-400">Service</th>
-                    <th class="px-6 py-3 text-left text-sm font-semibold text-gray-600 dark:text-gray-400">Akses</th>
-                    <th class="px-6 py-3 text-left text-sm font-semibold text-gray-600 dark:text-gray-400">Node</th>
-                    <th class="px-6 py-3 text-left text-sm font-semibold text-gray-600 dark:text-gray-400">Kota</th>
-                    <th class="px-6 py-3 text-left text-sm font-semibold text-gray-600 dark:text-gray-400">Status
-                    </th>
+                    <% columns.forEach(function (column) { %>
+                        <th class="px-4 py-3 text-left align-top min-w-[150px]"<% if (column.active) { %> aria-sort="<%= column.direction === 'asc' ? 'ascending' : 'descending' %>"<% } %>>
+                            <a href="<%= column.href %>"
+                                class="inline-flex items-center gap-1 text-sm font-semibold <%= column.active ? 'text-blue-600 dark:text-blue-400' : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white' %>">
+                                <%= column.label %>
+                                <% if (column.direction === 'asc') { %>
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg>
+                                <% } else if (column.direction === 'desc') { %>
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                <% } else { %>
+                                    <svg class="w-3.5 h-3.5 opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"></path></svg>
+                                <% } %>
+                            </a>
+                            <% if (column.key === 'status') { %>
+                                <select form="columnFilters" name="status" id="columnStatus"
+                                    class="mt-2 w-full px-2 py-1.5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md text-xs text-gray-700 dark:text-gray-200 focus:ring-2 focus:ring-blue-500">
+                                    <option value="">Semua</option>
+                                    <option value="Active" <%= status === 'Active' ? 'selected' : '' %>>Active</option>
+                                    <option value="Inactive" <%= status === 'Inactive' ? 'selected' : '' %>>Inactive</option>
+                                    <option value="Suspended" <%= status === 'Suspended' ? 'selected' : '' %>>Suspended</option>
+                                </select>
+                            <% } else { %>
+                                <input form="columnFilters" type="text" name="f_<%= column.key %>" data-col-filter
+                                    value="<%= filters[column.key] || '' %>" placeholder="Filter"
+                                    class="mt-2 w-full px-2 py-1.5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md text-xs text-gray-700 dark:text-gray-200 placeholder-gray-400 focus:ring-2 focus:ring-blue-500">
+                            <% } %>
+                        </th>
+                    <% }) %>
                     <th
                         class="px-3 py-3 text-center text-sm font-semibold text-gray-600 dark:text-gray-400 sticky right-0 top-0 bg-gray-50 dark:bg-gray-900 z-30 shadow-[-4px_0_8px_-4px_rgba(0,0,0,0.1)] w-1">
                         Aksi
@@ -240,7 +275,7 @@
                         <% }); %>
                             <% } else { %>
                                 <tr>
-                                    <td colspan="6" class="px-6 py-12 text-center text-gray-500 dark:text-gray-400">
+                                    <td colspan="8" class="px-6 py-12 text-center text-gray-500 dark:text-gray-400">
                                         <svg class="w-12 h-12 mx-auto mb-4 text-gray-300 dark:text-gray-600" fill="none"
                                             stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -261,4 +296,28 @@
         <%- include('../partials/pagination') %>
     </div>
 </div>
+<script>
+    (function () {
+        const form = document.getElementById('columnFilters');
+        if (!form) return;
+        let timer = null;
+        const submit = function () {
+            if (typeof form.requestSubmit === 'function') form.requestSubmit();
+            else form.submit();
+        };
+        document.querySelectorAll('[data-col-filter]').forEach(function (input) {
+            input.addEventListener('input', function () {
+                clearTimeout(timer);
+                timer = setTimeout(submit, 400);
+            });
+        });
+        const statusCol = document.getElementById('columnStatus');
+        if (statusCol) statusCol.addEventListener('change', submit);
+        form.addEventListener('submit', function () {
+            Array.from(form.elements).forEach(function (el) {
+                if ((el.tagName === 'INPUT' || el.tagName === 'SELECT') && !String(el.value || '').trim()) el.disabled = true;
+            });
+        });
+    })();
+</script>
 </div>

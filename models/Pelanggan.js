@@ -10,8 +10,7 @@ const Pelanggan = sequelize.define('Pelanggan', {
     no_jaringan: {
         type: DataTypes.STRING(100),
         allowNull: false,
-        unique: true,
-        comment: 'Nomor jaringan pelanggan (unique identifier)'
+        comment: 'Nomor jaringan pelanggan. Boleh sama bila nama customer berbeda.'
     },
     nama_pelanggan: {
         type: DataTypes.STRING(255),

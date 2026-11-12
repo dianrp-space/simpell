@@ -7,7 +7,7 @@
         </a>
         <div>
             <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Import Data Customer</h1>
-            <p class="text-sm text-gray-500 dark:text-gray-400">Masukkan data dari sheet DATA CUSTOMER. No jaringan yang sudah ada akan diperbarui.</p>
+            <p class="text-sm text-gray-500 dark:text-gray-400">Masukkan data dari sheet DATA CUSTOMER. Baris dengan no jaringan dan nama yang sama akan diperbarui.</p>
         </div>
     </div>
 
@@ -29,7 +29,7 @@
                     </div>
                 </dl>
                 <form action="/pelanggan/import/workbook" method="POST"
-                    onsubmit="return confirmSubmit(this, 'Impor <%= workbookInfo.total %> customer dari sheet <%= workbookInfo.sheetName %>? No jaringan yang sudah ada akan diperbarui.');">
+                    onsubmit="return confirmSubmit(this, 'Impor <%= workbookInfo.total %> customer dari sheet <%= workbookInfo.sheetName %>? Baris dengan no jaringan dan nama yang sama akan diperbarui.');">
                     <button type="submit"
                         class="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-amber-600 hover:bg-amber-700 text-white text-sm font-medium rounded-lg transition-colors shadow-sm">
                         Impor SIMPELL.xlsx
@@ -46,7 +46,7 @@
                 <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Gunakan file .xlsx yang punya sheet DATA CUSTOMER dengan kolom yang sama.</p>
             </div>
             <form action="/pelanggan/import" method="POST" enctype="multipart/form-data" class="space-y-4"
-                onsubmit="return confirmSubmit(this, 'Impor data customer dari file ini? No jaringan yang sudah ada akan diperbarui.');">
+                onsubmit="return confirmSubmit(this, 'Impor data customer dari file ini? Baris dengan no jaringan dan nama yang sama akan diperbarui.');">
                 <div>
                     <label for="file" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">File Excel</label>
                     <input type="file" name="file" id="file" accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" required

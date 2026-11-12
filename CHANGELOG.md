@@ -2,6 +2,51 @@
 
 Catatan perubahan yang dikerjakan pada kode SIMPELL ini. Belum ada tag versi baru. Dasarnya tetap rilis `1.0.0` yang sudah ada.
 
+## 2026-11-13
+
+### Data customer
+
+- Impor sheet DATA CUSTOMER menyimpan setiap baris. Dua customer boleh memakai nomor jaringan yang sama asal namanya berbeda.
+- Nomor `2025494235` punya dua nama Pegadaian, jadi 952 baris di Excel masuk sebagai 952 customer.
+- Impor ulang hanya memperbarui baris yang nomor jaringan dan namanya sama.
+- Alamat, kontak, dan email yang sudah tersimpan tidak ditimpa oleh sheet itu.
+- Judul kolom di daftar Data Customer bisa diklik untuk mengurutkan naik atau turun.
+- Kotak filter di bawah judul kolom menyaring seluruh data, bukan hanya 25 baris yang sedang tampil.
+- Kolom Status memakai pilihan Active, Inactive, dan Suspended. Tanda `-` mencari sel yang kosong.
+- Reset menghapus pencarian, filter kolom, dan urutan.
+
+### Header
+
+- Header punya tombol Logout di samping tombol portal.
+- Logout meminta konfirmasi, lalu langsung membuka halaman login.
+
+## 2026-11-12
+
+### Menu sesuai workbook
+
+- Menu **QC PSB & Project** ditambah di Ticket & Monitoring.
+- Grup Manage Service FO Kepri berisi Data MS FO Kepri, Pendingan MS FO Kepri, dan Data PM MS FO Kepri. Halaman ini masih menampilkan kolom dari sheet Excel.
+- Akses Network menambah **FO Xconnect**. Nama Fiber Optic diganti menjadi **Akses FO**.
+- Data FO Kepri disusun ulang: Data ODP, Data HH, Data Closure, Data OTB, dan Data ODC, ditambah Data Spliter, Data Core Remote, dan Data Core Trunk. Tiga menu terakhir masih kerangka kolom.
+- Form dan daftar Data Customer memakai Service, Bandwidth, Akses, Node, Kota, Koordinat, dan Keterangan.
+
+### Impor Excel
+
+- Data Customer punya halaman **Import Excel**.
+- Tombol **Impor SIMPELL.xlsx** membaca sheet DATA CUSTOMER di file workbook lokal.
+- File `.xlsx` lain bisa diunggah asal punya sheet dan kolom yang sama.
+- Berkas Excel tidak lagi ikut ke git. Salinan di komputer tetap dipakai aplikasi.
+
+## 2026-11-10
+
+### Tautan yang dibagikan
+
+- Pratinjau tautan, termasuk saat dibagikan ke WhatsApp, menampilkan logo SIMPELL.
+
+### Dependensi
+
+- Paket diperbarui supaya `npm audit` tidak melaporkan kerentanan yang diketahui.
+
 ## 2026-11-09
 
 ### Menu akses

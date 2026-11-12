@@ -3,6 +3,7 @@ const path = require('path');
 const ExcelJS = require('exceljs');
 const { Op } = require('sequelize');
 const Pelanggan = require('../models/Pelanggan');
+const ensureSchema = require('./ensureSchema');
 
 const COLUMN_MAP = {
     'no jaringan': 'no_jaringan',
@@ -131,7 +132,7 @@ function parseCustomerSheet(workbook) {
 
     const header = headerRow(sheet);
     const fields = [...header.fields.keys()];
-    const byNumber = new Map();
+    const byCustomer = new Map();
     let skipped = 0;
     let statusFallback = 0;
     let duplicateRows = 0;
@@ -163,15 +164,16 @@ function parseCustomerSheet(workbook) {
         } else {
             record.status = 'Active';
         }
-        if (byNumber.has(noJaringan)) duplicateRows += 1;
-        byNumber.set(noJaringan, record);
+        const key = `${noJaringan}\u0000${nama}`;
+        if (byCustomer.has(key)) duplicateRows += 1;
+        byCustomer.set(key, record);
     });
 
     return {
         sheetName: sheet.name,
         columns: SHEET_COLUMNS,
         fields,
-        rows: [...byNumber.values()],
+        rows: [...byCustomer.values()],
         skipped,
         statusFallback,
         duplicateRows
@@ -203,19 +205,37 @@ async function importCustomerRows(parsed) {
         };
     }
 
-    const numbers = parsed.rows.map((row) => row.no_jaringan);
+    const numbers = [...new Set(parsed.rows.map((row) => row.no_jaringan))];
     const existing = await Pelanggan.findAll({
-        attributes: ['no_jaringan'],
+        attributes: ['id', 'no_jaringan', 'nama_pelanggan'],
         where: { no_jaringan: { [Op.in]: numbers } }
     });
-    const existingSet = new Set(existing.map((row) => row.no_jaringan));
-    const updatable = [...new Set([...parsed.fields, 'status'])].filter((field) => field !== 'no_jaringan');
+    const existingByCustomer = new Map(
+        existing.map((row) => [`${row.no_jaringan}\u0000${row.nama_pelanggan}`, row.id])
+    );
+    const updatable = [...new Set([...parsed.fields, 'status'])].filter((field) => field !== 'no_jaringan' && field !== 'nama_pelanggan');
+    const creating = [];
+    const updating = [];
+    parsed.rows.forEach((row) => {
+        const id = existingByCustomer.get(`${row.no_jaringan}\u0000${row.nama_pelanggan}`);
+        if (id) updating.push({ id, values: row });
+        else creating.push(row);
+    });
 
-    await Pelanggan.bulkCreate(parsed.rows, { updateOnDuplicate: updatable });
+    if (creating.length) {
+        await ensureSchema.dropNetworkNumberUnique(Pelanggan.sequelize);
+        await Pelanggan.bulkCreate(creating);
+    }
+    for (const row of updating) {
+        await Pelanggan.update(
+            Object.fromEntries(updatable.map((field) => [field, row.values[field]])),
+            { where: { id: row.id } }
+        );
+    }
 
-    const updated = parsed.rows.filter((row) => existingSet.has(row.no_jaringan)).length;
+    const updated = updating.length;
     return {
-        created: parsed.rows.length - updated,
+        created: creating.length,
         updated,
         total: parsed.rows.length,
         skipped: parsed.skipped,
@@ -234,7 +254,7 @@ function resultMessage(result) {
     const parts = [
         `Impor sheet ${result.sheetName} selesai: ${result.created} customer baru, ${result.updated} diperbarui`
     ];
-    if (result.duplicateRows) parts.push(`${result.duplicateRows} no jaringan ganda memakai baris terakhir`);
+    if (result.duplicateRows) parts.push(`${result.duplicateRows} baris dengan no jaringan dan customer yang sama memakai baris terakhir`);
     if (result.skipped) parts.push(`${result.skipped} baris dilewati karena No Jaringan atau Customer kosong`);
     if (result.statusFallback) parts.push(`${result.statusFallback} status tidak dikenal dan disimpan sebagai Active`);
     return parts.join('. ') + '.';
