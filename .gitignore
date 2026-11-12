@@ -4,3 +4,7 @@ node_modules/
 backups/
 ngrok-simpell.yaml
 public/uploads/
+*.xlsx
+*.xls
+~$*
+*:Zone.Identifier

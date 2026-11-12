@@ -3,9 +3,27 @@ const router = express.Router();
 const { Pelanggan, AksesFo, AksesFoNode, AksesVsatStarlink, AksesM2m, AksesVsatTdma, PendingGgn, RecordGgn, Cpe, RadioLinkAp, RadioLinkClient, AksesThirdParty } = require('../models');
 const { Op } = require('sequelize');
 const ExcelJS = require('exceljs');
+const multer = require('multer');
 const logActivity = require('../utils/activityLogger');
 const { isEditor } = require('../middleware/auth');
 const { paginate } = require('../utils/paginate');
+const {
+    SHEET_COLUMNS,
+    bundledWorkbookPath,
+    summarizeWorkbook,
+    importWorkbook,
+    resultMessage
+} = require('../utils/importPelanggan');
+
+const uploadExcel = multer({
+    storage: multer.memoryStorage(),
+    limits: { fileSize: 20 * 1024 * 1024 },
+    fileFilter(req, file, callback) {
+        const name = (file.originalname || '').toLowerCase();
+        if (name.endsWith('.xlsx')) callback(null, true);
+        else callback(new Error('File harus berformat .xlsx'));
+    }
+});
 
 // List all Pelanggan
 router.get('/', async (req, res) => {
@@ -157,6 +175,65 @@ router.get('/export', async (req, res) => {
         req.flash('error_msg', 'Gagal export data pelanggan');
         res.redirect('/pelanggan');
     }
+});
+
+router.get('/import', isEditor, async (req, res) => {
+    let workbookInfo = null;
+    try {
+        workbookInfo = await summarizeWorkbook(bundledWorkbookPath());
+    } catch (error) {
+        console.error('Customer import summary error:', error);
+    }
+    res.render('pelanggan/import', {
+        title: 'Import Data Customer - SIMPELL',
+        columns: SHEET_COLUMNS,
+        workbookInfo
+    });
+});
+
+router.post('/import/workbook', isEditor, async (req, res) => {
+    try {
+        const result = await importWorkbook(bundledWorkbookPath());
+        await logActivity(
+            req,
+            'IMPORT',
+            `Impor data customer dari SIMPELL.xlsx: ${result.created} baru, ${result.updated} diperbarui`,
+            'pelanggan'
+        );
+        req.flash('success_msg', resultMessage(result));
+    } catch (error) {
+        console.error('Import workbook error:', error);
+        req.flash('error_msg', 'Gagal impor SIMPELL.xlsx: ' + error.message);
+    }
+    res.redirect('/pelanggan');
+});
+
+router.post('/import', isEditor, (req, res) => {
+    uploadExcel.single('file')(req, res, async (error) => {
+        if (error) {
+            req.flash('error_msg', error.message || 'Gagal membaca file Excel');
+            return res.redirect('/pelanggan/import');
+        }
+        if (!req.file) {
+            req.flash('error_msg', 'Pilih file Excel terlebih dahulu');
+            return res.redirect('/pelanggan/import');
+        }
+        try {
+            const result = await importWorkbook(req.file.buffer);
+            await logActivity(
+                req,
+                'IMPORT',
+                `Impor data customer dari ${req.file.originalname}: ${result.created} baru, ${result.updated} diperbarui`,
+                'pelanggan'
+            );
+            req.flash('success_msg', resultMessage(result));
+            res.redirect('/pelanggan');
+        } catch (importError) {
+            console.error('Import pelanggan error:', importError);
+            req.flash('error_msg', importError.message || 'Gagal impor data customer');
+            res.redirect('/pelanggan/import');
+        }
+    });
 });
 
 // Form Create Pelanggan
