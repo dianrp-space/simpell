@@ -54,6 +54,7 @@ try {
     const profileRoutes = require('./routes/profile');
     const pelangganRoutes = require('./routes/pelanggan');
     const activityLogRoutes = require('./routes/activity-log');
+    const changelogRoutes = require('./routes/changelog');
     const modulKosongRoutes = require('./routes/modul-kosong');
     const qcPsbRoutes = require('./routes/qc-psb');
     const msFoRoutes = require('./routes/ms-fo');
@@ -233,6 +234,7 @@ try {
     app.use('/pelanggan', isStaff, pelangganRoutes);
     app.use('/patroli', isStaff, require('./routes/patroli'));
     app.use('/activity-log', isStaff, activityLogRoutes);
+    app.use('/changelog', isStaff, changelogRoutes);
     app.use('/admin/users', isStaff, require('./routes/user-management'));
     app.use('/admin/backup', isAuthenticated, require('./routes/backup'));
     app.use('/admin/notifications', isAuthenticated, require('./routes/notifications'));

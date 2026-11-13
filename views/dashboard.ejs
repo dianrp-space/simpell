@@ -334,26 +334,28 @@
     </div>
 
     <!-- Chart Section -->
-    <div class="space-y-6">
-        <section class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-6 shadow-sm">
-            <div class="flex justify-end">
-                <label class="text-sm text-gray-600 dark:text-gray-300">
-                    <span class="sr-only">Tahun</span>
-                    <select id="chart-year"
-                        class="px-3 py-2 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg text-sm"></select>
-                </label>
-            </div>
-            <h2 id="chart-compare-title" class="text-center text-lg font-bold text-gray-900 dark:text-white">Perbandingan Jumlah Tiket GGN &amp; PM per Bulan</h2>
-            <div id="chart-compare" class="mt-2 min-h-[320px]"></div>
-        </section>
-        <section class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-6 shadow-sm">
-            <h2 class="text-center text-lg font-bold text-gray-900 dark:text-white">Trend Gangguan (GGN) Bulanan</h2>
-            <div id="chart-ggn" class="mt-2 min-h-[280px]"></div>
-        </section>
-        <section class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-6 shadow-sm">
-            <h2 class="text-center text-lg font-bold text-gray-900 dark:text-white">Trend Preventive Maintenance (PM) Bulanan</h2>
-            <div id="chart-pm" class="mt-2 min-h-[280px]"></div>
-        </section>
+    <div class="space-y-4">
+        <div class="flex justify-end">
+            <label class="text-sm text-gray-600 dark:text-gray-300">
+                <span class="sr-only">Tahun</span>
+                <select id="chart-year"
+                    class="px-3 py-2 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg text-sm"></select>
+            </label>
+        </div>
+        <div class="grid grid-cols-1 xl:grid-cols-3 gap-4">
+            <section class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4 shadow-sm">
+                <h2 id="chart-compare-title" class="text-center text-sm font-bold leading-snug text-gray-900 dark:text-white min-h-[3.25rem]">Perbandingan Jumlah Tiket GGN &amp; PM per Bulan</h2>
+                <div id="chart-compare" class="mt-1 min-h-[240px]"></div>
+            </section>
+            <section class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4 shadow-sm">
+                <h2 class="text-center text-sm font-bold leading-snug text-gray-900 dark:text-white min-h-[3.25rem]">Trend Gangguan (GGN) Bulanan</h2>
+                <div id="chart-ggn" class="mt-1 min-h-[240px]"></div>
+            </section>
+            <section class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4 shadow-sm">
+                <h2 class="text-center text-sm font-bold leading-snug text-gray-900 dark:text-white min-h-[3.25rem]">Trend Preventive Maintenance (PM) Bulanan</h2>
+                <div id="chart-pm" class="mt-1 min-h-[240px]"></div>
+            </section>
+        </div>
     </div>
 
     <!-- Info Section -->
@@ -434,23 +436,32 @@
             };
         }
 
-        function yAxis(title, theme) {
+        function desktopRow() {
+            return window.matchMedia('(min-width: 1280px)').matches;
+        }
+
+        function yAxis(title, theme, compact) {
             return {
                 min: 0,
                 forceNiceScale: true,
-                title: { text: title, style: { color: theme.title, fontSize: '12px', fontWeight: 600 } },
+                title: { text: title, style: { color: theme.title, fontSize: compact ? '11px' : '12px', fontWeight: 600 } },
                 labels: {
-                    style: { colors: theme.label },
+                    style: { colors: theme.label, fontSize: compact ? '10px' : '12px' },
                     formatter: function (value) { return Math.round(value); }
                 }
             };
         }
 
-        function xAxis(categories, theme) {
+        function xAxis(categories, theme, compact) {
             return {
                 categories: categories,
-                title: { text: 'Bulan', style: { color: theme.title, fontSize: '12px', fontWeight: 600 } },
-                labels: { style: { colors: theme.label } },
+                title: { text: 'Bulan', style: { color: theme.title, fontSize: compact ? '11px' : '12px', fontWeight: 600 } },
+                labels: {
+                    rotate: compact ? -45 : 0,
+                    rotateAlways: compact,
+                    hideOverlappingLabels: false,
+                    style: { colors: theme.label, fontSize: compact ? '10px' : '12px' }
+                },
                 axisBorder: { show: false },
                 axisTicks: { show: false }
             };
@@ -467,6 +478,11 @@
         function renderCharts(year) {
             var series = (payload.monthly && payload.monthly[year]) || { ggn: Array(12).fill(0), pm: Array(12).fill(0) };
             var theme = axisTheme();
+            var compact = desktopRow();
+            var height = compact ? 280 : 320;
+            function legendFor() {
+                return { position: compact ? 'bottom' : 'right', fontSize: '12px', labels: { colors: theme.title } };
+            }
             var months = payload.months || ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
             if (compareTitle) compareTitle.textContent = 'Perbandingan Jumlah Tiket GGN & PM per Bulan (' + year + ')';
 
@@ -475,42 +491,42 @@
                     { name: 'GGN', data: series.ggn },
                     { name: 'PM', data: series.pm }
                 ],
-                chart: { type: 'bar', height: 360, fontFamily: 'Inter, sans-serif', toolbar: { show: false } },
-                plotOptions: { bar: { horizontal: false, columnWidth: '62%', borderRadius: 1 } },
+                chart: { type: 'bar', height: height, fontFamily: 'Inter, sans-serif', toolbar: { show: false } },
+                plotOptions: { bar: { horizontal: false, columnWidth: compact ? '70%' : '62%', borderRadius: 1 } },
                 colors: [GGN_COLOR, PM_COLOR],
                 dataLabels: { enabled: false },
                 stroke: { show: true, width: 2, colors: ['transparent'] },
-                xaxis: xAxis(months, theme),
-                yaxis: yAxis('Jumlah Tiket', theme),
-                legend: { position: 'right', labels: { colors: theme.title } },
+                xaxis: xAxis(months, theme, compact),
+                yaxis: yAxis('Jumlah Tiket', theme, compact),
+                legend: legendFor(),
                 grid: { borderColor: theme.grid, strokeDashArray: 0 },
                 tooltip: { y: { formatter: function (value) { return value + ' tiket'; } } }
             });
 
             mount('ggn', ggnEl, {
                 series: [{ name: 'GGN', data: series.ggn }],
-                chart: { type: 'line', height: 320, fontFamily: 'Inter, sans-serif', toolbar: { show: false }, zoom: { enabled: false } },
+                chart: { type: 'line', height: height, fontFamily: 'Inter, sans-serif', toolbar: { show: false }, zoom: { enabled: false } },
                 colors: [GGN_COLOR],
                 stroke: { curve: 'straight', width: 2 },
-                markers: { size: 5, strokeWidth: 2, hover: { size: 7 } },
+                markers: { size: compact ? 4 : 5, strokeWidth: 2, hover: { size: 7 } },
                 dataLabels: { enabled: false },
-                xaxis: xAxis(months, theme),
-                yaxis: yAxis('Tiket GGN', theme),
-                legend: { position: 'right', labels: { colors: theme.title } },
+                xaxis: xAxis(months, theme, compact),
+                yaxis: yAxis('Tiket GGN', theme, compact),
+                legend: legendFor(),
                 grid: { borderColor: theme.grid, strokeDashArray: 0 },
                 tooltip: { y: { formatter: function (value) { return value + ' tiket'; } } }
             });
 
             mount('pm', pmEl, {
                 series: [{ name: 'PM', data: series.pm }],
-                chart: { type: 'line', height: 320, fontFamily: 'Inter, sans-serif', toolbar: { show: false }, zoom: { enabled: false } },
+                chart: { type: 'line', height: height, fontFamily: 'Inter, sans-serif', toolbar: { show: false }, zoom: { enabled: false } },
                 colors: [PM_COLOR],
                 stroke: { curve: 'straight', width: 2 },
-                markers: { size: 5, strokeWidth: 2, hover: { size: 7 } },
+                markers: { size: compact ? 4 : 5, strokeWidth: 2, hover: { size: 7 } },
                 dataLabels: { enabled: false },
-                xaxis: xAxis(months, theme),
-                yaxis: yAxis('Tiket PM', theme),
-                legend: { position: 'right', labels: { colors: theme.title } },
+                xaxis: xAxis(months, theme, compact),
+                yaxis: yAxis('Tiket PM', theme, compact),
+                legend: legendFor(),
                 grid: { borderColor: theme.grid, strokeDashArray: 0 },
                 tooltip: { y: { formatter: function (value) { return value + ' tiket'; } } }
             });
@@ -532,6 +548,12 @@
             });
             if (!years.length && yearSelect) yearSelect.disabled = true;
             if (yearSelect) yearSelect.addEventListener('change', function () { renderCharts(yearSelect.value); });
+            var compactNow = desktopRow();
+            window.addEventListener('resize', function () {
+                if (desktopRow() === compactNow) return;
+                compactNow = desktopRow();
+                renderCharts((yearSelect && yearSelect.value) || payload.defaultYear || '');
+            });
             renderCharts((yearSelect && yearSelect.value) || payload.defaultYear || '');
         });
     })();

@@ -131,6 +131,37 @@ ActivityLog.belongsTo(User, { foreignKey: 'user_id', as: 'user' });
 User.hasMany(PasswordResetRequest, { foreignKey: 'user_id', as: 'resetRequests' });
 PasswordResetRequest.belongsTo(User, { foreignKey: 'user_id', as: 'user' });
 
+// Kolom koordinat bertipe angka. Isian kosong dari form harus jadi null,
+// kalau tidak MySQL menolak string kosong saat simpan.
+function blankOptionalFields(model, values) {
+    if (!values || !model.rawAttributes) return;
+    Object.keys(values).forEach((field) => {
+        const attr = model.rawAttributes[field];
+        if (!attr || attr.allowNull === false) return;
+        const typeKey = attr.type && attr.type.key;
+        const coordinate = field === 'latitude' || field === 'longitude' || field === 'koordinat' || field === 'lat_long';
+        const date = typeKey === 'DATE' || typeKey === 'DATEONLY';
+        const integer = typeKey === 'INTEGER';
+        if (!coordinate && !date && !integer) return;
+        const value = values[field];
+        if (value === undefined || value === null) return;
+        if (String(value).trim() === '') values[field] = null;
+    });
+}
+
+function keepBlankCoordinatesOptional(model) {
+    const names = model.rawAttributes || {};
+    const hasCoordinate = ['latitude', 'longitude', 'koordinat', 'lat_long'].some((field) => names[field]);
+    if (!hasCoordinate) return;
+    model.addHook('beforeValidate', (instance) => blankOptionalFields(model, instance.dataValues));
+    model.addHook('beforeBulkUpdate', (options) => blankOptionalFields(model, options.attributes));
+}
+
+[
+    Odc, AksesM2m, DataHh, DataClosure, DataOdp, PendingGgn,
+    MsFo, DataCore, DataCoreSector, Pelanggan, RadioLinkAp, RadioLinkClient
+].forEach(keepBlankCoordinatesOptional);
+
 // Export all models
 module.exports = {
     sequelize,

@@ -50,7 +50,18 @@ Catatan perubahan yang dikerjakan pada kode SIMPELL ini. Belum ada tag versi bar
 - Dashboard menampilkan tiga grafik Record GGN & PM untuk tahun yang dipilih: perbandingan batang GGN dan PM per bulan, tren garis GGN, dan tren garis PM.
 - GGN berwarna merah dan PM berwarna hijau toska. Case yang mengandung PM masuk seri PM. Record lain dihitung sebagai GGN.
 - Januari sampai Desember tetap tampil. Bulan tanpa tiket bernilai nol. Grafik PM memakai skala sendiri.
+- Di layar desktop, ketiga grafik tampil dalam satu baris. Di layar yang lebih sempit, grafik tersusun ke bawah.
 - Unduhan Excel dashboard memuat jumlah GGN dan PM per tahun dan per bulan.
+
+### Koordinat
+
+- Latitude, longitude, dan lat long boleh dikosongkan. Isian kosong disimpan sebagai kosong dan tidak lagi membuat simpan gagal.
+- Form yang tercakup: Data HH, Data ODP, Data Closure, ODC, M2M/SOLTEM, Pending GGN, sector Data Core, Radio Link, Data Customer, dan Data MS FO.
+- Tanggal yang dikosongkan pada form tersebut juga tidak menghalangi simpan.
+
+### Manajemen
+
+- Grup Manajemen punya menu Changelog. Halaman itu menampilkan catatan perubahan ini.
 
 ## 2026-11-12
 

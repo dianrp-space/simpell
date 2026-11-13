@@ -1,0 +1,28 @@
+<div class="space-y-6 max-w-4xl">
+    <div>
+        <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Changelog</h1>
+        <p class="text-gray-500 dark:text-gray-400">Catatan perubahan SIMPELL.</p>
+    </div>
+
+    <% changelog.intro.forEach(function (paragraph) { %>
+        <p class="text-sm text-gray-600 dark:text-gray-300"><%- paragraph %></p>
+    <% }); %>
+
+    <% changelog.releases.forEach(function (release) { %>
+        <section class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-6 shadow-sm space-y-5">
+            <h2 class="text-lg font-bold text-gray-900 dark:text-white"><%= release.date %></h2>
+            <% release.groups.forEach(function (group) { %>
+                <div>
+                    <% if (group.title) { %>
+                        <h3 class="text-sm font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400"><%= group.title %></h3>
+                    <% } %>
+                    <ul class="mt-2 space-y-2 text-sm text-gray-700 dark:text-gray-200 list-disc pl-5">
+                        <% group.items.forEach(function (item) { %>
+                            <li class="[&_code]:rounded [&_code]:bg-gray-100 [&_code]:px-1 [&_code]:dark:bg-gray-900"><%- item %></li>
+                        <% }); %>
+                    </ul>
+                </div>
+            <% }); %>
+        </section>
+    <% }); %>
+</div>
