@@ -10,6 +10,7 @@ Catatan perubahan yang dikerjakan pada kode SIMPELL ini. Belum ada tag versi bar
 - Pendingan MS FO Kepri memakai kolom sheet PENDINGAN MS FO KEPRI: tanggal, no tiket, no jaringan, customer, rincian, akses, PJ, status, dan keterangan.
 - Kedua daftar bisa dicari, diurutkan, dan disaring per kolom. Tanda `-` mencari sel kosong.
 - Saat tabel masih kosong, aplikasi mengimpor baris dari `SIMPELL.xlsx`. Sel `-` disimpan sebagai kosong.
+- Data PM MS FO Kepri mengikuti blok di sheet: jenis, periode, target, nomor, tanggal, no tiket, no jaringan, customer, dan rincian. Slot target yang masih kosong ikut tersimpan.
 
 ### Data customer
 

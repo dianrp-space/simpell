@@ -58,6 +58,7 @@ try {
     const qcPsbRoutes = require('./routes/qc-psb');
     const msFoRoutes = require('./routes/ms-fo');
     const pendingMsFoRoutes = require('./routes/pending-ms-fo');
+    const pmMsFoRoutes = require('./routes/pm-ms-fo');
     const importQcPsbIfEmpty = require('./utils/importQcPsb');
     const importMsFoIfEmpty = require('./utils/importMsFo');
 
@@ -209,7 +210,7 @@ try {
     app.use('/qc-psb', isStaff, qcPsbRoutes);
     app.use('/ms-fo', isStaff, msFoRoutes);
     app.use('/pending-ms-fo', isStaff, pendingMsFoRoutes);
-    app.use('/pm-ms-fo', isStaff, modulKosongRoutes);
+    app.use('/pm-ms-fo', isStaff, pmMsFoRoutes);
     app.use('/data-spliter', isStaff, modulKosongRoutes);
     app.use('/data-core-remote', isStaff, modulKosongRoutes);
     app.use('/data-core-trunk', isStaff, modulKosongRoutes);
@@ -262,8 +263,8 @@ try {
             await ensureSchema(sequelize);
             await importQcPsbIfEmpty();
             const msFoImport = await importMsFoIfEmpty();
-            if (msFoImport.msFo || msFoImport.pending) {
-                console.log(`Imported DATA MS FO KEPRI ${msFoImport.msFo}, PENDINGAN MS FO KEPRI ${msFoImport.pending}`);
+            if (msFoImport.msFo || msFoImport.pending || msFoImport.pm) {
+                console.log(`Imported DATA MS FO KEPRI ${msFoImport.msFo}, PENDINGAN MS FO KEPRI ${msFoImport.pending}, DATA PM MS FO KEPRI ${msFoImport.pm}`);
             }
             await backfillAdminNotifications();
             await ensureAdmin();

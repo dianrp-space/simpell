@@ -12,7 +12,7 @@
                 <% fields.forEach(function (field) { %>
                     <% const current = data && data[field.name] != null ? data[field.name] : '';
                        const dateValue = field.type === 'date'
-                           ? (current ? moment(current).format('YYYY-MM-DD') : (data ? '' : moment().format('YYYY-MM-DD')))
+                           ? (current ? moment(current).format('YYYY-MM-DD') : (data || field.optional ? '' : moment().format('YYYY-MM-DD')))
                            : ''; %>
                     <div class="<%= field.wide ? 'md:col-span-2' : '' %>">
                         <label for="<%= field.name %>" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">

@@ -45,13 +45,15 @@
                     <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                 </div>
             </div>
-            <select name="status" id="statusFilter"
-                class="w-full md:w-48 px-4 py-2.5 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg text-sm text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500">
-                <option value="">Semua Status</option>
-                <% statuses.forEach(function (item) { %>
-                    <option value="<%= item %>" <%= status === item ? 'selected' : '' %>><%= item %></option>
-                <% }); %>
-            </select>
+            <% if (statuses && statuses.length) { %>
+                <select name="status" id="statusFilter"
+                    class="w-full md:w-48 px-4 py-2.5 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg text-sm text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500">
+                    <option value=""><%= filterLabel || 'Semua Status' %></option>
+                    <% statuses.forEach(function (item) { %>
+                        <option value="<%= item %>" <%= status === item ? 'selected' : '' %>><%= item %></option>
+                    <% }); %>
+                </select>
+            <% } %>
             <% Object.entries(filters).forEach(function (entry) { if (entry[1]) { %>
                 <input type="hidden" name="f_<%= entry[0] %>" value="<%= entry[1] %>">
             <% } }); %>
@@ -67,6 +69,9 @@
 
     <form id="columnFilters" action="<%= base %>" method="GET">
         <% if (search) { %><input type="hidden" name="search" value="<%= search %>"><% } %>
+        <% if (status && !columns.some(function (column) { return column.key === 'status'; })) { %>
+            <input type="hidden" name="status" value="<%= status %>">
+        <% } %>
         <% if (sort) { %>
             <input type="hidden" name="sort" value="<%= sort %>">
             <input type="hidden" name="dir" value="<%= dir %>">

@@ -69,7 +69,9 @@ function buildWhere(state, options = {}) {
         }
         and.push(textClause(field, value));
     });
-    if (options.withStatus !== false && state.status) and.push({ status: state.status });
+    if (options.withStatus !== false && state.status) {
+        and.push({ [options.statusField || 'status']: state.status });
+    }
     return and.length ? { [Op.and]: and } : {};
 }
 

@@ -3,6 +3,7 @@ const path = require('path');
 const ExcelJS = require('exceljs');
 const MsFo = require('../models/MsFo');
 const PendingMsFo = require('../models/PendingMsFo');
+const PmMsFo = require('../models/PmMsFo');
 const { cellText, cleanText, cleanNumber, parseDisplayDate } = require('./sheetValue');
 
 function workbookPath() {
@@ -13,8 +14,51 @@ function textAt(row, column, max) {
     return cleanText(row.getCell(column).value, max);
 }
 
+function parsePmBlock(title) {
+    const match = String(title).match(/^(.*?)\s*[-–]\s*(.*?)\s*\[\s*Target\s*(\d+)\s*\]\s*$/i);
+    if (!match) {
+        return { judul: title, jenis: title, periode: null, target: null };
+    }
+    return {
+        judul: title,
+        jenis: match[1].trim(),
+        periode: match[2].trim(),
+        target: Number(match[3])
+    };
+}
+
+function readPmSheet(sheet) {
+    const rows = [];
+    if (!sheet) return rows;
+    let block = null;
+    sheet.eachRow((row) => {
+        const label = cellText(row.getCell(2).value).replace(/\s+/g, ' ').trim();
+        if (!label) return;
+        if (/^no\.?$/i.test(label)) return;
+        if (!/^\d+$/.test(label)) {
+            block = parsePmBlock(label);
+            return;
+        }
+        if (!block) return;
+        rows.push({
+            urutan: rows.length + 1,
+            judul: block.judul,
+            jenis: block.jenis,
+            periode: block.periode,
+            target: block.target,
+            nomor: Number(label),
+            tanggal: parseDisplayDate(row.getCell(3).value),
+            no_ticket: textAt(row, 4, 100),
+            no_jaringan: textAt(row, 5, 100),
+            customer: textAt(row, 6, 255),
+            rincian: textAt(row, 7)
+        });
+    });
+    return rows;
+}
+
 async function readWorkbook(filePath = workbookPath()) {
-    if (!fs.existsSync(filePath)) return { msFo: [], pending: [] };
+    if (!fs.existsSync(filePath)) return { msFo: [], pending: [], pm: [] };
     const workbook = new ExcelJS.Workbook();
     await workbook.xlsx.readFile(filePath);
 
@@ -64,18 +108,19 @@ async function readWorkbook(filePath = workbookPath()) {
         });
     }
 
-    return { msFo, pending };
+    return { msFo, pending, pm: readPmSheet(workbook.getWorksheet('DATA PM MS FO KEPRI')) };
 }
 
 async function importMsFoIfEmpty() {
-    const [msCount, pendingCount] = await Promise.all([
+    const [msCount, pendingCount, pmCount] = await Promise.all([
         MsFo.count(),
-        PendingMsFo.count()
+        PendingMsFo.count(),
+        PmMsFo.count()
     ]);
-    if (msCount > 0 && pendingCount > 0) return { msFo: 0, pending: 0 };
+    if (msCount > 0 && pendingCount > 0 && pmCount > 0) return { msFo: 0, pending: 0, pm: 0 };
 
     const data = await readWorkbook();
-    const inserted = { msFo: 0, pending: 0 };
+    const inserted = { msFo: 0, pending: 0, pm: 0 };
     if (msCount === 0 && data.msFo.length) {
         await MsFo.bulkCreate(data.msFo);
         inserted.msFo = data.msFo.length;
@@ -83,6 +128,10 @@ async function importMsFoIfEmpty() {
     if (pendingCount === 0 && data.pending.length) {
         await PendingMsFo.bulkCreate(data.pending);
         inserted.pending = data.pending.length;
+    }
+    if (pmCount === 0 && data.pm.length) {
+        await PmMsFo.bulkCreate(data.pm);
+        inserted.pm = data.pm.length;
     }
     return inserted;
 }

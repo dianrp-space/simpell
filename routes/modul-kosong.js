@@ -2,12 +2,6 @@ const express = require('express');
 const router = express.Router();
 
 const PAGES = {
-    '/pm-ms-fo': {
-        title: 'Data PM MS FO Kepri',
-        group: 'Manage Service FO Kepri',
-        columns: ['No', 'Tanggal', 'No Ticket', 'No Jaringan', 'Customer', 'Rincian'],
-        note: 'Sheet Excel tersusun per blok bulan, misalnya PM ODP dan PM Closure. Modul ini belum ada di menu sebelumnya.'
-    },
     '/data-spliter': {
         title: 'Data Spliter',
         group: 'Data FO Kepri',
