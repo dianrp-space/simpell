@@ -104,31 +104,42 @@ async function getDashboardStats() {
         pelanggan_total, pelanggan_active, pelanggan_inactive, pelanggan_suspended
     };
 
-    // Record GGN & PM, grouped by year and month from tanggal
+    // Record GGN & PM, grouped by year and month from tanggal.
+    // Case yang mengandung "PM" masuk seri PM. Sisanya dihitung sebagai GGN.
     const [recordRows] = await sequelize.query(
-        `SELECT YEAR(tanggal) AS year, MONTH(tanggal) AS month, COUNT(id) AS count
+        `SELECT YEAR(tanggal) AS year, MONTH(tanggal) AS month,
+                SUM(CASE WHEN UPPER(IFNULL(case_type, '')) LIKE '%PM%' THEN 1 ELSE 0 END) AS pm,
+                SUM(CASE WHEN UPPER(IFNULL(case_type, '')) LIKE '%PM%' THEN 0 ELSE 1 END) AS ggn
          FROM record_ggn
          WHERE tanggal IS NOT NULL
          GROUP BY YEAR(tanggal), MONTH(tanggal)
          ORDER BY year ASC, month ASC`
     );
     const monthLabels = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+    const emptySeries = () => ({ ggn: Array(12).fill(0), pm: Array(12).fill(0) });
     const byYear = new Map();
     recordRows.forEach((row) => {
         const year = String(row.year);
         const month = Number(row.month);
-        if (!byYear.has(year)) byYear.set(year, Array(12).fill(0));
-        if (month >= 1 && month <= 12) byYear.get(year)[month - 1] = Number(row.count) || 0;
+        if (!byYear.has(year)) byYear.set(year, emptySeries());
+        if (month >= 1 && month <= 12) {
+            const bucket = byYear.get(year);
+            bucket.ggn[month - 1] = Number(row.ggn) || 0;
+            bucket.pm[month - 1] = Number(row.pm) || 0;
+        }
     });
-    const years = [...byYear.keys()];
     const currentYear = String(new Date().getFullYear());
+    if (!byYear.has(currentYear)) byYear.set(currentYear, emptySeries());
+    const years = [...byYear.keys()].sort();
+    const sum = (values) => values.reduce((total, count) => total + count, 0);
     const chartData = {
         months: monthLabels,
         years,
-        defaultYear: years.includes(currentYear) ? currentYear : (years[years.length - 1] || currentYear),
+        defaultYear: currentYear,
         yearly: {
             categories: years,
-            data: years.map((year) => byYear.get(year).reduce((sum, count) => sum + count, 0))
+            ggn: years.map((year) => sum(byYear.get(year).ggn)),
+            pm: years.map((year) => sum(byYear.get(year).pm))
         },
         monthly: Object.fromEntries(years.map((year) => [year, byYear.get(year)]))
     };
@@ -155,7 +166,7 @@ router.get('/dashboard', async (req, res) => {
         res.render('dashboard', {
             title: 'Dashboard - SIMPELL',
             stats: {},
-            chartData: { months: [], years: [], defaultYear: '', yearly: { categories: [], data: [] }, monthly: {} },
+            chartData: { months: [], years: [], defaultYear: '', yearly: { categories: [], ggn: [], pm: [] }, monthly: {} },
             error_msg: 'Gagal memuat statistik dashboard'
         });
     }
@@ -243,25 +254,27 @@ router.get('/export-dashboard', async (req, res) => {
         const sheetChart = workbook.addWorksheet('Data Grafik');
         sheetChart.columns = [
             { header: 'Periode', key: 'period', width: 20 },
-            { header: 'Jumlah', key: 'count', width: 15 }
+            { header: 'GGN', key: 'ggn', width: 12 },
+            { header: 'PM', key: 'pm', width: 12 }
         ];
 
         const addChartHeader = (title) => {
-            const row = sheetChart.addRow([title, '']);
+            const row = sheetChart.addRow([title, '', '']);
             row.font = { bold: true, color: { argb: 'FFFFFFFF' } };
-            row.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF2563EB' } }; // Blue
+            row.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF2563EB' } };
         };
 
         addChartHeader('Per Tahun');
         chartData.yearly.categories.forEach((year, i) => {
-            sheetChart.addRow({ period: year, count: chartData.yearly.data[i] });
+            sheetChart.addRow({ period: year, ggn: chartData.yearly.ggn[i], pm: chartData.yearly.pm[i] });
         });
 
         chartData.years.forEach((year) => {
-            sheetChart.addRow(['', '']);
+            const series = chartData.monthly[year] || { ggn: [], pm: [] };
+            sheetChart.addRow(['', '', '']);
             addChartHeader('Per Bulan ' + year);
             chartData.months.forEach((month, i) => {
-                sheetChart.addRow({ period: month + ' ' + year, count: chartData.monthly[year][i] });
+                sheetChart.addRow({ period: month + ' ' + year, ggn: series.ggn[i] || 0, pm: series.pm[i] || 0 });
             });
         });
 

@@ -47,11 +47,10 @@ Catatan perubahan yang dikerjakan pada kode SIMPELL ini. Belum ada tag versi bar
 
 ### Dashboard
 
-- Dashboard menampilkan dua grafik dari Record GGN & PM, dihitung dari tanggal tiap record.
-- Grafik per tahun menunjukkan jumlah tiket setiap tahun yang punya data.
-- Grafik per bulan menunjukkan Januari sampai Desember. Tahun bisa diganti dari pilihan di kartu grafik.
-- Bulan tanpa tiket tetap tampil dengan nilai nol.
-- Unduhan Excel dashboard ikut memuat angka per tahun dan per bulan.
+- Dashboard menampilkan tiga grafik Record GGN & PM untuk tahun yang dipilih: perbandingan batang GGN dan PM per bulan, tren garis GGN, dan tren garis PM.
+- GGN berwarna merah dan PM berwarna hijau toska. Case yang mengandung PM masuk seri PM. Record lain dihitung sebagai GGN.
+- Januari sampai Desember tetap tampil. Bulan tanpa tiket bernilai nol. Grafik PM memakai skala sendiri.
+- Unduhan Excel dashboard memuat jumlah GGN dan PM per tahun dan per bulan.
 
 ## 2026-11-12
 
