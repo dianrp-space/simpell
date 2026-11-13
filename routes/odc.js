@@ -7,7 +7,7 @@ const { paginate } = require('../utils/paginate');
 const { isEditor } = require('../middleware/auth');
 
 const CORE_COLORS = ['Blue', 'Orange', 'Green', 'Brown', 'Gray', 'White', 'Red', 'Black', 'Yellow', 'Purple', 'Pink', 'Aqua'];
-const STATUSES = ['Active', 'Cut', 'Alokasi', 'Idle', 'None'];
+const STATUSES = ['Active', 'Cut', 'Alokasi', 'Idle', 'None', 'Bad'];
 const COLOR_HEX = {
     'Blue': '#0000FF', 'Orange': '#FF8C00', 'Green': '#008000', 'Brown': '#8B4513',
     'Gray': '#808080', 'White': '#FFFFFF', 'Red': '#FF0000', 'Black': '#000000',

@@ -18,9 +18,13 @@ Catatan perubahan yang dikerjakan pada kode SIMPELL ini. Belum ada tag versi bar
 
 ### Data ODC
 
-- Kolom status di detail Data ODC bisa dipilih: Active, Cut, Alokasi, Idle, dan None.
-- Active hijau, Cut merah, Alokasi biru, Idle kuning, dan None abu-abu.
-- Status Bad yang sudah tersimpan tetap tampil. Bad tidak ada di pilihan baru.
+- Kolom status di detail Data ODC bisa dipilih: Active, Cut, Alokasi, Idle, None, dan Bad.
+- Active hijau, Cut merah, Alokasi biru, Idle kuning, None abu-abu, dan Bad merah muda.
+- Kartu di detail menghitung Capacity plus setiap status. Core penanda sector atau tray yang kosong tidak ikut dihitung.
+
+### Dashboard
+
+- Ucapan di dashboard mengikuti jam WIB: Selamat Pagi pukul 04.00–10.59, Selamat Siang pukul 11.00–14.59, Selamat Sore pukul 15.00–18.59, dan Selamat Malam pukul 19.00–03.59.
 
 ### 3rd Party
 

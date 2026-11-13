@@ -27,84 +27,42 @@
             <% } %>
     </div>
 
-    <% const totalCapacity=Number(data.capacity) || 0; const activeCount=data.cores ? data.cores.filter(c=> c.status ===
-        'Active').length : 0;
-        const badCount = data.cores ? data.cores.filter(c => c.status === 'Bad').length : 0;
-        const availableCount = totalCapacity - activeCount - badCount;
+    <% const totalCapacity = Number(data.capacity) || 0;
+        const statusCards = [
+            { name: 'Active', tone: 'green' },
+            { name: 'Cut', tone: 'red' },
+            { name: 'Alokasi', tone: 'blue' },
+            { name: 'Idle', tone: 'amber' },
+            { name: 'None', tone: 'gray' },
+            { name: 'Bad', tone: 'rose' }
+        ];
+        const countedCores = data.cores ? data.cores.filter(c => c.tray !== 0 && c.tube !== 0 && c.core_number !== 0) : [];
+        const statusTotals = {};
+        statusCards.forEach(function (card) { statusTotals[card.name] = 0; });
+        countedCores.forEach(function (core) {
+            if (Object.prototype.hasOwnProperty.call(statusTotals, core.status)) statusTotals[core.status] += 1;
+        });
+        const cardTone = {
+            green: 'bg-green-50 dark:bg-green-900/10 border-green-100 dark:border-green-900/20 text-green-600 dark:text-green-400',
+            red: 'bg-red-50 dark:bg-red-900/10 border-red-100 dark:border-red-900/20 text-red-600 dark:text-red-400',
+            blue: 'bg-blue-50 dark:bg-blue-900/10 border-blue-100 dark:border-blue-900/20 text-blue-600 dark:text-blue-400',
+            amber: 'bg-amber-50 dark:bg-amber-900/10 border-amber-100 dark:border-amber-900/20 text-amber-700 dark:text-amber-400',
+            gray: 'bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-400',
+            rose: 'bg-rose-50 dark:bg-rose-900/10 border-rose-100 dark:border-rose-900/20 text-rose-600 dark:text-rose-400'
+        };
         %>
 
-        <!-- Statistics Cards -->
-        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            <!-- Capacity Card -->
-            <div
-                class="bg-blue-50 dark:bg-blue-900/10 border border-blue-100 dark:border-blue-900/20 rounded-xl p-3 flex items-center gap-3">
-                <div class="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg text-blue-600 dark:text-blue-400">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-                    </svg>
-                </div>
-                <div>
-                    <p class="text-[10px] font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wider">Capacity
-                    </p>
-                    <p class="text-xl font-bold text-gray-900 dark:text-white leading-none">
-                        <%= totalCapacity %>
-                    </p>
-                </div>
+        <div class="grid grid-cols-2 sm:grid-cols-4 xl:grid-cols-7 gap-3">
+            <div class="bg-sky-50 dark:bg-sky-900/10 border border-sky-100 dark:border-sky-900/20 rounded-xl p-3">
+                <p class="text-[10px] font-bold text-sky-600 dark:text-sky-400 uppercase tracking-wider">Capacity</p>
+                <p class="mt-1 text-xl font-bold text-gray-900 dark:text-white leading-none"><%= totalCapacity %></p>
             </div>
-
-            <!-- Available Card -->
-            <div
-                class="bg-sky-50 dark:bg-sky-900/10 border border-sky-100 dark:border-sky-900/20 rounded-xl p-3 flex items-center gap-3">
-                <div class="p-2 bg-sky-100 dark:bg-sky-900/30 rounded-lg text-sky-600 dark:text-sky-400">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
+            <% statusCards.forEach(function (card) { %>
+                <div class="border rounded-xl p-3 <%= cardTone[card.tone] %>">
+                    <p class="text-[10px] font-bold uppercase tracking-wider"><%= card.name %></p>
+                    <p class="mt-1 text-xl font-bold text-gray-900 dark:text-white leading-none"><%= statusTotals[card.name] %></p>
                 </div>
-                <div>
-                    <p class="text-[10px] font-bold text-sky-600 dark:text-sky-400 uppercase tracking-wider">Available
-                    </p>
-                    <p class="text-xl font-bold text-gray-900 dark:text-white leading-none">
-                        <%= availableCount %>
-                    </p>
-                </div>
-            </div>
-
-            <!-- Active Card -->
-            <div
-                class="bg-green-50 dark:bg-green-900/10 border border-green-100 dark:border-green-900/20 rounded-xl p-3 flex items-center gap-3">
-                <div class="p-2 bg-green-100 dark:bg-green-900/30 rounded-lg text-green-600 dark:text-green-400">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M13 10V3L4 14h7v7l9-11h-7z" />
-                    </svg>
-                </div>
-                <div>
-                    <p class="text-[10px] font-bold text-green-600 dark:text-green-400 uppercase tracking-wider">Active
-                    </p>
-                    <p class="text-xl font-bold text-gray-900 dark:text-white leading-none">
-                        <%= activeCount %>
-                    </p>
-                </div>
-            </div>
-
-            <!-- Bad Card -->
-            <div
-                class="bg-red-50 dark:bg-red-900/10 border border-red-100 dark:border-red-900/20 rounded-xl p-3 flex items-center gap-3">
-                <div class="p-2 bg-red-100 dark:bg-red-900/30 rounded-lg text-red-600 dark:text-red-400">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                </div>
-                <div>
-                    <p class="text-[10px] font-bold text-red-600 dark:text-red-400 uppercase tracking-wider">Bad</p>
-                    <p class="text-xl font-bold text-gray-900 dark:text-white leading-none">
-                        <%= badCount %>
-                    </p>
-                </div>
-            </div>
+            <% }); %>
         </div>
         <% if (isEditor) { %>
             <a href="/odc/<%= data.id %>/edit?return_to=/odc/<%= data.id %>"
