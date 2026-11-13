@@ -3,6 +3,7 @@ const router = express.Router();
 const ExcelJS = require('exceljs');
 const sequelize = require('../config/database');
 const { MsFo } = require('../models');
+const pelangganChoices = require('../utils/pelangganChoices');
 const { isEditor } = require('../middleware/auth');
 const { paginate } = require('../utils/paginate');
 const logActivity = require('../utils/activityLogger');
@@ -76,8 +77,8 @@ function fieldsFor(lists) {
     const text = (name, label, extra = {}) => ({ name, label, type: 'text', ...extra });
     return [
         { name: 'nomor', label: 'No.', type: 'number', placeholder: 'Nomor urut sheet' },
-        text('no_jaringan', 'No Jaringan', { required: true, placeholder: 'Nomor jaringan' }),
-        text('customer', 'Customer', { required: true, wide: true, placeholder: 'Nama customer' }),
+        text('no_jaringan', 'No Jaringan', { type: 'customer', required: true, wide: true, placeholder: 'Cari nomor jaringan atau customer' }),
+        text('customer', 'Customer', { required: true, wide: true, placeholder: 'Terisi saat nomor jaringan dipilih' }),
         text('service', 'Service', { list: 'service', placeholder: 'Contoh: VPN, INET' }),
         text('bandwidth', 'Bandwidth', { placeholder: 'Contoh: 20 Mbps' }),
         text('akses', 'Akses', { list: 'akses', placeholder: 'Contoh: Akses FO' }),
@@ -204,7 +205,8 @@ router.get('/create', isEditor, async (req, res) => {
         base: BASE,
         data: null,
         fields: fieldsFor(lists),
-        lists
+        lists,
+        pelangganList: await pelangganChoices()
     });
 });
 
@@ -239,7 +241,8 @@ router.get('/:id/edit', isEditor, async (req, res) => {
         base: BASE,
         data,
         fields: fieldsFor(lists),
-        lists
+        lists,
+        pelangganList: await pelangganChoices()
     });
 });
 

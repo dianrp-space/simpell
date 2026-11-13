@@ -1,0 +1,96 @@
+<script id="pelanggan-choices" type="application/json"><%- JSON.stringify(typeof pelangganList !== 'undefined' && pelangganList ? pelangganList : []).replace(/</g, '\\u003c') %></script>
+<script>
+    (function () {
+        if (window.__nojarSearchReady) return;
+        window.__nojarSearchReady = true;
+        const choices = JSON.parse(document.getElementById('pelanggan-choices').textContent || '[]');
+
+        document.querySelectorAll('[data-nojar]').forEach(function (root) {
+            const search = root.querySelector('input[type="text"]');
+            const hidden = root.querySelector('input[type="hidden"]');
+            const dropdown = root.querySelector('[data-nojar-dropdown]');
+            const selected = document.getElementById(hidden.id + '_selected');
+            const selectedText = document.getElementById(hidden.id + '_selected_text');
+            const clearButton = root.querySelector('[data-nojar-clear]');
+            const fill = document.getElementById(root.getAttribute('data-fill') || 'customer');
+            if (!search || !hidden || !dropdown) return;
+
+            function hide() { dropdown.classList.add('hidden'); }
+
+            function show(query) {
+                const needle = query.toLowerCase();
+                const matches = choices.filter(function (item) {
+                    return String(item.no_jaringan || '').toLowerCase().includes(needle)
+                        || String(item.nama_pelanggan || '').toLowerCase().includes(needle);
+                }).slice(0, 10);
+                dropdown.innerHTML = '';
+                if (!matches.length) {
+                    const empty = document.createElement('div');
+                    empty.className = 'px-4 py-3 text-sm text-gray-500';
+                    empty.textContent = 'Tidak ada customer ditemukan';
+                    dropdown.appendChild(empty);
+                } else {
+                    matches.forEach(function (item) {
+                        const row = document.createElement('button');
+                        row.type = 'button';
+                        row.className = 'block w-full px-4 py-3 text-left hover:bg-gray-100 dark:hover:bg-gray-700 border-b border-gray-100 dark:border-gray-700 last:border-0';
+                        const number = document.createElement('div');
+                        number.className = 'text-sm font-medium text-gray-900 dark:text-white';
+                        number.textContent = item.no_jaringan || '-';
+                        const name = document.createElement('div');
+                        name.className = 'text-sm text-gray-500 dark:text-gray-400';
+                        name.textContent = item.nama_pelanggan || '-';
+                        row.appendChild(number);
+                        row.appendChild(name);
+                        row.addEventListener('click', function () {
+                            hidden.value = item.no_jaringan || '';
+                            if (fill) fill.value = item.nama_pelanggan || '';
+                            if (selectedText) selectedText.textContent = (item.no_jaringan || '-') + ' - ' + (item.nama_pelanggan || '-');
+                            if (selected) selected.classList.remove('hidden');
+                            search.value = '';
+                            hide();
+                        });
+                        dropdown.appendChild(row);
+                    });
+                }
+                dropdown.classList.remove('hidden');
+            }
+
+            search.addEventListener('input', function () {
+                search.setCustomValidity('');
+                const query = search.value.trim();
+                hidden.value = query;
+                if (selected) selected.classList.add('hidden');
+                if (query) show(query);
+                else hide();
+            });
+            search.addEventListener('focus', function () {
+                if (search.value.trim()) show(search.value.trim());
+            });
+            if (clearButton) {
+                clearButton.addEventListener('click', function () {
+                    hidden.value = '';
+                    if (fill) fill.value = '';
+                    if (selected) selected.classList.add('hidden');
+                    search.value = '';
+                    search.focus();
+                });
+            }
+            document.addEventListener('click', function (event) {
+                if (!root.contains(event.target)) hide();
+            });
+            if (search.form) {
+                search.form.addEventListener('submit', function (event) {
+                    if (!hidden.value && search.value.trim()) hidden.value = search.value.trim();
+                    if (root.getAttribute('data-required') === 'true' && !hidden.value) {
+                        event.preventDefault();
+                        search.setCustomValidity('No jaringan wajib diisi');
+                        search.reportValidity();
+                    } else {
+                        search.setCustomValidity('');
+                    }
+                });
+            }
+        });
+    })();
+</script>

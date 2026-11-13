@@ -112,19 +112,19 @@
                         Customer</th>
                     <th
                         class="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider whitespace-nowrap">
+                        Rincian</th>
+                    <th
+                        class="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider whitespace-nowrap">
                         Akses</th>
                     <th
                         class="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider whitespace-nowrap">
-                        Rincian</th>
+                        PJ</th>
                     <th
                         class="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider whitespace-nowrap">
                         Status</th>
                     <th
                         class="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider whitespace-nowrap">
                         Keterangan</th>
-                    <th
-                        class="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider whitespace-nowrap">
-                        PJ</th>
                     <% if (isEditor) { %>
                         <th
                             class="px-3 py-3 text-center text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider whitespace-nowrap sticky right-0 top-0 bg-gray-50 dark:bg-gray-900 z-30 shadow-[-4px_0_8px_-4px_rgba(0,0,0,0.1)] w-1">
@@ -174,12 +174,16 @@
                                         <%= item.pelanggan ? item.pelanggan.nama_pelanggan : '-' %>
                                     </span>
                                 </td>
+                                <td class="px-6 py-4 text-gray-700 dark:text-gray-300 text-sm align-top min-w-[300px]">
+                                    <%- formatText(item.rincian) %>
+                                </td>
                                 <td
                                     class="px-6 py-4 text-gray-700 dark:text-gray-300 text-sm whitespace-nowrap align-top">
                                     <%= item.akses || '-' %>
                                 </td>
-                                <td class="px-6 py-4 text-gray-700 dark:text-gray-300 text-sm align-top min-w-[300px]">
-                                    <%- formatText(item.rincian) %>
+                                <td
+                                    class="px-6 py-4 text-gray-700 dark:text-gray-300 text-sm whitespace-nowrap align-top">
+                                    <%= item.pj || '-' %>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap align-top">
                                     <% let statusClass='' ; if (item.status==='Pending' ) {
@@ -198,10 +202,6 @@
                                 </td>
                                 <td class="px-6 py-4 text-gray-700 dark:text-gray-300 text-sm align-top min-w-[300px]">
                                     <%- formatText(item.keterangan) %>
-                                </td>
-                                <td
-                                    class="px-6 py-4 text-gray-700 dark:text-gray-300 text-sm whitespace-nowrap align-top">
-                                    <%= item.pj || '-' %>
                                 </td>
                                 <% if (isEditor) { %>
                                     <td

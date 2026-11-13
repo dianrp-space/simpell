@@ -128,7 +128,7 @@ router.get('/export', async (req, res) => {
 
             // Table Header
             sheet.getRow(4).values = [
-                'No', 'Port OLT', 'SN Modem', 'No Jaringan', 'Nama Pelanggan',
+                'No', 'Port OLT', (req.aksesJenis === 'FO_P2P' || req.aksesJenis === 'DIRECT_LAN' || req.aksesJenis === 'FO_XCONNECT') ? 'NODE' : 'SN Modem', 'No Jaringan', 'Nama Pelanggan',
                 'Redaman', 'Tanggal Redaman', 'Bandwidth', 'Keterangan'
             ];
             sheet.columns = [

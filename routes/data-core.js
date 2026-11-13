@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { DataCore, DataCoreSector } = require('../models');
+const pelangganChoices = require('../utils/pelangganChoices');
 const { Op } = require('sequelize');
 const { isEditor } = require('../middleware/auth');
 const ExcelJS = require('exceljs');
@@ -131,10 +132,11 @@ router.get('/', async (req, res) => {
 });
 
 // GET - Create jaringan form
-router.get('/create', isEditor, (req, res) => {
+router.get('/create', isEditor, async (req, res) => {
     res.render('data-core/form', {
         title: 'Tambah Data Core - SIMPELL',
-        data: null
+        data: null,
+        pelangganList: await pelangganChoices()
     });
 });
 
@@ -184,7 +186,8 @@ router.get('/:id/edit', isEditor, async (req, res) => {
         res.render('data-core/form', {
             title: 'Edit Data Core - SIMPELL',
             data,
-            return_url: return_url || '/data-core'
+            return_url: return_url || '/data-core',
+            pelangganList: await pelangganChoices()
         });
     } catch (error) {
         res.redirect('/data-core');

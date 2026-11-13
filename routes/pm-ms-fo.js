@@ -2,7 +2,8 @@ const express = require('express');
 const router = express.Router();
 const ExcelJS = require('exceljs');
 const sequelize = require('../config/database');
-const { PmMsFo, Pelanggan } = require('../models');
+const { PmMsFo } = require('../models');
+const pelangganChoices = require('../utils/pelangganChoices');
 const { isEditor } = require('../middleware/auth');
 const { paginate } = require('../utils/paginate');
 const logActivity = require('../utils/activityLogger');
@@ -218,14 +219,6 @@ router.get('/', async (req, res) => {
         res.redirect('/dashboard');
     }
 });
-
-async function pelangganChoices() {
-    return Pelanggan.findAll({
-        attributes: ['id', 'no_jaringan', 'nama_pelanggan'],
-        order: [['nama_pelanggan', 'ASC']],
-        raw: true
-    });
-}
 
 router.get('/create', isEditor, async (req, res) => {
     const lists = await choiceLists();

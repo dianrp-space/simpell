@@ -3,12 +3,13 @@ const router = express.Router();
 const { Op } = require('sequelize');
 const ExcelJS = require('exceljs');
 const { QcPsb } = require('../models');
+const pelangganChoices = require('../utils/pelangganChoices');
 const { isEditor } = require('../middleware/auth');
 const { paginate } = require('../utils/paginate');
 const logActivity = require('../utils/activityLogger');
 
 const STATUSES = ['Pending', 'Progress', 'Done'];
-const SEARCH_FIELDS = ['notik', 'nojar', 'qc_ke', 'jenis', 'customer', 'akses', 'pj', 'keterangan'];
+const SEARCH_FIELDS = ['nojar', 'qc_ke', 'jenis', 'customer', 'akses', 'pj', 'keterangan'];
 
 function payloadFrom(body) {
     const text = (value) => {
@@ -17,7 +18,6 @@ function payloadFrom(body) {
     };
     return {
         tanggal: body.tanggal,
-        notik: text(body.notik),
         nojar: text(body.nojar),
         qc_ke: text(body.qc_ke),
         jenis: text(body.jenis),
@@ -61,11 +61,10 @@ router.get('/export', async (req, res) => {
         const sheet = workbook.addWorksheet('QC PSB & PROJECT');
         sheet.columns = [
             { header: 'TANGGAL', key: 'tanggal', width: 16 },
-            { header: 'NOTIK', key: 'notik', width: 18 },
             { header: 'NOJAR', key: 'nojar', width: 18 },
+            { header: 'CUSTOMER', key: 'customer', width: 40 },
             { header: 'QC KE', key: 'qc_ke', width: 12 },
             { header: 'JENIS', key: 'jenis', width: 24 },
-            { header: 'CUSTOMER', key: 'customer', width: 40 },
             { header: 'AKSES', key: 'akses', width: 14 },
             { header: 'PJ', key: 'pj', width: 16 },
             { header: 'STATUS', key: 'status', width: 14 },
@@ -78,11 +77,10 @@ router.get('/export', async (req, res) => {
             const [year, month, day] = String(item.tanggal || '').split('-');
             sheet.addRow({
                 tanggal: day ? `${Number(day)}/${Number(month)}/${year}` : '',
-                notik: item.notik || '',
                 nojar: item.nojar || '',
+                customer: item.customer || '',
                 qc_ke: item.qc_ke || '',
                 jenis: item.jenis || '',
-                customer: item.customer || '',
                 akses: item.akses || '',
                 pj: item.pj || '',
                 status: item.status || '',
@@ -134,7 +132,8 @@ router.get('/create', isEditor, async (req, res) => {
     res.render('qc-psb/form', {
         title: 'Tambah QC PSB & Project - SIMPELL',
         data: null,
-        ...lists
+        ...lists,
+        pelangganList: await pelangganChoices()
     });
 });
 
@@ -161,7 +160,8 @@ router.get('/:id/edit', isEditor, async (req, res) => {
     res.render('qc-psb/form', {
         title: 'Edit QC PSB & Project - SIMPELL',
         data,
-        ...lists
+        ...lists,
+        pelangganList: await pelangganChoices()
     });
 });
 

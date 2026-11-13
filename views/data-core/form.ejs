@@ -25,14 +25,17 @@
 
             <!-- No Jaringan -->
             <div>
-                <label for="no_jaringan" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <label for="no_jaringan_search" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     No Jaringan / ID <span class="text-red-500">*</span>
                 </label>
-                <input type="text" id="no_jaringan" name="no_jaringan" required
-                    value="<%= data ? data.no_jaringan : '' %>"
-                    class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all font-mono"
-                    placeholder="Contoh: 2024422410-HYDRA-PUNGGUR">
-                <p class="mt-1 text-xs text-gray-500">Nomor identifikasi jaringan atau kode referensi</p>
+                <%- include('../partials/nojar-search', {
+                    name: 'no_jaringan',
+                    value: data ? data.no_jaringan : '',
+                    companion: data ? data.nama_lokasi : '',
+                    placeholder: 'Cari nomor jaringan atau customer',
+                    fill: 'nama_lokasi',
+                    required: true
+                }) %>
             </div>
 
             <!-- Nama Lokasi -->
@@ -43,7 +46,7 @@
                 <input type="text" id="nama_lokasi" name="nama_lokasi" required
                     value="<%= data ? data.nama_lokasi : '' %>"
                     class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                    placeholder="Contoh: HH PANRIL, CLOSURE GGN MUKA KUNING">
+                    placeholder="Terisi saat nomor jaringan dipilih">
                 <p class="mt-1 text-xs text-gray-500">Nama lokasi perangkat atau nama customer</p>
             </div>
 
@@ -79,3 +82,4 @@
         </form>
     </div>
 </div>
+<%- include('../partials/nojar-search-script') %>

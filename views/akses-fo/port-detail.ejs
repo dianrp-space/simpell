@@ -36,8 +36,7 @@
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                    <label class="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">SN
-                        Modem</label>
+                    <label class="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-1"><%= (aksesJenis === 'FO_P2P' || aksesJenis === 'DIRECT_LAN' || aksesJenis === 'FO_XCONNECT') ? 'NODE' : 'SN Modem' %></label>
                     <div
                         class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900/50 border border-gray-100 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white font-mono">
                         <%= data ? data.sn_modem || '-' : '-' %>

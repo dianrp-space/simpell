@@ -96,7 +96,7 @@
                             Port</th>
                         <th
                             class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider bg-blue-600 text-white">
-                            SN Modem</th>
+                            <%= (aksesJenis === 'FO_P2P' || aksesJenis === 'DIRECT_LAN' || aksesJenis === 'FO_XCONNECT') ? 'NODE' : 'SN Modem' %></th>
                         <th
                             class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider bg-blue-600 text-white">
                             No Jaringan</th>

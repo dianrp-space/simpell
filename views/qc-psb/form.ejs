@@ -5,29 +5,33 @@
         </a>
         <div>
             <h1 class="text-2xl font-bold text-gray-900 dark:text-white"><%= data ? 'Edit' : 'Tambah' %> QC PSB & Project</h1>
-            <p class="text-gray-500 dark:text-gray-400">Tanggal, no tiket, no jaringan, QC ke, jenis, customer, akses, PJ, status, keterangan</p>
+            <p class="text-gray-500 dark:text-gray-400">Tanggal, no jaringan, customer, QC ke, jenis, akses, PJ, status, keterangan</p>
         </div>
     </div>
 
     <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-6 shadow-sm">
         <form action="<%= data ? '/qc-psb/' + data.id + '?_method=PUT' : '/qc-psb' %>" method="POST" class="space-y-6">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
+                <div class="md:col-span-2">
                     <label for="tanggal" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Tanggal <span class="text-red-500">*</span></label>
                     <input type="date" id="tanggal" name="tanggal" required value="<%= data && data.tanggal ? moment(data.tanggal).format('YYYY-MM-DD') : moment().format('YYYY-MM-DD') %>"
                         class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500">
                 </div>
                 <div>
-                    <label for="notik" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">No Tiket</label>
-                    <input type="text" id="notik" name="notik" value="<%= data ? data.notik || '' : '' %>"
-                        class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
-                        placeholder="Nomor tiket">
+                    <label for="nojar_search" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">No Jaringan</label>
+                    <%- include('../partials/nojar-search', {
+                        name: 'nojar',
+                        value: data ? data.nojar || '' : '',
+                        companion: data ? data.customer || '' : '',
+                        placeholder: 'Cari nomor jaringan atau customer',
+                        fill: 'customer'
+                    }) %>
                 </div>
                 <div>
-                    <label for="nojar" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">No Jaringan</label>
-                    <input type="text" id="nojar" name="nojar" value="<%= data ? data.nojar || '' : '' %>"
+                    <label for="customer" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Customer</label>
+                    <input type="text" id="customer" name="customer" value="<%= data ? data.customer || '' : '' %>"
                         class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
-                        placeholder="Nomor jaringan">
+                        placeholder="Terisi saat nomor jaringan dipilih">
                 </div>
                 <div>
                     <label for="qc_ke" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">QC ke</label>
@@ -42,12 +46,6 @@
                         class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
                         placeholder="Contoh: PSB / RELOKASI / PM">
                     <datalist id="jenis_list"><% jenis.forEach(function (item) { %><option value="<%= item %>"><% }); %></datalist>
-                </div>
-                <div class="md:col-span-2">
-                    <label for="customer" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Customer</label>
-                    <input type="text" id="customer" name="customer" value="<%= data ? data.customer || '' : '' %>"
-                        class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
-                        placeholder="Nama customer">
                 </div>
                 <div>
                     <label for="akses" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Akses</label>
@@ -82,3 +80,4 @@
         </form>
     </div>
 </div>
+<%- include('../partials/nojar-search-script') %>

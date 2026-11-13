@@ -3,6 +3,7 @@ const router = express.Router();
 const ExcelJS = require('exceljs');
 const sequelize = require('../config/database');
 const { PendingMsFo } = require('../models');
+const pelangganChoices = require('../utils/pelangganChoices');
 const { isEditor } = require('../middleware/auth');
 const { paginate } = require('../utils/paginate');
 const logActivity = require('../utils/activityLogger');
@@ -69,8 +70,8 @@ function fieldsFor(lists) {
     return [
         { name: 'tanggal', label: 'Tanggal', type: 'date', required: true },
         { name: 'no_ticket', label: 'No Ticket', type: 'text', placeholder: 'Nomor tiket' },
-        { name: 'no_jaringan', label: 'No Jaringan', type: 'text', list: 'no_jaringan', placeholder: 'Contoh: TARGET - 15' },
-        { name: 'customer', label: 'Customer', type: 'text', list: 'customer', placeholder: 'Contoh: PM REMOTE' },
+        { name: 'no_jaringan', label: 'No Jaringan', type: 'customer', wide: true, placeholder: 'Cari nomor jaringan atau customer' },
+        { name: 'customer', label: 'Customer', type: 'text', list: 'customer', wide: true, placeholder: 'Terisi saat nomor jaringan dipilih' },
         { name: 'akses', label: 'Akses', type: 'text', list: 'akses', placeholder: 'Contoh: FO' },
         { name: 'status', label: 'Status', type: 'select', options: lists.status, default: 'Pending' },
         { name: 'rincian', label: 'Rincian', type: 'textarea', wide: true },
@@ -188,7 +189,8 @@ router.get('/create', isEditor, async (req, res) => {
         base: BASE,
         data: null,
         fields: fieldsFor(lists),
-        lists
+        lists,
+        pelangganList: await pelangganChoices()
     });
 });
 
@@ -223,7 +225,8 @@ router.get('/:id/edit', isEditor, async (req, res) => {
         base: BASE,
         data,
         fields: fieldsFor(lists),
-        lists
+        lists,
+        pelangganList: await pelangganChoices()
     });
 });
 

@@ -1,0 +1,18 @@
+<div data-nojar data-fill="<%= typeof fill !== 'undefined' && fill ? fill : 'customer' %>"<% if (typeof required !== 'undefined' && required) { %> data-required="true"<% } %>>
+    <div class="relative">
+        <input type="text" id="<%= name %>_search" autocomplete="off"
+            placeholder="<%= placeholder || 'Cari nomor jaringan atau customer' %>"
+            class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500">
+        <input type="hidden" id="<%= name %>" name="<%= name %>" value="<%= value || '' %>">
+        <div id="<%= name %>_dropdown" data-nojar-dropdown class="absolute z-50 hidden w-full mt-1 max-h-60 overflow-y-auto rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 shadow-lg"></div>
+    </div>
+    <div id="<%= name %>_selected" class="mt-2 <%= value ? '' : 'hidden' %>">
+        <div class="flex items-center gap-2 rounded-lg border border-blue-200 dark:border-blue-700 bg-blue-50 dark:bg-blue-900/30 p-2">
+            <span id="<%= name %>_selected_text" class="text-sm text-blue-700 dark:text-blue-300"><%= value || '' %><%= companion ? ' - ' + companion : '' %></span>
+            <button type="button" id="<%= name %>_clear" data-nojar-clear class="ml-auto text-blue-500 hover:text-blue-700" aria-label="Hapus pilihan">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+        </div>
+    </div>
+    <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">Cari nomor jaringan atau nama customer. Data customer terisi otomatis setelah dipilih.</p>
+</div>

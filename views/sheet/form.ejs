@@ -15,7 +15,7 @@
                            ? (current ? moment(current).format('YYYY-MM-DD') : (data || field.optional ? '' : moment().format('YYYY-MM-DD')))
                            : ''; %>
                     <div class="<%= field.wide ? 'md:col-span-2' : '' %>">
-                        <label for="<%= field.name %>" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        <label for="<%= field.type === 'customer' ? field.name + '_search' : field.name %>" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                             <%= field.label %><% if (field.required) { %> <span class="text-red-500">*</span><% } %>
                         </label>
                         <% if (field.type === 'fiber') { %>
@@ -36,22 +36,14 @@
                             </div>
                             <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">Nomor port 1 sampai 12 mengisi warna inti optik. Warna tetap bisa diganti setelahnya.</p>
                         <% } else if (field.type === 'customer') { %>
-                            <div class="relative">
-                                <input type="text" id="<%= field.name %>_search" autocomplete="off"
-                                    placeholder="<%= field.placeholder || 'Cari nomor jaringan atau customer' %>"
-                                    class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500">
-                                <input type="hidden" id="<%= field.name %>" name="<%= field.name %>" value="<%= current %>">
-                                <div id="<%= field.name %>_dropdown" class="absolute z-50 hidden w-full mt-1 max-h-60 overflow-y-auto rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 shadow-lg"></div>
-                            </div>
-                            <div id="<%= field.name %>_selected" class="mt-2 <%= current ? '' : 'hidden' %>">
-                                <div class="flex items-center gap-2 rounded-lg border border-blue-200 dark:border-blue-700 bg-blue-50 dark:bg-blue-900/30 p-2">
-                                    <span id="<%= field.name %>_selected_text" class="text-sm text-blue-700 dark:text-blue-300"><%= current %><%= data && data.customer ? ' - ' + data.customer : '' %></span>
-                                    <button type="button" id="<%= field.name %>_clear" class="ml-auto text-blue-500 hover:text-blue-700" aria-label="Hapus pilihan">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                                    </button>
-                                </div>
-                            </div>
-                            <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">Cari nomor jaringan atau nama customer. Nama customer terisi otomatis setelah dipilih.</p>
+                            <%- include('../partials/nojar-search', {
+                                name: field.name,
+                                value: current,
+                                companion: data && data[field.fill || 'customer'] ? data[field.fill || 'customer'] : '',
+                                placeholder: field.placeholder,
+                                fill: field.fill || 'customer',
+                                required: field.required
+                            }) %>
                         <% } else if (field.type === 'textarea') { %>
                             <textarea id="<%= field.name %>" name="<%= field.name %>" rows="4"
                                 class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"><%= current %></textarea>
@@ -88,85 +80,8 @@
         </form>
     </div>
 </div>
-<% const customerField = fields.find(function (field) { return field.type === 'customer'; }); %>
-<% if (customerField) { %>
-<script id="pelanggan-choices" type="application/json"><%- JSON.stringify(typeof pelangganList !== 'undefined' && pelangganList ? pelangganList : []).replace(/</g, '\\u003c') %></script>
-<script>
-    (function () {
-        const fieldName = <%- JSON.stringify(customerField.name) %>;
-        const choices = JSON.parse(document.getElementById('pelanggan-choices').textContent || '[]');
-        const search = document.getElementById(fieldName + '_search');
-        const hidden = document.getElementById(fieldName);
-        const dropdown = document.getElementById(fieldName + '_dropdown');
-        const selected = document.getElementById(fieldName + '_selected');
-        const selectedText = document.getElementById(fieldName + '_selected_text');
-        const clearButton = document.getElementById(fieldName + '_clear');
-        const customer = document.getElementById('customer');
-        if (!search || !hidden || !dropdown) return;
-
-        function hide() { dropdown.classList.add('hidden'); }
-
-        function show(query) {
-            const needle = query.toLowerCase();
-            const matches = choices.filter(function (item) {
-                return String(item.no_jaringan || '').toLowerCase().includes(needle)
-                    || String(item.nama_pelanggan || '').toLowerCase().includes(needle);
-            }).slice(0, 10);
-            dropdown.innerHTML = '';
-            if (!matches.length) {
-                const empty = document.createElement('div');
-                empty.className = 'px-4 py-3 text-sm text-gray-500';
-                empty.textContent = 'Tidak ada customer ditemukan';
-                dropdown.appendChild(empty);
-            } else {
-                matches.forEach(function (item) {
-                    const row = document.createElement('button');
-                    row.type = 'button';
-                    row.className = 'block w-full px-4 py-3 text-left hover:bg-gray-100 dark:hover:bg-gray-700 border-b border-gray-100 dark:border-gray-700 last:border-0';
-                    const number = document.createElement('div');
-                    number.className = 'text-sm font-medium text-gray-900 dark:text-white';
-                    number.textContent = item.no_jaringan || '-';
-                    const name = document.createElement('div');
-                    name.className = 'text-sm text-gray-500 dark:text-gray-400';
-                    name.textContent = item.nama_pelanggan || '-';
-                    row.appendChild(number);
-                    row.appendChild(name);
-                    row.addEventListener('click', function () {
-                        hidden.value = item.no_jaringan || '';
-                        if (customer) customer.value = item.nama_pelanggan || '';
-                        selectedText.textContent = (item.no_jaringan || '-') + ' - ' + (item.nama_pelanggan || '-');
-                        selected.classList.remove('hidden');
-                        search.value = '';
-                        hide();
-                    });
-                    dropdown.appendChild(row);
-                });
-            }
-            dropdown.classList.remove('hidden');
-        }
-
-        search.addEventListener('input', function () {
-            const query = search.value.trim();
-            if (query) show(query);
-            else hide();
-        });
-        search.addEventListener('focus', function () {
-            if (search.value.trim()) show(search.value.trim());
-        });
-        clearButton.addEventListener('click', function () {
-            hidden.value = '';
-            if (customer) customer.value = '';
-            selected.classList.add('hidden');
-            search.focus();
-        });
-        document.addEventListener('click', function (event) {
-            if (!search.contains(event.target) && !dropdown.contains(event.target)) hide();
-        });
-        search.form.addEventListener('submit', function () {
-            if (!hidden.value && search.value.trim()) hidden.value = search.value.trim();
-        });
-    })();
-</script>
+<% if (fields.some(function (field) { return field.type === 'customer'; })) { %>
+<%- include('../partials/nojar-search-script') %>
 <% } %>
 <% const fiberField = fields.find(function (field) { return field.type === 'fiber'; }); %>
 <% if (fiberField && fiberField.byPort) { %>

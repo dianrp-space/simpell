@@ -66,6 +66,34 @@ Catatan perubahan yang dikerjakan pada kode SIMPELL ini. Belum ada tag versi bar
 
 - Grup Manajemen punya menu Changelog. Halaman itu menampilkan catatan perubahan ini.
 
+### Menu
+
+- Judul grup menu memakai latar biru seperti banner Selamat Datang, supaya berbeda dari submenu.
+
+### Nomor jaringan
+
+- Isian nomor jaringan di Data MS FO Kepri, Pendingan MS FO Kepri, Data Core, dan QC PSB bisa dicari dari nomor jaringan atau nama customer.
+- Memilih hasil pencarian mengisi nama customer. Di Data Core, hasil itu mengisi nama lokasi.
+- Nomor yang tidak ada di Data Customer tetap bisa diketik dan disimpan.
+
+### QC PSB & Project
+
+- Nama customer berada tepat setelah nomor jaringan di form, daftar, detail, dan unduhan Excel.
+- Nomor tiket tidak lagi tampil di form, daftar, detail, pencarian, dan unduhan Excel. Nomor yang sudah tersimpan tidak dihapus saat data diubah.
+
+### Header
+
+- Header dashboard punya tombol tema terang dan gelap. Pilihan itu tersimpan di peramban dan di akun.
+
+### Pendingan GGN & PM
+
+- Urutan kolom daftar dan unduhan Excel menjadi Tanggal, No Ticket, No Jaringan, Customer, Rincian, Akses, PJ, Status, dan Keterangan.
+
+### Akses Network
+
+- Di P2P/FO Core, Direct LAN, dan FO Xconnect, kolom SN Modem pada detail node, form port, dan unduhan Excel berjudul NODE. Isinya tetap data yang sama.
+- Menu Akses FO tetap memakai judul SN Modem.
+
 ## 2026-11-12
 
 ### Menu sesuai workbook

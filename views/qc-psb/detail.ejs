@@ -20,12 +20,12 @@
             <p class="font-medium text-gray-900 dark:text-white"><%= data.tanggal ? moment(data.tanggal).format('DD/MM/YYYY') : '-' %></p>
         </div>
         <div class="p-4 bg-gray-50 dark:bg-gray-900/50 rounded-lg">
-            <p class="text-xs text-gray-500 mb-1">No Tiket</p>
-            <p class="font-medium text-gray-900 dark:text-white"><%= data.notik || '-' %></p>
-        </div>
-        <div class="p-4 bg-gray-50 dark:bg-gray-900/50 rounded-lg">
             <p class="text-xs text-gray-500 mb-1">No Jaringan</p>
             <p class="font-medium text-gray-900 dark:text-white"><%= data.nojar || '-' %></p>
+        </div>
+        <div class="p-4 bg-gray-50 dark:bg-gray-900/50 rounded-lg">
+            <p class="text-xs text-gray-500 mb-1">Customer</p>
+            <p class="font-medium text-gray-900 dark:text-white"><%= data.customer || '-' %></p>
         </div>
         <div class="p-4 bg-gray-50 dark:bg-gray-900/50 rounded-lg">
             <p class="text-xs text-gray-500 mb-1">QC ke</p>
@@ -34,10 +34,6 @@
         <div class="p-4 bg-gray-50 dark:bg-gray-900/50 rounded-lg">
             <p class="text-xs text-gray-500 mb-1">Jenis</p>
             <p class="font-medium text-gray-900 dark:text-white"><%= data.jenis || '-' %></p>
-        </div>
-        <div class="p-4 bg-gray-50 dark:bg-gray-900/50 rounded-lg md:col-span-2">
-            <p class="text-xs text-gray-500 mb-1">Customer</p>
-            <p class="font-medium text-gray-900 dark:text-white"><%= data.customer || '-' %></p>
         </div>
         <div class="p-4 bg-gray-50 dark:bg-gray-900/50 rounded-lg">
             <p class="text-xs text-gray-500 mb-1">Akses</p>

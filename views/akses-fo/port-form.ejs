@@ -38,8 +38,7 @@
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                    <label for="sn_modem" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">SN
-                        Modem</label>
+                    <label for="sn_modem" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"><%= (aksesJenis === 'FO_P2P' || aksesJenis === 'DIRECT_LAN' || aksesJenis === 'FO_XCONNECT') ? 'NODE' : 'SN Modem' %></label>
                     <input type="text" id="sn_modem" name="sn_modem" value="<%= data ? data.sn_modem || '' : '' %>"
                         class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all font-mono"
                         placeholder="SerialNumber">

@@ -44,11 +44,11 @@ router.get('/export', async (req, res) => {
             { header: 'No Ticket', key: 'no_ticket', width: 20 },
             { header: 'No Jaringan', key: 'no_jaringan', width: 20 },
             { header: 'Customer', key: 'customer', width: 30 },
-            { header: 'Akses', key: 'akses', width: 15 },
             { header: 'Rincian', key: 'rincian', width: 40 },
+            { header: 'Akses', key: 'akses', width: 15 },
+            { header: 'PJ', key: 'pj', width: 20 },
             { header: 'Status', key: 'status', width: 15 },
-            { header: 'Keterangan', key: 'keterangan', width: 40 },
-            { header: 'PJ', key: 'pj', width: 20 }
+            { header: 'Keterangan', key: 'keterangan', width: 40 }
         ];
 
         // Header style
