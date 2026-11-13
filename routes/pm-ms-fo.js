@@ -14,7 +14,6 @@ const JENIS = ['PM ODP', 'PM CLOSURE', 'PM REMOTE'];
 const COLUMNS = [
     { key: 'jenis', label: 'Jenis' },
     { key: 'periode', label: 'Periode' },
-    { key: 'nomor', label: 'No.' },
     { key: 'tanggal', label: 'Tanggal' },
     { key: 'no_ticket', label: 'No Ticket' },
     { key: 'no_jaringan', label: 'No Jaringan' },
@@ -29,8 +28,7 @@ const LIST_OPTIONS = {
     dir: 'asc',
     sequelize,
     searchFields: SEARCH_FIELDS,
-    dateField: 'tanggal',
-    numericFields: ['nomor']
+    dateField: 'tanggal'
 };
 
 function judulFrom(payload) {
@@ -44,7 +42,6 @@ function payloadFrom(body) {
         jenis: cleanText(body.jenis, 100),
         periode: cleanText(body.periode, 100),
         target: cleanNumber(body.target),
-        nomor: cleanNumber(body.nomor),
         tanggal: parseDisplayDate(body.tanggal),
         no_ticket: cleanText(body.no_ticket, 100),
         no_jaringan: cleanText(body.no_jaringan, 100),
@@ -79,7 +76,6 @@ function fieldsFor(lists) {
         { name: 'jenis', label: 'Jenis', type: 'text', list: 'jenis', required: true, placeholder: 'Contoh: PM ODP' },
         { name: 'periode', label: 'Periode', type: 'text', list: 'periode', placeholder: 'Contoh: OKTOBER 2026' },
         { name: 'target', label: 'Target', type: 'number', placeholder: 'Jumlah target blok' },
-        { name: 'nomor', label: 'No.', type: 'number' },
         { name: 'tanggal', label: 'Tanggal', type: 'date', optional: true },
         { name: 'no_ticket', label: 'No Ticket', type: 'text', placeholder: 'Nomor tiket' },
         { name: 'no_jaringan', label: 'No Jaringan', type: 'text', placeholder: 'Nomor jaringan' },

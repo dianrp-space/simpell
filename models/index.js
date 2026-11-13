@@ -23,6 +23,7 @@ const QcPsb = require('./QcPsb');
 const MsFo = require('./MsFo');
 const PendingMsFo = require('./PendingMsFo');
 const PmMsFo = require('./PmMsFo');
+const DataSpliter = require('./DataSpliter');
 const RecordGgn = require('./RecordGgn');
 const { DataCore, DataCoreSector } = require('./DataCore');
 const Pelanggan = require('./Pelanggan');
@@ -156,6 +157,7 @@ module.exports = {
     MsFo,
     PendingMsFo,
     PmMsFo,
+    DataSpliter,
     RecordGgn,
     DataCore,
     DataCoreSector,

@@ -11,6 +11,14 @@ Catatan perubahan yang dikerjakan pada kode SIMPELL ini. Belum ada tag versi bar
 - Kedua daftar bisa dicari, diurutkan, dan disaring per kolom. Tanda `-` mencari sel kosong.
 - Saat tabel masih kosong, aplikasi mengimpor baris dari `SIMPELL.xlsx`. Sel `-` disimpan sebagai kosong.
 - Data PM MS FO Kepri mengikuti blok di sheet: jenis, periode, target, nomor, tanggal, no tiket, no jaringan, customer, dan rincian. Slot target yang masih kosong ikut tersimpan.
+- Kolom No. tidak lagi tampil di daftar, form, dan detail Data PM MS FO Kepri. Nomor yang sudah tersimpan tetap ada dan ikut ke unduhan Excel.
+
+### Data Spliter
+
+- Menu Data Spliter menggantikan halaman kerangka. Isiannya mengikuti sheet DATA SPLITTER: lokasi, kartu, OLT, tray, core, no spliter, port, warna, deskripsi, destination, template, dan keterangan.
+- Daftar menampilkan legenda warna inti optik. Port 1 sampai 12 memakai urutan biru, oranye, hijau, coklat, abu, putih, merah, hitam, kuning, ungu, pink, dan aqua.
+- Warna bisa dipilih langsung di form. Mengisi nomor port 1 sampai 12 mengisi warna yang sesuai, dan pilihan itu masih bisa diganti.
+- Saat tabel masih kosong, aplikasi mengimpor blok lokasi dari `SIMPELL.xlsx`. Baris judul, kartu, dan legend template tidak ikut disimpan.
 
 ### Data customer
 

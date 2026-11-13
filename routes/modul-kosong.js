@@ -2,12 +2,6 @@ const express = require('express');
 const router = express.Router();
 
 const PAGES = {
-    '/data-spliter': {
-        title: 'Data Spliter',
-        group: 'Data FO Kepri',
-        columns: ['OLT', 'Tray', 'Core', 'No Spliter', 'Description', 'Destination'],
-        note: 'Sheet Excel Data Spliter tersusun per blok lokasi. Modul ini belum ada di menu sebelumnya.'
-    },
     '/data-core-remote': {
         title: 'Data Core Remote',
         group: 'Data FO Kepri',

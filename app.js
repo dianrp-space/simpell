@@ -61,6 +61,8 @@ try {
     const pmMsFoRoutes = require('./routes/pm-ms-fo');
     const importQcPsbIfEmpty = require('./utils/importQcPsb');
     const importMsFoIfEmpty = require('./utils/importMsFo');
+    const importSpliterIfEmpty = require('./utils/importSpliter');
+    const dataSpliterRoutes = require('./routes/data-spliter');
 
     const app = express();
     const server = http.createServer(app);
@@ -211,7 +213,7 @@ try {
     app.use('/ms-fo', isStaff, msFoRoutes);
     app.use('/pending-ms-fo', isStaff, pendingMsFoRoutes);
     app.use('/pm-ms-fo', isStaff, pmMsFoRoutes);
-    app.use('/data-spliter', isStaff, modulKosongRoutes);
+    app.use('/data-spliter', isStaff, dataSpliterRoutes);
     app.use('/data-core-remote', isStaff, modulKosongRoutes);
     app.use('/data-core-trunk', isStaff, modulKosongRoutes);
     app.use('/akses-vsat-starlink', isStaff, aksesVsatStarlinkRoutes);
@@ -266,6 +268,8 @@ try {
             if (msFoImport.msFo || msFoImport.pending || msFoImport.pm) {
                 console.log(`Imported DATA MS FO KEPRI ${msFoImport.msFo}, PENDINGAN MS FO KEPRI ${msFoImport.pending}, DATA PM MS FO KEPRI ${msFoImport.pm}`);
             }
+            const spliterImport = await importSpliterIfEmpty();
+            if (spliterImport) console.log(`Imported DATA SPLITTER ${spliterImport}`);
             await backfillAdminNotifications();
             await ensureAdmin();
             // 3. Jalankan Server

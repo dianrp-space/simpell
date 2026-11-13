@@ -6,7 +6,7 @@
             </a>
             <div>
                 <h1 class="text-2xl font-bold text-gray-900 dark:text-white"><%= heading %></h1>
-                <p class="text-sm text-gray-500 dark:text-gray-400"><%= data.customer || data.no_jaringan || data.no_ticket || '-' %></p>
+                <p class="text-sm text-gray-500 dark:text-gray-400"><%= data.customer || data.no_jaringan || data.no_ticket || data.olt || data.lokasi || '-' %></p>
             </div>
         </div>
         <% if (isEditor) { %>
@@ -22,6 +22,16 @@
                     <p class="font-medium text-gray-900 dark:text-white"><%= data[field.name] ? moment(data[field.name]).format('DD/MM/YYYY') : '-' %></p>
                 <% } else if (field.type === 'textarea') { %>
                     <p class="font-medium text-gray-900 dark:text-white whitespace-pre-wrap"><%- formatText(data[field.name]) %></p>
+                <% } else if (field.type === 'fiber') { %>
+                    <% const fiber = typeof fiberMap !== 'undefined' && fiberMap ? fiberMap[data[field.name]] : null; %>
+                    <% if (fiber) { %>
+                        <p class="font-medium text-gray-900 dark:text-white inline-flex items-center gap-2">
+                            <span class="inline-block h-5 w-5 rounded-full border border-black/10" style="background:<%= fiber.hex %>"></span>
+                            <%= fiber.label %>
+                        </p>
+                    <% } else { %>
+                        <p class="font-medium text-gray-900 dark:text-white">-</p>
+                    <% } %>
                 <% } else { %>
                     <p class="font-medium text-gray-900 dark:text-white"><%= data[field.name] == null || data[field.name] === '' ? '-' : data[field.name] %></p>
                 <% } %>
