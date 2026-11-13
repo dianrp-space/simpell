@@ -105,6 +105,7 @@ router.get('/', async (req, res) => {
             title: 'Data CPE - SIMPELL',
             data: rows,
             pagination,
+            totalItems: pagination.total,
             search: search || ''
         });
     } catch (error) {

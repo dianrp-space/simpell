@@ -43,8 +43,8 @@ router.get('/export', async (req, res) => {
             { header: 'RFO', key: 'rfo', width: 40 },
             { header: 'Akses', key: 'akses', width: 15 },
             { header: 'PJ', key: 'pj', width: 20 },
-            { header: 'Durasi Progres', key: 'durasi_progress', width: 20 },
-            { header: 'Status', key: 'status', width: 15 }
+            { header: 'Status', key: 'status', width: 15 },
+            { header: 'Durasi Progres', key: 'durasi_progress', width: 20 }
         ];
 
         // Header style

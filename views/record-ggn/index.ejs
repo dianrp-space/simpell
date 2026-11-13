@@ -137,12 +137,12 @@
                         PJ
                     </th>
                     <th
-                        class="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider whitespace-nowrap">
-                        Durasi Progres
-                    </th>
-                    <th
                         class="px-6 py-3 text-center text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider whitespace-nowrap">
                         Status
+                    </th>
+                    <th
+                        class="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider whitespace-nowrap">
+                        Durasi Progres
                     </th>
                     <% if (isEditor) { %>
                         <th
@@ -212,17 +212,6 @@
                                     class="px-6 py-4 text-gray-700 dark:text-gray-300 text-sm whitespace-nowrap align-top">
                                     <%= item.pj || '-' %>
                                 </td>
-                                <td
-                                    class="px-6 py-4 text-gray-700 dark:text-gray-300 text-sm whitespace-nowrap align-top">
-                                    <span class="inline-flex items-center gap-1">
-                                        <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor"
-                                            viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                        </svg>
-                                        <%= item.durasi_progress || '-' %>
-                                    </span>
-                                </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-center align-top">
                                     <% if (item.status==='Done' ) { %>
                                         <span
@@ -250,6 +239,17 @@
                                                             <%= item.status || 'Done' %>
                                                         </span>
                                                         <% } %>
+                                </td>
+                                <td
+                                    class="px-6 py-4 text-gray-700 dark:text-gray-300 text-sm whitespace-nowrap align-top">
+                                    <span class="inline-flex items-center gap-1">
+                                        <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor"
+                                            viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                        </svg>
+                                        <%= item.durasi_progress || '-' %>
+                                    </span>
                                 </td>
                                 <% if (isEditor) { %>
                                     <td

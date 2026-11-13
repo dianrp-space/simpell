@@ -56,7 +56,10 @@ try {
     const activityLogRoutes = require('./routes/activity-log');
     const modulKosongRoutes = require('./routes/modul-kosong');
     const qcPsbRoutes = require('./routes/qc-psb');
+    const msFoRoutes = require('./routes/ms-fo');
+    const pendingMsFoRoutes = require('./routes/pending-ms-fo');
     const importQcPsbIfEmpty = require('./utils/importQcPsb');
+    const importMsFoIfEmpty = require('./utils/importMsFo');
 
     const app = express();
     const server = http.createServer(app);
@@ -204,8 +207,8 @@ try {
     app.use('/akses-fo-xconnect', isStaff, aksesFoRoutes);
     app.use('/akses-fo', isStaff, aksesFoRoutes);
     app.use('/qc-psb', isStaff, qcPsbRoutes);
-    app.use('/ms-fo', isStaff, modulKosongRoutes);
-    app.use('/pending-ms-fo', isStaff, modulKosongRoutes);
+    app.use('/ms-fo', isStaff, msFoRoutes);
+    app.use('/pending-ms-fo', isStaff, pendingMsFoRoutes);
     app.use('/pm-ms-fo', isStaff, modulKosongRoutes);
     app.use('/data-spliter', isStaff, modulKosongRoutes);
     app.use('/data-core-remote', isStaff, modulKosongRoutes);
@@ -258,6 +261,10 @@ try {
             await sequelize.sync();
             await ensureSchema(sequelize);
             await importQcPsbIfEmpty();
+            const msFoImport = await importMsFoIfEmpty();
+            if (msFoImport.msFo || msFoImport.pending) {
+                console.log(`Imported DATA MS FO KEPRI ${msFoImport.msFo}, PENDINGAN MS FO KEPRI ${msFoImport.pending}`);
+            }
             await backfillAdminNotifications();
             await ensureAdmin();
             // 3. Jalankan Server

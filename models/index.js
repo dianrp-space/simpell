@@ -20,6 +20,8 @@ const OtbCentral = require('./OtbCentral');
 const OtbPhd = require('./OtbPhd');
 const PendingGgn = require('./PendingGgn');
 const QcPsb = require('./QcPsb');
+const MsFo = require('./MsFo');
+const PendingMsFo = require('./PendingMsFo');
 const RecordGgn = require('./RecordGgn');
 const { DataCore, DataCoreSector } = require('./DataCore');
 const Pelanggan = require('./Pelanggan');
@@ -150,6 +152,8 @@ module.exports = {
     OtbPhd,
     PendingGgn,
     QcPsb,
+    MsFo,
+    PendingMsFo,
     RecordGgn,
     DataCore,
     DataCoreSector,

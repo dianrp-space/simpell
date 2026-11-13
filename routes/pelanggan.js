@@ -19,6 +19,7 @@ const CUSTOMER_COLUMNS = [
     { key: 'no_jaringan', label: 'No Jaringan' },
     { key: 'nama_pelanggan', label: 'Customer' },
     { key: 'service', label: 'Service' },
+    { key: 'bandwidth', label: 'Bandwidth' },
     { key: 'akses', label: 'Akses' },
     { key: 'node', label: 'Node' },
     { key: 'kota', label: 'Kota' },
@@ -54,6 +55,7 @@ function customerWhere(state, withStatus) {
                 { nama_pelanggan: { [Op.like]: pattern } },
                 { alamat: { [Op.like]: pattern } },
                 { service: { [Op.like]: pattern } },
+                { bandwidth: { [Op.like]: pattern } },
                 { akses: { [Op.like]: pattern } },
                 { node: { [Op.like]: pattern } },
                 { kota: { [Op.like]: pattern } }

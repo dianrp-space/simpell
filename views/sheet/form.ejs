@@ -1,0 +1,56 @@
+<div class="max-w-4xl mx-auto space-y-6">
+    <div class="flex items-center gap-4">
+        <a href="<%= base %>" class="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 dark:hover:text-white dark:hover:bg-gray-700 rounded-lg">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+        </a>
+        <h1 class="text-2xl font-bold text-gray-900 dark:text-white"><%= heading %></h1>
+    </div>
+
+    <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-6 shadow-sm">
+        <form action="<%= data ? base + '/' + data.id + '?_method=PUT' : base %>" method="POST" class="space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <% fields.forEach(function (field) { %>
+                    <% const current = data && data[field.name] != null ? data[field.name] : '';
+                       const dateValue = field.type === 'date'
+                           ? (current ? moment(current).format('YYYY-MM-DD') : (data ? '' : moment().format('YYYY-MM-DD')))
+                           : ''; %>
+                    <div class="<%= field.wide ? 'md:col-span-2' : '' %>">
+                        <label for="<%= field.name %>" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            <%= field.label %><% if (field.required) { %> <span class="text-red-500">*</span><% } %>
+                        </label>
+                        <% if (field.type === 'textarea') { %>
+                            <textarea id="<%= field.name %>" name="<%= field.name %>" rows="4"
+                                class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"><%= current %></textarea>
+                        <% } else if (field.type === 'select') { %>
+                            <select id="<%= field.name %>" name="<%= field.name %>"
+                                class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500">
+                                <% (field.options || []).forEach(function (option) { %>
+                                    <option value="<%= option %>" <%= String(current || field.default || '') === option ? 'selected' : '' %>><%= option %></option>
+                                <% }); %>
+                            </select>
+                        <% } else if (field.type === 'date') { %>
+                            <input type="date" id="<%= field.name %>" name="<%= field.name %>" <%= field.required ? 'required' : '' %> value="<%= dateValue %>"
+                                class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500">
+                        <% } else { %>
+                            <input type="<%= field.type === 'number' ? 'number' : 'text' %>" id="<%= field.name %>" name="<%= field.name %>"
+                                <%= field.required ? 'required' : '' %>
+                                <% if (field.list) { %>list="list_<%= field.name %>"<% } %>
+                                value="<%= current %>"
+                                placeholder="<%= field.placeholder || '' %>"
+                                class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500">
+                            <% if (field.list && lists[field.list]) { %>
+                                <datalist id="list_<%= field.name %>">
+                                    <% lists[field.list].forEach(function (option) { %><option value="<%= option %>"><% }); %>
+                                </datalist>
+                            <% } %>
+                        <% } %>
+                    </div>
+                <% }); %>
+            </div>
+            <div class="flex justify-end gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
+                <a href="<%= base %>" class="px-4 py-2.5 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 text-sm font-medium rounded-lg">Batal</a>
+                <button type="submit" class="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg"><%= data ? 'Simpan Perubahan' : 'Tambah Data' %></button>
+            </div>
+        </form>
+    </div>
+</div>

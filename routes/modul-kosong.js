@@ -2,18 +2,6 @@ const express = require('express');
 const router = express.Router();
 
 const PAGES = {
-    '/ms-fo': {
-        title: 'Data MS FO Kepri',
-        group: 'Manage Service FO Kepri',
-        columns: ['No Jaringan', 'Customer', 'Service', 'Bandwidth', 'Akses', 'Node', 'Status', 'Kota', 'Lat Long', 'PJ MS FO', 'Keterangan'],
-        note: 'Sheet Excel Data MS FO Kepri ada. Modul ini belum ada di menu sebelumnya.'
-    },
-    '/pending-ms-fo': {
-        title: 'Pendingan MS FO Kepri',
-        group: 'Manage Service FO Kepri',
-        columns: ['Tanggal', 'No Ticket', 'No Jaringan', 'Customer', 'Rincian', 'Akses', 'PJ', 'Status', 'Keterangan'],
-        note: 'Sheet Excel Pendingan MS FO Kepri ada. Modul ini belum ada di menu sebelumnya.'
-    },
     '/pm-ms-fo': {
         title: 'Data PM MS FO Kepri',
         group: 'Manage Service FO Kepri',

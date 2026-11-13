@@ -233,6 +233,7 @@
                                 <%= item.nama_pelanggan %>
                             </td>
                             <td class="px-6 py-4 text-sm text-gray-700 dark:text-gray-300"><%= item.service || '-' %></td>
+                            <td class="px-6 py-4 text-sm text-gray-700 dark:text-gray-300"><%= item.bandwidth || '-' %></td>
                             <td class="px-6 py-4 text-sm text-gray-700 dark:text-gray-300"><%= item.akses || '-' %></td>
                             <td class="px-6 py-4 text-sm text-gray-700 dark:text-gray-300"><%= item.node || '-' %></td>
                             <td class="px-6 py-4 text-sm text-gray-700 dark:text-gray-300"><%= item.kota || '-' %></td>
@@ -277,7 +278,7 @@
                         <% }); %>
                             <% } else { %>
                                 <tr>
-                                    <td colspan="8" class="px-6 py-12 text-center text-gray-500 dark:text-gray-400">
+                                    <td colspan="9" class="px-6 py-12 text-center text-gray-500 dark:text-gray-400">
                                         <svg class="w-12 h-12 mx-auto mb-4 text-gray-300 dark:text-gray-600" fill="none"
                                             stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"

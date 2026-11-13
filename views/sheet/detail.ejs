@@ -1,0 +1,31 @@
+<div class="max-w-4xl space-y-6">
+    <div class="flex items-center justify-between gap-4">
+        <div class="flex items-center gap-4">
+            <a href="<%= base %>" class="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 dark:hover:text-white dark:hover:bg-gray-700 rounded-lg">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+            </a>
+            <div>
+                <h1 class="text-2xl font-bold text-gray-900 dark:text-white"><%= heading %></h1>
+                <p class="text-sm text-gray-500 dark:text-gray-400"><%= data.customer || data.no_jaringan || data.no_ticket || '-' %></p>
+            </div>
+        </div>
+        <% if (isEditor) { %>
+            <a href="<%= base %>/<%= data.id %>/edit" class="px-4 py-2.5 bg-amber-500 hover:bg-amber-600 text-white text-sm font-medium rounded-lg">Edit</a>
+        <% } %>
+    </div>
+
+    <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-6 shadow-sm grid grid-cols-1 md:grid-cols-2 gap-4">
+        <% fields.forEach(function (field) { %>
+            <div class="p-4 bg-gray-50 dark:bg-gray-900/50 rounded-lg <%= field.wide ? 'md:col-span-2' : '' %>">
+                <p class="text-xs text-gray-500 mb-1"><%= field.label %></p>
+                <% if (field.type === 'date') { %>
+                    <p class="font-medium text-gray-900 dark:text-white"><%= data[field.name] ? moment(data[field.name]).format('DD/MM/YYYY') : '-' %></p>
+                <% } else if (field.type === 'textarea') { %>
+                    <p class="font-medium text-gray-900 dark:text-white whitespace-pre-wrap"><%- formatText(data[field.name]) %></p>
+                <% } else { %>
+                    <p class="font-medium text-gray-900 dark:text-white"><%= data[field.name] == null || data[field.name] === '' ? '-' : data[field.name] %></p>
+                <% } %>
+            </div>
+        <% }); %>
+    </div>
+</div>
