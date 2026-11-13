@@ -11,6 +11,7 @@ const { readList, buildWhere, columnMeta, listHref } = require('../utils/listSta
 
 const BASE = '/ms-fo';
 const STATUSES = ['Active', 'Inactive', 'Suspended'];
+const PJ = ['JOINTER', 'TA'];
 const COLUMNS = [
     { key: 'nomor', label: 'No.' },
     { key: 'no_jaringan', label: 'No Jaringan' },
@@ -22,8 +23,8 @@ const COLUMNS = [
     { key: 'status', label: 'Status' },
     { key: 'kota', label: 'Kota' },
     { key: 'lat_long', label: 'Lat Long' },
-    { key: 'pj', label: 'PJ MS FO' },
-    { key: 'keterangan', label: 'Keterangan' }
+    { key: 'keterangan', label: 'Keterangan' },
+    { key: 'pj', label: 'PJ MS FO' }
 ];
 const SEARCH_FIELDS = ['no_jaringan', 'customer', 'service', 'bandwidth', 'akses', 'node', 'kota', 'lat_long', 'pj', 'keterangan'];
 const LIST_OPTIONS = {
@@ -66,7 +67,7 @@ async function choiceLists() {
         akses: unique('akses', ['Akses FO']),
         node: unique('node'),
         kota: unique('kota'),
-        pj: unique('pj'),
+        pj: unique('pj', PJ),
         status: unique('status', STATUSES)
     };
 }
@@ -83,9 +84,9 @@ function fieldsFor(lists) {
         text('node', 'Node', { list: 'node', placeholder: 'Contoh: BTMGPNXR01' }),
         text('kota', 'Kota', { list: 'kota', placeholder: 'Contoh: BATAM' }),
         text('lat_long', 'Lat Long', { placeholder: 'Koordinat' }),
-        text('pj', 'PJ MS FO', { list: 'pj', placeholder: 'Penanggung jawab' }),
         { name: 'status', label: 'Status', type: 'select', options: lists.status, default: 'Active' },
-        { name: 'keterangan', label: 'Keterangan', type: 'textarea', wide: true }
+        { name: 'keterangan', label: 'Keterangan', type: 'textarea', wide: true },
+        text('pj', 'PJ MS FO', { list: 'pj', placeholder: 'JOINTER, TA, atau ketik PJ baru' })
     ];
 }
 

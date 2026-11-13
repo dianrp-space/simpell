@@ -50,6 +50,10 @@ const PmMsFo = sequelize.define('PmMsFo', {
     rincian: {
         type: DataTypes.TEXT,
         allowNull: true
+    },
+    pj: {
+        type: DataTypes.STRING(100),
+        allowNull: true
     }
 }, {
     tableName: 'pm_ms_fo',

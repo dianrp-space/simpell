@@ -11,6 +11,7 @@ const { readList, buildWhere, columnMeta, listHref } = require('../utils/listSta
 
 const BASE = '/pending-ms-fo';
 const STATUSES = ['Pending', 'Progress', 'Done'];
+const PJ = ['JOINTER', 'TA'];
 const COLUMNS = [
     { key: 'tanggal', label: 'Tanggal' },
     { key: 'no_ticket', label: 'No Ticket' },
@@ -18,9 +19,9 @@ const COLUMNS = [
     { key: 'customer', label: 'Customer' },
     { key: 'rincian', label: 'Rincian' },
     { key: 'akses', label: 'Akses' },
-    { key: 'pj', label: 'PJ' },
     { key: 'status', label: 'Status' },
-    { key: 'keterangan', label: 'Keterangan' }
+    { key: 'keterangan', label: 'Keterangan' },
+    { key: 'pj', label: 'PJ' }
 ];
 const SEARCH_FIELDS = ['no_ticket', 'no_jaringan', 'customer', 'rincian', 'akses', 'pj', 'keterangan'];
 const LIST_OPTIONS = {
@@ -59,7 +60,7 @@ async function choiceLists() {
         no_jaringan: unique('no_jaringan'),
         customer: unique('customer'),
         akses: unique('akses', ['FO']),
-        pj: unique('pj'),
+        pj: unique('pj', PJ),
         status: unique('status', STATUSES)
     };
 }
@@ -71,10 +72,10 @@ function fieldsFor(lists) {
         { name: 'no_jaringan', label: 'No Jaringan', type: 'text', list: 'no_jaringan', placeholder: 'Contoh: TARGET - 15' },
         { name: 'customer', label: 'Customer', type: 'text', list: 'customer', placeholder: 'Contoh: PM REMOTE' },
         { name: 'akses', label: 'Akses', type: 'text', list: 'akses', placeholder: 'Contoh: FO' },
-        { name: 'pj', label: 'PJ', type: 'text', list: 'pj', placeholder: 'Penanggung jawab' },
         { name: 'status', label: 'Status', type: 'select', options: lists.status, default: 'Pending' },
         { name: 'rincian', label: 'Rincian', type: 'textarea', wide: true },
-        { name: 'keterangan', label: 'Keterangan', type: 'textarea', wide: true }
+        { name: 'keterangan', label: 'Keterangan', type: 'textarea', wide: true },
+        { name: 'pj', label: 'PJ', type: 'text', list: 'pj', placeholder: 'JOINTER, TA, atau ketik PJ baru' }
     ];
 }
 

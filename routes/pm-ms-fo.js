@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const ExcelJS = require('exceljs');
 const sequelize = require('../config/database');
-const { PmMsFo } = require('../models');
+const { PmMsFo, Pelanggan } = require('../models');
 const { isEditor } = require('../middleware/auth');
 const { paginate } = require('../utils/paginate');
 const logActivity = require('../utils/activityLogger');
@@ -11,6 +11,7 @@ const { readList, buildWhere, columnMeta, listHref } = require('../utils/listSta
 
 const BASE = '/pm-ms-fo';
 const JENIS = ['PM ODP', 'PM CLOSURE', 'PM REMOTE'];
+const PJ = ['JOINTER', 'TA'];
 const COLUMNS = [
     { key: 'jenis', label: 'Jenis' },
     { key: 'periode', label: 'Periode' },
@@ -18,9 +19,10 @@ const COLUMNS = [
     { key: 'no_ticket', label: 'No Ticket' },
     { key: 'no_jaringan', label: 'No Jaringan' },
     { key: 'customer', label: 'Customer' },
-    { key: 'rincian', label: 'Rincian' }
+    { key: 'rincian', label: 'Rincian' },
+    { key: 'pj', label: 'PJ' }
 ];
-const SEARCH_FIELDS = ['judul', 'jenis', 'periode', 'no_ticket', 'no_jaringan', 'customer', 'rincian'];
+const SEARCH_FIELDS = ['judul', 'jenis', 'periode', 'no_ticket', 'no_jaringan', 'customer', 'rincian', 'pj'];
 const LIST_OPTIONS = {
     statuses: JENIS,
     statusField: 'jenis',
@@ -46,19 +48,20 @@ function payloadFrom(body) {
         no_ticket: cleanText(body.no_ticket, 100),
         no_jaringan: cleanText(body.no_jaringan, 100),
         customer: cleanText(body.customer, 255),
-        rincian: cleanText(body.rincian)
+        rincian: cleanText(body.rincian),
+        pj: cleanText(body.pj, 100)
     };
     payload.judul = judulFrom(payload);
     return payload;
 }
 
 function isFilled(row) {
-    return Boolean(row.tanggal || row.no_ticket || row.no_jaringan || row.customer || row.rincian);
+    return Boolean(row.tanggal || row.no_ticket || row.no_jaringan || row.customer || row.rincian || row.pj);
 }
 
 async function choiceLists() {
     const rows = await PmMsFo.findAll({
-        attributes: ['jenis', 'periode'],
+        attributes: ['jenis', 'periode', 'pj'],
         raw: true
     });
     const unique = (key, extras = []) => [...new Set([
@@ -67,7 +70,8 @@ async function choiceLists() {
     ])].sort((a, b) => String(a).localeCompare(String(b), 'id'));
     return {
         jenis: unique('jenis', JENIS),
-        periode: unique('periode')
+        periode: unique('periode'),
+        pj: unique('pj', PJ)
     };
 }
 
@@ -78,16 +82,17 @@ function fieldsFor(lists) {
         { name: 'target', label: 'Target', type: 'number', placeholder: 'Jumlah target blok' },
         { name: 'tanggal', label: 'Tanggal', type: 'date', optional: true },
         { name: 'no_ticket', label: 'No Ticket', type: 'text', placeholder: 'Nomor tiket' },
-        { name: 'no_jaringan', label: 'No Jaringan', type: 'text', placeholder: 'Nomor jaringan' },
-        { name: 'customer', label: 'Customer', type: 'text', wide: true, placeholder: 'Nama customer' },
-        { name: 'rincian', label: 'Rincian', type: 'textarea', wide: true }
+        { name: 'no_jaringan', label: 'No Jaringan', type: 'customer', wide: true, placeholder: 'Cari nomor jaringan atau customer' },
+        { name: 'customer', label: 'Customer', type: 'text', wide: true, placeholder: 'Terisi saat nomor jaringan dipilih' },
+        { name: 'rincian', label: 'Rincian', type: 'textarea', wide: true },
+        { name: 'pj', label: 'PJ', type: 'text', list: 'pj', placeholder: 'JOINTER, TA, atau ketik PJ baru' }
     ];
 }
 
 async function blockCounts(where) {
     const rows = await PmMsFo.findAll({
         where,
-        attributes: ['jenis', 'tanggal', 'no_ticket', 'no_jaringan', 'customer', 'rincian'],
+        attributes: ['jenis', 'tanggal', 'no_ticket', 'no_jaringan', 'customer', 'rincian', 'pj'],
         raw: true
     });
     const groups = new Map();
@@ -116,7 +121,7 @@ function displayDate(value) {
 }
 
 function writeBlocks(sheet, rows) {
-    const headers = ['NO.', 'TANGGAL', 'NO TICKET', 'NO JARINGAN', 'CUSTOMER', 'RINCIAN'];
+    const headers = ['NO.', 'TANGGAL', 'NO TICKET', 'NO JARINGAN', 'CUSTOMER', 'RINCIAN', 'PJ'];
     const groups = [];
     rows.forEach((row) => {
         const key = row.judul || row.jenis || 'PM';
@@ -145,7 +150,8 @@ function writeBlocks(sheet, rows) {
                 row.no_ticket || '',
                 row.no_jaringan || '',
                 row.customer || '',
-                row.rincian || ''
+                row.rincian || '',
+                row.pj || ''
             ];
             values.forEach((value, index) => {
                 sheet.getCell(cursor, index + 1).value = value;
@@ -154,7 +160,7 @@ function writeBlocks(sheet, rows) {
         });
         cursor += 1;
     });
-    [10, 16, 20, 18, 40, 64].forEach((width, index) => {
+    [10, 16, 20, 18, 40, 64, 16].forEach((width, index) => {
         sheet.getColumn(index + 1).width = width;
     });
 }
@@ -190,7 +196,7 @@ router.get('/', async (req, res) => {
         res.render('sheet/index', {
             title: 'Data PM MS FO Kepri - SIMPELL',
             heading: 'Data PM MS FO Kepri',
-            subtitle: 'Blok PM ODP, PM Closure, dan PM Remote: periode, target, tanggal, no tiket, no jaringan, customer, dan rincian',
+            subtitle: 'Blok PM ODP, PM Closure, dan PM Remote: periode, target, tanggal, no tiket, no jaringan, customer, rincian, dan PJ',
             base: BASE,
             data: rows,
             pagination,
@@ -204,7 +210,7 @@ router.get('/', async (req, res) => {
             exportHref: listHref(BASE + '/export', state),
             columns: columnMeta(BASE, state, COLUMNS),
             stats: await blockCounts(buildWhere(state, { ...LIST_OPTIONS, withStatus: false })),
-            searchPlaceholder: 'Cari jenis, periode, tiket, jaringan, customer, rincian...'
+            searchPlaceholder: 'Cari jenis, periode, tiket, jaringan, customer, rincian, PJ...'
         });
     } catch (error) {
         console.error('PM MS FO List Error:', error);
@@ -212,6 +218,14 @@ router.get('/', async (req, res) => {
         res.redirect('/dashboard');
     }
 });
+
+async function pelangganChoices() {
+    return Pelanggan.findAll({
+        attributes: ['id', 'no_jaringan', 'nama_pelanggan'],
+        order: [['nama_pelanggan', 'ASC']],
+        raw: true
+    });
+}
 
 router.get('/create', isEditor, async (req, res) => {
     const lists = await choiceLists();
@@ -221,7 +235,8 @@ router.get('/create', isEditor, async (req, res) => {
         base: BASE,
         data: null,
         fields: fieldsFor(lists),
-        lists
+        lists,
+        pelangganList: await pelangganChoices()
     });
 });
 
@@ -258,7 +273,8 @@ router.get('/:id/edit', isEditor, async (req, res) => {
         base: BASE,
         data,
         fields: fieldsFor(lists),
-        lists
+        lists,
+        pelangganList: await pelangganChoices()
     });
 });
 

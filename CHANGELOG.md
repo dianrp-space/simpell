@@ -12,6 +12,9 @@ Catatan perubahan yang dikerjakan pada kode SIMPELL ini. Belum ada tag versi bar
 - Saat tabel masih kosong, aplikasi mengimpor baris dari `SIMPELL.xlsx`. Sel `-` disimpan sebagai kosong.
 - Data PM MS FO Kepri mengikuti blok di sheet: jenis, periode, target, nomor, tanggal, no tiket, no jaringan, customer, dan rincian. Slot target yang masih kosong ikut tersimpan.
 - Kolom No. tidak lagi tampil di daftar, form, dan detail Data PM MS FO Kepri. Nomor yang sudah tersimpan tetap ada dan ikut ke unduhan Excel.
+- Data PM MS FO Kepri punya kolom PJ tepat sebelum Aksi. Pilihan awalnya JOINTER dan TA. Nama PJ baru bisa diketik, lalu ikut tersimpan dan muncul lagi di pilihan berikutnya.
+- Isian No Jaringan di Data PM MS FO Kepri bisa dicari dari nomor jaringan atau nama customer, sama seperti di Record Gangguan. Memilih hasil pencarian mengisi nama customer.
+- Kolom PJ di Data MS FO Kepri dan Pendingan MS FO Kepri juga berada tepat sebelum Aksi. Isiannya memakai pilihan yang sama: JOINTER, TA, atau nama baru yang diketik.
 
 ### Data Spliter
 
