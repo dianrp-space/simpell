@@ -2,6 +2,38 @@
 
 Catatan perubahan yang dikerjakan pada kode SIMPELL ini. Belum ada tag versi baru. Dasarnya tetap rilis `1.0.0` yang sudah ada.
 
+## 2026-11-14
+
+### Koordinat
+
+- Isian koordinat menerima format desimal dan DMS. DMS diubah ke desimal saat disimpan.
+- Contoh `1° 07' 15.6" N` menjadi `1.121`, dan `104° 03' 02.7" E` menjadi `104.05075`. Arah selatan atau barat, serta tanda minus, membuat nilai negatif.
+- Isian kosong tetap disimpan sebagai kosong.
+
+### Data FO Kepri
+
+- Grup Data FO Kepri punya menu Data Core Project, tepat setelah Data OTB.
+- Bentuknya sama dengan Data OTB: central, sector, tube, dan core. Datanya tersimpan terpisah, jadi tidak bercampur dengan OTB.
+- Dashboard dan ringkasan Excel menghitung jumlah sector Data Core Project.
+
+### Data ODC
+
+- Kolom status di detail Data ODC bisa dipilih: Active, Cut, Alokasi, Idle, dan None.
+- Active hijau, Cut merah, Alokasi biru, Idle kuning, dan None abu-abu.
+- Status Bad yang sudah tersimpan tetap tampil. Bad tidak ada di pilihan baru.
+
+### 3rd Party
+
+- Menu 3rd Party punya kolom Keterangan setelah Tgl Online.
+- Keterangan bisa diisi di form tambah dan edit, lalu tampil di daftar, detail, detail customer, dan unduhan Excel.
+
+### Data MS FO Kepri
+
+- Form Data MS FO Kepri memakai isian yang sama dengan Data Customer: customer, service, bandwidth, akses, node, kota, koordinat, status, kontak, email, alamat, dan keterangan.
+- Mengetik nomor jaringan yang sudah ada langsung mengisi data itu dari Data Customer.
+- Remote yang belum ada ditambahkan di Data Customer. Nomor yang belum terdaftar tidak bisa disimpan di Data MS FO Kepri, dan remote yang sama tidak bisa dimasukkan dua kali.
+- Nomor urut dan PJ MS FO tetap khusus menu ini.
+
 ## 2026-11-13
 
 ### Manage Service FO Kepri

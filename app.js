@@ -49,7 +49,40 @@ try {
     const dataClosureRoutes = require('./routes/data-closure');
     const dataOdpRoutes = require('./routes/data-odp');
     const aksesThirdPartyRoutes = require('./routes/akses-third-party');
-    const otbPhdRoutes = require('./routes/otb-phd');
+    const { createFiberCoreRouter } = require('./routes/fiber-core');
+    const { OtbCentral, OtbPhd, CoreProjectCentral, CoreProjectCore } = require('./models');
+    const otbPhdRoutes = createFiberCoreRouter({
+        Central: OtbCentral,
+        Core: OtbPhd,
+        base: '/otb-phd',
+        label: {
+            listTitle: 'OTB Central - SIMPELL',
+            indexTitle: 'OTB Central',
+            indexSubtitle: 'Manajemen Lokasi OTB PHD',
+            short: 'OTB PHD',
+            file: 'OTB_Full',
+            createCentralTitle: 'Tambah Central OTB - SIMPELL',
+            createSectorTitle: 'Tambah Sector OTB PHD - SIMPELL',
+            editSectorTitle: 'Edit Sector OTB PHD - SIMPELL',
+            editCoreTitle: 'Edit Core OTB PHD - SIMPELL'
+        }
+    });
+    const dataCoreProjectRoutes = createFiberCoreRouter({
+        Central: CoreProjectCentral,
+        Core: CoreProjectCore,
+        base: '/data-core-project',
+        label: {
+            listTitle: 'Data Core Project - SIMPELL',
+            indexTitle: 'Data Core Project',
+            indexSubtitle: 'Manajemen Data Core Project',
+            short: 'Data Core Project',
+            file: 'Data_Core_Project',
+            createCentralTitle: 'Tambah Central - SIMPELL',
+            createSectorTitle: 'Tambah Sector - SIMPELL',
+            editSectorTitle: 'Edit Sector - SIMPELL',
+            editCoreTitle: 'Edit Core - SIMPELL'
+        }
+    });
     const dataCoreRoutes = require('./routes/data-core');
     const profileRoutes = require('./routes/profile');
     const pelangganRoutes = require('./routes/pelanggan');
@@ -230,6 +263,7 @@ try {
     app.use('/akses-third-party', isStaff, aksesThirdPartyRoutes);
 
     app.use('/otb-phd', isStaff, otbPhdRoutes);
+    app.use('/data-core-project', isStaff, dataCoreProjectRoutes);
     app.use('/data-core', isStaff, dataCoreRoutes);
     app.use('/pelanggan', isStaff, pelangganRoutes);
     app.use('/patroli', isStaff, require('./routes/patroli'));

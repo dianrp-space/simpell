@@ -1,223 +1,185 @@
 /**
- * Coordinate Converter Utility
- * Converts DMS (Degrees, Minutes, Seconds) format to Decimal format
- * 
- * Supported DMS formats:
- * - 1° 07' 15.6" N or 1°07'15.6"N
- * - 104° 03' 02.7" E or 104°03'02.7"E
- * - S/W directions result in negative values
+ * Menampilkan pratinjau DMS dan mengubahnya ke desimal sebelum form dikirim.
+ * Penyimpanan tetap dikonversi di server.
  */
-
 (function () {
     'use strict';
 
-    /**
-     * Parse DMS string and convert to decimal
-     * @param {string} dmsStr - DMS string like "1° 07' 15.6" N"
-     * @returns {number|null} - Decimal value or null if parsing failed
-     */
-    function parseDMS(dmsStr) {
-        if (!dmsStr || typeof dmsStr !== 'string') return null;
+    if (window.__coordConverterLoaded) return;
+    window.__coordConverterLoaded = true;
 
-        // Clean up the string
-        dmsStr = dmsStr.trim();
+    const TOKEN = /(?:[NSEW]\s*)?[+-]?\d+(?:[.,]\d+)?\s*[°º˚]\s*\d+(?:[.,]\d+)?\s*['′’](?:\s*\d+(?:[.,]\d+)?\s*["″“”]?)?\s*[NSEW]?/gi;
 
-        // If it's already a valid decimal number, return it
-        if (/^-?\d+\.?\d*$/.test(dmsStr)) {
-            return parseFloat(dmsStr);
+    function parseCoordinate(input) {
+        if (!input) return null;
+        let text = String(input).trim();
+        if (!text) return null;
+        text = text
+            .replace(/[º˚]/g, '°')
+            .replace(/[′’‘]/g, "'")
+            .replace(/[″“”]/g, '"')
+            .replace(/\s+/g, ' ')
+            .trim();
+
+        let sign = 1;
+        const leading = text.match(/^([NSEW])\s+(.+)$/i);
+        if (leading) {
+            if (/[SW]/i.test(leading[1])) sign = -1;
+            text = leading[2].trim();
+        }
+        const trailing = text.match(/^(.+?)\s*([NSEW])$/i);
+        if (trailing) {
+            if (/[SW]/i.test(trailing[2])) sign = -1;
+            text = trailing[1].trim();
         }
 
-        // Try to parse DMS format
-        // Pattern: degrees° minutes' seconds" direction
-        // Examples: 1° 07' 15.6" N, 104°03'02.7"E, 1°7'15.6"N
-        const dmsPattern = /^(-?\d+(?:\.\d+)?)\s*[°]\s*(\d+(?:\.\d+)?)\s*['′]\s*(\d+(?:\.\d+)?)\s*["″]?\s*([NSEWnsew])?$/;
-
-        const match = dmsStr.match(dmsPattern);
-
-        if (!match) {
-            // Try alternative pattern without seconds symbol
-            const altPattern = /^(-?\d+(?:\.\d+)?)\s*[°]\s*(\d+(?:\.\d+)?)\s*['′]\s*(\d+(?:\.\d+)?)\s*([NSEWnsew])?$/;
-            const altMatch = dmsStr.match(altPattern);
-            if (!altMatch) return null;
+        if (/^[+-]?\d+(?:[.,]\d+)?$/.test(text)) {
+            const negative = text.startsWith('-');
+            const number = Number(text.replace(',', '.'));
+            if (!Number.isFinite(number)) return null;
+            return negative ? number : sign * Math.abs(number);
         }
 
-        if (match) {
-            const degrees = parseFloat(match[1]);
-            const minutes = parseFloat(match[2]);
-            const seconds = parseFloat(match[3]);
-            const direction = match[4] ? match[4].toUpperCase() : null;
-
-            // Calculate decimal value
-            let decimal = Math.abs(degrees) + (minutes / 60) + (seconds / 3600);
-
-            // Apply sign based on direction or original sign
-            if (direction === 'S' || direction === 'W') {
-                decimal = -decimal;
-            } else if (degrees < 0) {
-                decimal = -decimal;
-            }
-
-            return decimal;
-        }
-
-        return null;
+        const dms = text.match(/^([+-]?\d+(?:[.,]\d+)?)\s*°\s*(\d+(?:[.,]\d+)?)(?:\s*'\s*(\d+(?:[.,]\d+)?)?)?\s*"?$/);
+        if (!dms) return null;
+        const degrees = Number(dms[1].replace(',', '.'));
+        const minutes = Number(dms[2].replace(',', '.'));
+        const seconds = dms[3] ? Number(dms[3].replace(',', '.')) : 0;
+        if (![degrees, minutes, seconds].every(Number.isFinite)) return null;
+        if (minutes < 0 || minutes >= 60 || seconds < 0 || seconds >= 60) return null;
+        const decimal = Math.abs(degrees) + (minutes / 60) + (seconds / 3600);
+        return (degrees < 0 || sign < 0) ? -decimal : decimal;
     }
 
-    /**
-     * Format decimal to display with appropriate precision
-     * @param {number} decimal - Decimal coordinate value
-     * @returns {string} - Formatted string
-     */
     function formatDecimal(decimal) {
-        if (decimal === null || isNaN(decimal)) return '';
-        // Use high precision (14 decimal places like the example)
-        return decimal.toFixed(14).replace(/\.?0+$/, '');
+        if (decimal === null || !Number.isFinite(decimal)) return '';
+        return (Math.round(decimal * 1e8) / 1e8).toFixed(8).replace(/\.?0+$/, '');
     }
 
-    /**
-     * Check if a string looks like DMS format
-     * @param {string} str - Input string
-     * @returns {boolean}
-     */
-    function isDMSFormat(str) {
-        if (!str) return false;
-        return /[°]/.test(str) && /['′]/.test(str);
-    }
-
-    /**
-     * Initialize converter on an input element
-     * @param {HTMLInputElement} input - The input element
-     * @param {string} type - 'latitude' or 'longitude'
-     */
-    function initConverter(input, type) {
-        // Ensure input has an ID
-        if (!input.id) {
-            input.id = 'coord_' + Math.random().toString(36).substr(2, 9);
-        }
-
-        // Create helper text element
-        const helperId = input.id + '_helper';
-        let helper = document.getElementById(helperId);
-
-        if (!helper) {
-            helper = document.createElement('p');
-            helper.id = helperId;
-            helper.className = 'mt-1 text-xs text-gray-500 dark:text-gray-400';
-
-            let exampleDMS = '1° 07\' 15.6" N';
-            let exampleDec = '1.121001';
-
-            if (type === 'longitude') {
-                exampleDMS = '104° 03\' 02.7" E';
-                exampleDec = '104.051525';
+    function convertText(value) {
+        const text = String(value || '').trim();
+        if (!text || !/[°º˚]/.test(text)) return text;
+        let failed = false;
+        const converted = text.replace(TOKEN, function (match) {
+            const parsed = parseCoordinate(match);
+            if (parsed === null) {
+                failed = true;
+                return match;
             }
+            return formatDecimal(parsed);
+        });
+        return failed || /[°º˚]/.test(converted) ? null : converted;
+    }
 
-            helper.innerHTML = `<span class="text-blue-500">💡</span> Format: <code class="bg-gray-100 dark:bg-gray-700 px-1 rounded">${exampleDMS}</code> atau <code class="bg-gray-100 dark:bg-gray-700 px-1 rounded">${exampleDec}</code>`;
-            input.parentNode.appendChild(helper);
+    function initConverter(input, type) {
+        if (input.dataset.coordReady === '1') return;
+        input.dataset.coordReady = '1';
+        if (!input.id) input.id = 'coord_' + Math.random().toString(36).slice(2, 9);
+
+        const helper = document.createElement('p');
+        helper.className = 'mt-1 text-xs text-gray-500 dark:text-gray-400';
+        const example = type === 'longitude'
+            ? '104° 03\' 02.7" E atau 104.05075'
+            : (type === 'pair'
+                ? '1° 07\' 15.6" N, 104° 03\' 02.7" E atau 1.121, 104.05075'
+                : '1° 07\' 15.6" N atau 1.121');
+        helper.textContent = 'Format desimal atau DMS. Contoh: ' + example;
+        input.parentNode.appendChild(helper);
+
+        const preview = document.createElement('p');
+        preview.className = 'mt-1 text-xs font-medium hidden';
+        input.parentNode.appendChild(preview);
+
+        function show(ok, message) {
+            preview.classList.remove('hidden');
+            preview.className = 'mt-1 text-xs font-medium ' + (ok
+                ? 'text-green-600 dark:text-green-400'
+                : 'text-red-600 dark:text-red-400');
+            preview.textContent = message;
         }
 
-        // Create conversion preview element
-        const previewId = input.id + '_preview';
-        let preview = document.getElementById(previewId);
-
-        if (!preview) {
-            preview = document.createElement('p');
-            preview.id = previewId;
-            preview.className = 'mt-1 text-xs font-medium hidden';
-            input.parentNode.appendChild(preview);
-        }
-
-        // Handle input changes
-        function handleInput() {
+        function convertedValue() {
             const value = input.value.trim();
+            if (!value) return '';
+            if (type === 'pair' || /[°º˚]/.test(value) && value.indexOf(',') !== -1) {
+                return convertText(value);
+            }
+            if (/[°º˚]/.test(value)) {
+                const decimal = parseCoordinate(value);
+                return decimal === null ? null : formatDecimal(decimal);
+            }
+            const decimal = parseCoordinate(value);
+            return decimal === null ? null : value;
+        }
 
-            if (!value) {
+        input.addEventListener('input', function () {
+            const value = input.value.trim();
+            input.setCustomValidity('');
+            if (!value || !/[°º˚]/.test(value)) {
                 preview.classList.add('hidden');
-                preview.textContent = '';
                 return;
             }
+            const next = convertedValue();
+            if (next === null) show(false, 'Format koordinat tidak valid');
+            else show(true, 'Akan disimpan sebagai ' + next);
+        });
 
-            if (isDMSFormat(value)) {
-                const decimal = parseDMS(value);
-                if (decimal !== null) {
-                    preview.classList.remove('hidden');
-                    preview.className = 'mt-1 text-xs font-medium text-green-600 dark:text-green-400';
-                    preview.innerHTML = '✓ Akan dikonversi ke: <code class="bg-green-100 dark:bg-green-900 px-1 rounded">' + formatDecimal(decimal) + '</code>';
-                } else {
-                    preview.classList.remove('hidden');
-                    preview.className = 'mt-1 text-xs font-medium text-red-600 dark:text-red-400';
-                    preview.textContent = '✗ Format DMS tidak valid';
-                }
-            } else {
-                const num = parseFloat(value);
-                if (!isNaN(num)) {
-                    preview.classList.add('hidden');
-                } else {
-                    preview.classList.remove('hidden');
-                    preview.className = 'mt-1 text-xs font-medium text-red-600 dark:text-red-400';
-                    preview.textContent = '✗ Format koordinat tidak valid';
-                }
+        input.addEventListener('blur', function () {
+            const next = convertedValue();
+            if (next && /[°º˚]/.test(input.value)) {
+                input.value = next;
+                preview.classList.add('hidden');
             }
-        }
-
-        // Handle blur - convert DMS to decimal
-        function handleBlur() {
-            const value = input.value.trim();
-
-            if (isDMSFormat(value)) {
-                const decimal = parseDMS(value);
-                if (decimal !== null) {
-                    input.value = formatDecimal(decimal);
-                    preview.classList.add('hidden');
-
-                    // Show brief success feedback
-                    const originalPlaceholder = input.placeholder;
-                    input.classList.add('ring-2', 'ring-green-500');
-                    setTimeout(() => {
-                        input.classList.remove('ring-2', 'ring-green-500');
-                    }, 1000);
-                }
-            }
-        }
-
-        // Attach event listeners
-        input.addEventListener('input', handleInput);
-        input.addEventListener('blur', handleBlur);
-
-        // Initial check
-        handleInput();
+        });
     }
 
-    /**
-     * Auto-initialize all coordinate inputs on page load
-     */
     function autoInit() {
-        // Find latitude inputs
-        const latInputs = document.querySelectorAll('input[name="latitude"], input[id="latitude"]');
-        latInputs.forEach(function (input) {
+        document.querySelectorAll('input[name="latitude"]').forEach(function (input) {
             initConverter(input, 'latitude');
         });
-
-        // Find longitude inputs  
-        const lngInputs = document.querySelectorAll('input[name="longitude"], input[id="longitude"]');
-        lngInputs.forEach(function (input) {
+        document.querySelectorAll('input[name="longitude"]').forEach(function (input) {
             initConverter(input, 'longitude');
+        });
+        document.querySelectorAll('input[name="koordinat"], input[name="lat_long"]').forEach(function (input) {
+            initConverter(input, 'pair');
         });
     }
 
-    // Auto-initialize when DOM is ready
+    document.addEventListener('submit', function (event) {
+        const form = event.target;
+        if (!form || !form.querySelectorAll) return;
+        const fields = form.querySelectorAll('input[name="latitude"], input[name="longitude"], input[name="koordinat"], input[name="lat_long"]');
+        let invalid = false;
+        fields.forEach(function (input) {
+            const value = input.value.trim();
+            if (!value) return;
+            const pair = input.name === 'koordinat' || input.name === 'lat_long';
+            const next = pair || (/[°º˚]/.test(value) && value.indexOf(',') !== -1)
+                ? convertText(value)
+                : (/[°º˚]/.test(value) ? (function () {
+                    const decimal = parseCoordinate(value);
+                    return decimal === null ? null : formatDecimal(decimal);
+                })() : (parseCoordinate(value) === null ? null : value));
+            if (next === null) {
+                invalid = true;
+                input.setCustomValidity('Format koordinat tidak valid');
+                input.reportValidity();
+            } else if (/[°º˚]/.test(value)) {
+                input.value = next;
+                input.setCustomValidity('');
+            }
+        });
+        if (invalid) event.preventDefault();
+    }, true);
+
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', autoInit);
     } else {
         autoInit();
     }
 
-    // Expose functions globally for manual use
     window.CoordinateConverter = {
-        parseDMS: parseDMS,
-        formatDecimal: formatDecimal,
-        isDMSFormat: isDMSFormat,
-        initConverter: initConverter
+        parseCoordinate: parseCoordinate,
+        formatDecimal: formatDecimal
     };
-
 })();

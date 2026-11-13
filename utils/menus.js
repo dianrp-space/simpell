@@ -22,6 +22,7 @@ const MENUS = [
     { key: 'data-hh', label: 'Data HH', prefix: '/data-hh', group: 'Data FO Kepri' },
     { key: 'data-closure', label: 'Data Closure', prefix: '/data-closure', group: 'Data FO Kepri' },
     { key: 'otb-phd', label: 'Data OTB', prefix: '/otb-phd', group: 'Data FO Kepri' },
+    { key: 'data-core-project', label: 'Data Core Project', prefix: '/data-core-project', group: 'Data FO Kepri' },
     { key: 'odc', label: 'Data ODC', prefix: '/odc', group: 'Data FO Kepri' },
     { key: 'data-spliter', label: 'Data Spliter', prefix: '/data-spliter', group: 'Data FO Kepri' },
     { key: 'data-core-remote', label: 'Data Core Remote', prefix: '/data-core-remote', group: 'Data FO Kepri' },

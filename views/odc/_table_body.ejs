@@ -183,35 +183,19 @@
                                                 <td
                                                     class="px-3 py-2 border-r border-gray-200 dark:border-gray-700 text-center">
                                                     <% if (isEditor) { %>
+                                                        <% const statusChoices=(typeof statuses !=='undefined' ? statuses : ['Active','Cut','Alokasi','Idle','None']).slice(); if (core.status && !statusChoices.includes(core.status)) statusChoices.push(core.status); const statusTone=core.status==='Active' ? 'bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-300' : ((core.status==='Cut' || core.status==='Bad') ? 'bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-300' : (core.status==='Alokasi' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-300' : (core.status==='Idle' ? 'bg-amber-100 text-amber-800 dark:bg-amber-900/50 dark:text-amber-300' : 'bg-white text-gray-800 dark:bg-gray-800 dark:text-gray-300'))); %>
                                                         <select onchange="updateCoreStatus(this, '<%= core.id %>')"
-                                                            class="text-xs font-medium rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500 cursor-pointer py-1 pl-2 pr-8 transition-colors <%= core.status === 'Active' ? 'bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-300' : (core.status === 'Bad' ? 'bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-300' : 'bg-white text-gray-800 dark:bg-gray-800 dark:text-gray-300') %>">
-                                                            <% if (typeof statuses !=='undefined' ) { %>
-                                                                <% statuses.forEach(s=> { %>
-                                                                    <option value="<%= s %>"
-                                                                        class="bg-white text-gray-900 dark:bg-gray-800 dark:text-white"
-                                                                        <%=core.status===s ? 'selected' : '' %>><%= s %>
-                                                                    </option>
-                                                                    <% }) %>
-                                                                        <% } else { %>
-                                                                            <option value="Active"
-                                                                                class="bg-white text-gray-900 dark:bg-gray-800 dark:text-white"
-                                                                                <%=core.status==='Active' ? 'selected'
-                                                                                : '' %>>Active</option>
-                                                                            <option value="Bad"
-                                                                                class="bg-white text-gray-900 dark:bg-gray-800 dark:text-white"
-                                                                                <%=core.status==='Bad' ? 'selected' : ''
-                                                                                %>
-                                                                                >Bad</option>
-                                                                            <option value="None"
-                                                                                class="bg-white text-gray-900 dark:bg-gray-800 dark:text-white"
-                                                                                <%=core.status==='None' ? 'selected'
-                                                                                : '' %>
-                                                                                >None</option>
-                                                                            <% } %>
+                                                            class="text-xs font-medium rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500 cursor-pointer py-1 pl-2 pr-8 transition-colors <%= statusTone %>">
+                                                            <% statusChoices.forEach(s=> { %>
+                                                                <option value="<%= s %>"
+                                                                    class="bg-white text-gray-900 dark:bg-gray-800 dark:text-white"
+                                                                    <%= core.status===s ? 'selected' : '' %>><%= s %>
+                                                                </option>
+                                                            <% }) %>
                                                         </select>
                                                         <% } else { %>
                                                             <span
-                                                                class="text-xs font-bold <%= core.status === 'Active' ? 'text-green-600' : (core.status === 'Bad' ? 'text-red-600' : 'text-gray-400') %>">
+                                                                class="text-xs font-bold <%= core.status === 'Active' ? 'text-green-600' : ((core.status === 'Cut' || core.status === 'Bad') ? 'text-red-600' : (core.status === 'Alokasi' ? 'text-blue-600' : (core.status === 'Idle' ? 'text-amber-600' : 'text-gray-400'))) %>">
                                                                 <%= core.status ? core.status.toUpperCase() : 'NONE' %>
                                                             </span>
                                                             <% } %>

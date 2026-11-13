@@ -18,6 +18,8 @@ const DataOdp = require('./DataOdp');
 
 const OtbCentral = require('./OtbCentral');
 const OtbPhd = require('./OtbPhd');
+const CoreProjectCentral = require('./CoreProjectCentral');
+const CoreProjectCore = require('./CoreProjectCore');
 const PendingGgn = require('./PendingGgn');
 const QcPsb = require('./QcPsb');
 const MsFo = require('./MsFo');
@@ -92,6 +94,16 @@ OtbPhd.belongsTo(OtbCentral, {
     as: 'central'
 });
 
+CoreProjectCentral.hasMany(CoreProjectCore, {
+    foreignKey: 'central_id',
+    as: 'sectors',
+    onDelete: 'CASCADE'
+});
+CoreProjectCore.belongsTo(CoreProjectCentral, {
+    foreignKey: 'central_id',
+    as: 'central'
+});
+
 // Pelanggan relationships - services linked to customers
 Pelanggan.hasMany(AksesFo, { foreignKey: 'pelanggan_id', as: 'aksesFoList' });
 AksesFo.belongsTo(Pelanggan, { foreignKey: 'pelanggan_id', as: 'pelanggan' });
@@ -131,8 +143,10 @@ ActivityLog.belongsTo(User, { foreignKey: 'user_id', as: 'user' });
 User.hasMany(PasswordResetRequest, { foreignKey: 'user_id', as: 'resetRequests' });
 PasswordResetRequest.belongsTo(User, { foreignKey: 'user_id', as: 'user' });
 
-// Kolom koordinat bertipe angka. Isian kosong dari form harus jadi null,
-// kalau tidak MySQL menolak string kosong saat simpan.
+const { decimalCoordinate, decimalCoordinateText } = require('../utils/coordinates');
+
+// Kolom koordinat boleh diisi desimal atau DMS. DMS diubah ke desimal saat simpan.
+// Isian kosong menjadi null supaya MySQL tidak menolak string kosong.
 function blankOptionalFields(model, values) {
     if (!values || !model.rawAttributes) return;
     Object.keys(values).forEach((field) => {
@@ -145,6 +159,14 @@ function blankOptionalFields(model, values) {
         if (!coordinate && !date && !integer) return;
         const value = values[field];
         if (value === undefined || value === null) return;
+        if (field === 'latitude' || field === 'longitude') {
+            values[field] = decimalCoordinate(value, field);
+            return;
+        }
+        if (field === 'koordinat' || field === 'lat_long') {
+            values[field] = decimalCoordinateText(value);
+            return;
+        }
         if (String(value).trim() === '') values[field] = null;
     });
 }
@@ -183,6 +205,8 @@ module.exports = {
 
     OtbCentral,
     OtbPhd,
+    CoreProjectCentral,
+    CoreProjectCore,
     PendingGgn,
     QcPsb,
     MsFo,

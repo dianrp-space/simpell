@@ -13,9 +13,39 @@
             const selectedText = document.getElementById(hidden.id + '_selected_text');
             const clearButton = root.querySelector('[data-nojar-clear]');
             const fill = document.getElementById(root.getAttribute('data-fill') || 'customer');
+            const autofill = root.getAttribute('data-autofill') === '1';
+            const profileFields = {
+                service: 'service',
+                bandwidth: 'bandwidth',
+                akses: 'akses',
+                node: 'node',
+                kota: 'kota',
+                lat_long: 'koordinat',
+                status: 'status',
+                keterangan: 'keterangan',
+                kontak: 'kontak',
+                email: 'email',
+                alamat: 'alamat'
+            };
+            let appliedNumber = '';
             if (!search || !hidden || !dropdown) return;
 
             function hide() { dropdown.classList.add('hidden'); }
+
+            function writeProfile(item) {
+                if (!autofill) return;
+                Object.keys(profileFields).forEach(function (field) {
+                    const input = document.getElementById(field);
+                    if (input) input.value = item ? (item[profileFields[field]] || '') : '';
+                });
+            }
+
+            function exactMatches(query) {
+                const needle = query.toLowerCase();
+                return choices.filter(function (item) {
+                    return String(item.no_jaringan || '').toLowerCase() === needle;
+                });
+            }
 
             function show(query) {
                 const needle = query.toLowerCase();
@@ -45,6 +75,8 @@
                         row.addEventListener('click', function () {
                             hidden.value = item.no_jaringan || '';
                             if (fill) fill.value = item.nama_pelanggan || '';
+                            writeProfile(item);
+                            appliedNumber = item.no_jaringan || '';
                             if (selectedText) selectedText.textContent = (item.no_jaringan || '-') + ' - ' + (item.nama_pelanggan || '-');
                             if (selected) selected.classList.remove('hidden');
                             search.value = '';
@@ -61,6 +93,18 @@
                 const query = search.value.trim();
                 hidden.value = query;
                 if (selected) selected.classList.add('hidden');
+                const exact = autofill ? exactMatches(query) : [];
+                if (exact.length === 1) {
+                    if (fill) fill.value = exact[0].nama_pelanggan || '';
+                    writeProfile(exact[0]);
+                    appliedNumber = exact[0].no_jaringan || '';
+                    if (selectedText) selectedText.textContent = (exact[0].no_jaringan || '-') + ' - ' + (exact[0].nama_pelanggan || '-');
+                    if (selected) selected.classList.remove('hidden');
+                } else if (appliedNumber && appliedNumber.toLowerCase() !== query.toLowerCase()) {
+                    if (fill) fill.value = '';
+                    writeProfile(null);
+                    appliedNumber = '';
+                }
                 if (query) show(query);
                 else hide();
             });
@@ -71,6 +115,8 @@
                 clearButton.addEventListener('click', function () {
                     hidden.value = '';
                     if (fill) fill.value = '';
+                    writeProfile(null);
+                    appliedNumber = '';
                     if (selected) selected.classList.add('hidden');
                     search.value = '';
                     search.focus();

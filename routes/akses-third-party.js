@@ -83,7 +83,7 @@ router.get('/export', async (req, res) => {
                 bandwidth: item.bandwidth || '-',
                 sewa: item.sewa_per_bulan || '-',
                 tgl_online: item.tgl_online ? moment(item.tgl_online).format('YYYY-MM-DD') : '-',
-                keterangan: item.pelanggan ? item.pelanggan.keterangan : '' // Or item specific desc? 3rd party doesn't have own keterangan in view, using pelanggan's or just empty
+                keterangan: item.keterangan || '-'
             });
 
             if ((idx + 1) % 2 === 0) {

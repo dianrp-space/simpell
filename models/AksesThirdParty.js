@@ -48,6 +48,10 @@ const AksesThirdParty = sequelize.define('AksesThirdParty', {
     tgl_online: {
         type: DataTypes.DATEONLY, // Using DATEONLY as time is likely not needed
         allowNull: true
+    },
+    keterangan: {
+        type: DataTypes.TEXT,
+        allowNull: true
     }
 }, {
     tableName: 'akses_third_party',

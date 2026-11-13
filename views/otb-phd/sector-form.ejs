@@ -2,7 +2,7 @@
 <div class="space-y-6">
     <!-- Page Header -->
     <div class="flex items-center gap-4">
-        <a href="/otb-phd"
+        <a href="<%= fiberBase %>"
             class="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 dark:hover:text-white dark:hover:bg-gray-700 rounded-lg transition-colors">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18">
@@ -17,7 +17,7 @@
 
     <!-- Form -->
     <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-6 shadow-sm">
-        <form action="/otb-phd/sector" method="POST" class="space-y-6">
+        <form action="<%= fiberBase %>/sector" method="POST" class="space-y-6">
             <input type="hidden" name="central_id" value="<%= central.id %>">
             <div class="grid gap-6 md:grid-cols-2">
                 <!-- Sector Name -->
@@ -63,7 +63,7 @@
                             d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                     </svg>
                     <div class="text-sm text-blue-700 dark:text-blue-300">
-                        <p class="font-medium mb-1">Struktur OTB PHD</p>
+                        <p class="font-medium mb-1">Struktur <%= moduleTitle %></p>
                         <p>Setiap tube memiliki 12 core dengan warna standar FO (Blue, Orange, Green, dll). Core akan
                             otomatis dibuat dengan status "Available". Anda dapat mengedit setiap core setelahnya.</p>
                     </div>
@@ -72,7 +72,7 @@
 
             <!-- Submit -->
             <div class="flex items-center justify-end gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
-                <a href="/otb-phd"
+                <a href="<%= fiberBase %>"
                     class="px-4 py-2.5 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-medium rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
                     Batal
                 </a>

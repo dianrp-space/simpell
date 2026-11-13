@@ -80,6 +80,40 @@ async function ensureSchema(sequelize) {
         await sequelize.query('ALTER TABLE pm_ms_fo ADD COLUMN pj VARCHAR(100) NULL');
     }
 
+    const [odcCoreTables] = await sequelize.query(
+        `SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES
+         WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'odc_cores'`
+    );
+    if (odcCoreTables.length) {
+        await sequelize.query(
+            "ALTER TABLE odc_cores MODIFY COLUMN status ENUM('Active','Cut','Alokasi','Idle','None','Bad') NOT NULL DEFAULT 'None'"
+        );
+    }
+
+    const [thirdPartyTables] = await sequelize.query(
+        `SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES
+         WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'akses_third_party'`
+    );
+    if (thirdPartyTables.length && !(await columnExists(sequelize, 'akses_third_party', 'keterangan'))) {
+        await sequelize.query('ALTER TABLE akses_third_party ADD COLUMN keterangan TEXT NULL');
+    }
+
+    const [msFoTables] = await sequelize.query(
+        `SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES
+         WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'ms_fo'`
+    );
+    if (msFoTables.length) {
+        if (!(await columnExists(sequelize, 'ms_fo', 'kontak'))) {
+            await sequelize.query('ALTER TABLE ms_fo ADD COLUMN kontak VARCHAR(50) NULL');
+        }
+        if (!(await columnExists(sequelize, 'ms_fo', 'email'))) {
+            await sequelize.query('ALTER TABLE ms_fo ADD COLUMN email VARCHAR(255) NULL');
+        }
+        if (!(await columnExists(sequelize, 'ms_fo', 'alamat'))) {
+            await sequelize.query('ALTER TABLE ms_fo ADD COLUMN alamat TEXT NULL');
+        }
+    }
+
     await sequelize.query(
         `CREATE TABLE IF NOT EXISTS sessions (
             sid VARCHAR(255) NOT NULL PRIMARY KEY,

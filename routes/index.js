@@ -7,6 +7,7 @@ const PendingGgn = require('../models/PendingGgn');
 const { AksesFo } = require('../models/AksesFo');
 
 const OtbPhd = require('../models/OtbPhd');
+const CoreProjectCore = require('../models/CoreProjectCore');
 const { DataCore } = require('../models/DataCore');
 const AksesVsatStarlink = require('../models/AksesVsatStarlink');
 const AksesM2m = require('../models/AksesM2m');
@@ -56,6 +57,10 @@ async function getDashboardStats() {
         distinct: true,
         col: 'sector'
     });
+    const core_project = await CoreProjectCore.count({
+        distinct: true,
+        col: 'sector'
+    });
 
     const [akses_fo, akses_fo_p2p, akses_direct_lan] = await Promise.all([
         AksesFoNode.count({ where: { jenis: 'FO' } }),
@@ -90,7 +95,7 @@ async function getDashboardStats() {
     ]);
 
     const stats = {
-        core_lamda, odc, otb_phd: otb_phd_sectors, data_core,
+        core_lamda, odc, otb_phd: otb_phd_sectors, core_project, data_core,
         akses_fo, akses_fo_p2p, akses_direct_lan, starlink, m2m, soltem, tdma,
         aset_fo, data_hh, data_closure, data_odp,
         cpe, radio_link_ap, radio_link_client, third_party,
@@ -218,6 +223,7 @@ router.get('/export-dashboard', async (req, res) => {
         sheetSummary.addRow({ category: 'Data FO', item: 'Core Lamda', count: stats.core_lamda });
         sheetSummary.addRow({ category: 'Data FO', item: 'ODC', count: stats.odc });
         sheetSummary.addRow({ category: 'Data FO', item: 'OTB (Sector)', count: stats.otb_phd });
+        sheetSummary.addRow({ category: 'Data FO', item: 'Data Core Project (Sector)', count: stats.core_project });
         sheetSummary.addRow({ category: 'Data FO', item: 'Data Core', count: stats.data_core });
 
         addSectionHeader('Akses Network');

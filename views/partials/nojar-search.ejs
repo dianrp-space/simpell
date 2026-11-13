@@ -1,4 +1,4 @@
-<div data-nojar data-fill="<%= typeof fill !== 'undefined' && fill ? fill : 'customer' %>"<% if (typeof required !== 'undefined' && required) { %> data-required="true"<% } %>>
+<div data-nojar data-fill="<%= typeof fill !== 'undefined' && fill ? fill : 'customer' %>"<% if (typeof required !== 'undefined' && required) { %> data-required="true"<% } %><% if (typeof autofill !== 'undefined' && autofill) { %> data-autofill="1"<% } %>>
     <div class="relative">
         <input type="text" id="<%= name %>_search" autocomplete="off"
             placeholder="<%= placeholder || 'Cari nomor jaringan atau customer' %>"
@@ -14,5 +14,9 @@
             </button>
         </div>
     </div>
-    <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">Cari nomor jaringan atau nama customer. Data customer terisi otomatis setelah dipilih.</p>
+    <% if (typeof autofill !== 'undefined' && autofill) { %>
+        <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">Ketik nomor jaringan yang sudah ada di Data Customer. Service, bandwidth, akses, node, kota, dan data lain terisi otomatis. Remote baru ditambahkan di Data Customer.</p>
+    <% } else { %>
+        <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">Cari nomor jaringan atau nama customer. Data customer terisi otomatis setelah dipilih.</p>
+    <% } %>
 </div>

@@ -119,6 +119,9 @@
                         <th
                             class="px-6 py-4 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider whitespace-nowrap">
                             Tgl Online</th>
+                        <th
+                            class="px-6 py-4 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider whitespace-nowrap">
+                            Keterangan</th>
                         <% if (isEditor) { %>
                             <th
                                 class="px-3 py-4 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider text-center sticky right-0 top-0 bg-gray-50 dark:bg-gray-900 z-30 shadow-[-4px_0_8px_-4px_rgba(0,0,0,0.1)] w-1">
@@ -129,7 +132,7 @@
                 <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
                     <% if (data.length===0) { %>
                         <tr>
-                            <td colspan="11" class="px-6 py-8 text-center text-gray-500 dark:text-gray-400">
+                            <td colspan="12" class="px-6 py-8 text-center text-gray-500 dark:text-gray-400">
                                 Belum ada data tersedia
                             </td>
                         </tr>
@@ -175,6 +178,10 @@
                                     <td
                                         class="px-6 py-4 text-sm text-gray-700 dark:text-gray-300 whitespace-nowrap align-top">
                                         <%= item.tgl_online ? moment(item.tgl_online).format('DD MMM YYYY') : '-' %>
+                                    </td>
+                                    <td
+                                        class="px-6 py-4 text-sm text-gray-700 dark:text-gray-300 whitespace-nowrap align-top">
+                                        <%= item.keterangan || '-' %>
                                     </td>
                                     <% if (isEditor) { %>
                                         <td

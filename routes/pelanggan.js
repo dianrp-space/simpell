@@ -488,7 +488,8 @@ router.get('/:id/export', async (req, res) => {
             { header: 'Segment', key: 'id_segment', width: 20 },
             { header: 'Mitra', key: 'nama_mitra', width: 20 },
             { header: 'Bandwidth', key: 'bandwidth', width: 15 },
-            { header: 'Sewa/Bulan', key: 'sewa_per_bulan', width: 20 }
+            { header: 'Sewa/Bulan', key: 'sewa_per_bulan', width: 20 },
+            { header: 'Keterangan', key: 'keterangan', width: 30 }
         ]);
 
 

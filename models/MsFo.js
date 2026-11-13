@@ -48,6 +48,18 @@ const MsFo = sequelize.define('MsFo', {
         type: DataTypes.STRING(255),
         allowNull: true
     },
+    kontak: {
+        type: DataTypes.STRING(50),
+        allowNull: true
+    },
+    email: {
+        type: DataTypes.STRING(255),
+        allowNull: true
+    },
+    alamat: {
+        type: DataTypes.TEXT,
+        allowNull: true
+    },
     pj: {
         type: DataTypes.STRING(100),
         allowNull: true

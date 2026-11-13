@@ -334,7 +334,7 @@
                 </li>
                 <% } %>
 
-                <% if (canSeeGroup(['data-odp', 'data-hh', 'data-closure', 'otb-phd', 'odc', 'data-spliter', 'data-core-remote', 'data-core-trunk'])) { %>
+                <% if (canSeeGroup(['data-odp', 'data-hh', 'data-closure', 'otb-phd', 'data-core-project', 'odc', 'data-spliter', 'data-core-remote', 'data-core-trunk'])) { %>
                 <li class="nav-group" data-group="data-fo-kepri">
                     <button type="button" class="nav-group-toggle group-label w-full mt-3 py-2.5 px-3 flex items-center gap-2 text-xs font-bold text-white uppercase tracking-wide rounded-lg bg-gradient-to-r from-blue-500 to-blue-600 shadow-sm shadow-blue-500/25 hover:from-blue-600 hover:to-blue-700 transition-colors" aria-expanded="true" aria-controls="nav-group-data-fo-kepri">
                         <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -393,6 +393,17 @@
                 </li>
                 <% } %>
 
+                <% if (canSeeMenu('data-core-project')) { %>
+                <li>
+                    <a href="/data-core-project" class="<%= navClass(currentPath.startsWith('/data-core-project')) %>">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m-4 5h.01"></path>
+                        </svg>
+                        <span class="sidebar-text whitespace-normal leading-snug">DATA CORE PROJECT</span>
+                    </a>
+                </li>
+                <% } %>
+
                 <% if (canSeeMenu('odc')) { %>
                 <li>
                     <a href="/odc" class="<%= navClass(currentPath.startsWith('/odc')) %>">
@@ -436,7 +447,7 @@
                     </a>
                 </li>
                 <% } %>
-                <% if (canSeeGroup(['data-odp', 'data-hh', 'data-closure', 'otb-phd', 'odc', 'data-spliter', 'data-core-remote', 'data-core-trunk'])) { %>
+                <% if (canSeeGroup(['data-odp', 'data-hh', 'data-closure', 'otb-phd', 'data-core-project', 'odc', 'data-spliter', 'data-core-remote', 'data-core-trunk'])) { %>
                     </ul>
                 </li>
                 <% } %>

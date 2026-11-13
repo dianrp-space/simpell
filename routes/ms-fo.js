@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const ExcelJS = require('exceljs');
 const sequelize = require('../config/database');
-const { MsFo } = require('../models');
+const { MsFo, Pelanggan } = require('../models');
 const pelangganChoices = require('../utils/pelangganChoices');
 const { isEditor } = require('../middleware/auth');
 const { paginate } = require('../utils/paginate');
@@ -24,10 +24,13 @@ const COLUMNS = [
     { key: 'status', label: 'Status' },
     { key: 'kota', label: 'Kota' },
     { key: 'lat_long', label: 'Lat Long' },
+    { key: 'kontak', label: 'Kontak' },
+    { key: 'email', label: 'Email' },
+    { key: 'alamat', label: 'Alamat' },
     { key: 'keterangan', label: 'Keterangan' },
     { key: 'pj', label: 'PJ MS FO' }
 ];
-const SEARCH_FIELDS = ['no_jaringan', 'customer', 'service', 'bandwidth', 'akses', 'node', 'kota', 'lat_long', 'pj', 'keterangan'];
+const SEARCH_FIELDS = ['no_jaringan', 'customer', 'service', 'bandwidth', 'akses', 'node', 'kota', 'lat_long', 'kontak', 'email', 'alamat', 'pj', 'keterangan'];
 const LIST_OPTIONS = {
     statuses: STATUSES,
     sort: 'nomor',
@@ -49,9 +52,40 @@ function payloadFrom(body) {
         status: cleanText(body.status, 50) || 'Active',
         kota: cleanText(body.kota, 100),
         lat_long: cleanText(body.lat_long, 255),
+        kontak: cleanText(body.kontak, 50),
+        email: cleanText(body.email, 255),
+        alamat: cleanText(body.alamat),
         pj: cleanText(body.pj, 100),
         keterangan: cleanText(body.keterangan)
     };
+}
+
+async function customerFor(noJaringan, customerName) {
+    const rows = await Pelanggan.findAll({ where: { no_jaringan: noJaringan } });
+    if (!rows.length) {
+        return { error: 'No jaringan belum ada di Data Customer. Tambahkan dulu di menu Data Customer.' };
+    }
+    if (rows.length === 1) return { pelanggan: rows[0] };
+    const named = customerName
+        ? rows.find((row) => String(row.nama_pelanggan).toLowerCase() === customerName.toLowerCase())
+        : null;
+    if (named) return { pelanggan: named };
+    return { error: 'Nomor jaringan ini dipakai lebih dari satu customer. Pilih customer yang sesuai.' };
+}
+
+function applyCustomer(payload, pelanggan) {
+    payload.customer = cleanText(pelanggan.nama_pelanggan, 255);
+    payload.service = cleanText(pelanggan.service, 100);
+    payload.bandwidth = cleanText(pelanggan.bandwidth, 50);
+    payload.akses = cleanText(pelanggan.akses, 100);
+    payload.node = cleanText(pelanggan.node, 100);
+    payload.status = cleanText(pelanggan.status, 50) || 'Active';
+    payload.kota = cleanText(pelanggan.kota, 100);
+    payload.lat_long = cleanText(pelanggan.koordinat, 255);
+    payload.kontak = cleanText(pelanggan.kontak, 50);
+    payload.email = cleanText(pelanggan.email, 255);
+    payload.alamat = cleanText(pelanggan.alamat);
+    if (!payload.keterangan) payload.keterangan = cleanText(pelanggan.keterangan);
 }
 
 async function choiceLists() {
@@ -76,17 +110,20 @@ async function choiceLists() {
 function fieldsFor(lists) {
     const text = (name, label, extra = {}) => ({ name, label, type: 'text', ...extra });
     return [
-        { name: 'nomor', label: 'No.', type: 'number', placeholder: 'Nomor urut sheet' },
-        text('no_jaringan', 'No Jaringan', { type: 'customer', required: true, wide: true, placeholder: 'Cari nomor jaringan atau customer' }),
-        text('customer', 'Customer', { required: true, wide: true, placeholder: 'Terisi saat nomor jaringan dipilih' }),
+        text('no_jaringan', 'No Jaringan', { type: 'customer', required: true, wide: true, autofill: true, placeholder: 'Ketik nomor jaringan yang sudah ada' }),
+        text('customer', 'Customer', { required: true, wide: true, placeholder: 'Terisi otomatis dari Data Customer' }),
         text('service', 'Service', { list: 'service', placeholder: 'Contoh: VPN, INET' }),
-        text('bandwidth', 'Bandwidth', { placeholder: 'Contoh: 20 Mbps' }),
-        text('akses', 'Akses', { list: 'akses', placeholder: 'Contoh: Akses FO' }),
+        text('bandwidth', 'Bandwidth', { placeholder: 'Contoh: 20 MB' }),
+        text('akses', 'Akses', { list: 'akses', placeholder: 'Contoh: Akses FO, CPE, M2M' }),
         text('node', 'Node', { list: 'node', placeholder: 'Contoh: BTMGPNXR01' }),
         text('kota', 'Kota', { list: 'kota', placeholder: 'Contoh: BATAM' }),
-        text('lat_long', 'Lat Long', { placeholder: 'Koordinat' }),
+        text('lat_long', 'Koordinat', { placeholder: 'Lat, long' }),
         { name: 'status', label: 'Status', type: 'select', options: lists.status, default: 'Active' },
+        text('kontak', 'Kontak (No HP/Telp)', { placeholder: 'Contoh: 08123456789' }),
+        text('email', 'Email', { placeholder: 'Contoh: email@domain.com' }),
+        { name: 'alamat', label: 'Alamat', type: 'textarea', wide: true },
         { name: 'keterangan', label: 'Keterangan', type: 'textarea', wide: true },
+        { name: 'nomor', label: 'No.', type: 'number', placeholder: 'Nomor urut, khusus MS FO' },
         text('pj', 'PJ MS FO', { list: 'pj', placeholder: 'JOINTER, TA, atau ketik PJ baru' })
     ];
 }
@@ -120,6 +157,9 @@ function sheetColumns() {
         { header: 'STATUS', key: 'status', width: 14 },
         { header: 'KOTA', key: 'kota', width: 16 },
         { header: 'LAT LONG', key: 'lat_long', width: 28 },
+        { header: 'KONTAK', key: 'kontak', width: 18 },
+        { header: 'EMAIL', key: 'email', width: 28 },
+        { header: 'ALAMAT', key: 'alamat', width: 36 },
         { header: 'PJ MS FO', key: 'pj', width: 14 },
         { header: 'KETERANGAN', key: 'keterangan', width: 40 }
     ];
@@ -149,6 +189,9 @@ router.get('/export', async (req, res) => {
                 status: item.status || '',
                 kota: item.kota || '',
                 lat_long: item.lat_long || '',
+                kontak: item.kontak || '',
+                email: item.email || '',
+                alamat: item.alamat || '',
                 pj: item.pj || '',
                 keterangan: item.keterangan || ''
             });
@@ -175,7 +218,7 @@ router.get('/', async (req, res) => {
         res.render('sheet/index', {
             title: 'Data MS FO Kepri - SIMPELL',
             heading: 'Data MS FO Kepri',
-            subtitle: 'No jaringan, customer, service, bandwidth, akses, node, status, kota, lat long, PJ, dan keterangan',
+            subtitle: 'Remote yang ditangani MS FO. Data mengikuti Data Customer saat nomor jaringan dipilih.',
             base: BASE,
             data: rows,
             pagination,
@@ -213,8 +256,21 @@ router.get('/create', isEditor, async (req, res) => {
 router.post('/', isEditor, async (req, res) => {
     try {
         const payload = payloadFrom(req.body);
-        if (!payload.no_jaringan || !payload.customer) {
-            req.flash('error_msg', 'No jaringan dan customer wajib diisi');
+        if (!payload.no_jaringan) {
+            req.flash('error_msg', 'No jaringan wajib diisi');
+            return res.redirect(BASE + '/create');
+        }
+        const found = await customerFor(payload.no_jaringan, payload.customer);
+        if (!found.pelanggan) {
+            req.flash('error_msg', found.error);
+            return res.redirect(BASE + '/create');
+        }
+        applyCustomer(payload, found.pelanggan);
+        const duplicate = await MsFo.findOne({
+            where: { no_jaringan: payload.no_jaringan, customer: payload.customer }
+        });
+        if (duplicate) {
+            req.flash('error_msg', 'Remote ini sudah ada di Data MS FO Kepri');
             return res.redirect(BASE + '/create');
         }
         const created = await MsFo.create(payload);
@@ -270,8 +326,22 @@ router.put('/:id', isEditor, async (req, res) => {
             return res.redirect(BASE);
         }
         const payload = payloadFrom(req.body);
-        if (!payload.no_jaringan || !payload.customer) {
-            req.flash('error_msg', 'No jaringan dan customer wajib diisi');
+        if (!payload.no_jaringan) {
+            req.flash('error_msg', 'No jaringan wajib diisi');
+            return res.redirect(`${BASE}/${data.id}/edit`);
+        }
+        const found = await customerFor(payload.no_jaringan, payload.customer);
+        if (found.pelanggan) {
+            applyCustomer(payload, found.pelanggan);
+        } else if (data.no_jaringan !== payload.no_jaringan) {
+            req.flash('error_msg', found.error);
+            return res.redirect(`${BASE}/${data.id}/edit`);
+        }
+        const duplicate = await MsFo.findOne({
+            where: { no_jaringan: payload.no_jaringan, customer: payload.customer || data.customer }
+        });
+        if (duplicate && duplicate.id !== data.id) {
+            req.flash('error_msg', 'Remote ini sudah ada di Data MS FO Kepri');
             return res.redirect(`${BASE}/${data.id}/edit`);
         }
         await data.update(payload);

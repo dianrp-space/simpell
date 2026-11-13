@@ -52,7 +52,7 @@ const OdcCore = sequelize.define('OdcCore', {
         allowNull: false
     },
     status: {
-        type: DataTypes.ENUM('Active', 'Bad', 'None'),
+        type: DataTypes.ENUM('Active', 'Cut', 'Alokasi', 'Idle', 'None', 'Bad'),
         allowNull: false,
         defaultValue: 'None'
     },

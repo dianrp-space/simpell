@@ -10,7 +10,7 @@
         <!-- Page Header -->
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div class="flex items-center gap-4">
-                <a href="<%= (typeof central !== 'undefined' && central) ? '/otb-phd/central/' + central.id : '/otb-phd' %>"
+                <a href="<%= (typeof central !== 'undefined' && central) ? fiberBase + '/central/' + central.id : fiberBase %>"
                     class="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 dark:hover:text-white dark:hover:bg-gray-700 rounded-lg transition-colors">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -24,7 +24,7 @@
                 </div>
             </div>
             <% if (isEditor) { %>
-                <a href="/otb-phd/sector/<%= encodeURIComponent(sectorName) %>/edit?return_to=/otb-phd/sector/<%= encodeURIComponent(sectorName) %>"
+                <a href="<%= fiberBase %>/sector/<%= encodeURIComponent(sectorName) %>/edit?return_to=<%= fiberBase %>/sector/<%= encodeURIComponent(sectorName) %>"
                     class="inline-flex items-center gap-2 px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-medium rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -379,7 +379,7 @@
                                                     <% } %>
                                     </div>
                                     <% if (isEditor) { %>
-                                        <a href="/otb-phd/<%= core.id %>/edit"
+                                        <a href="<%= fiberBase %>/<%= core.id %>/edit"
                                             class="absolute top-2 right-2 text-gray-400 hover:text-blue-500"
                                             title="Edit">
                                             <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -451,7 +451,7 @@
             // Apply base class + color class
             select.className = "text-xs font-medium rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500 cursor-pointer py-1 pl-2 pr-8 transition-colors " + (clsMap[value] || clsMap['None']);
 
-            fetch(`/otb-phd/${coreId}`, {
+            fetch(`<%= fiberBase %>/${coreId}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
                 body: JSON.stringify({ status: value })
@@ -478,7 +478,7 @@
 
             // Set Form Action (Method Override handled by default POST if using middleware, but fetch/action usually needs _method)
             // Assuming method-override is set up in app.js for ?_method=PUT
-            form.action = `/otb-phd/${coreId}?_method=PUT`;
+            form.action = `<%= fiberBase %>/${coreId}?_method=PUT`;
 
             // Determine Field Config
             let label = '';

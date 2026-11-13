@@ -92,7 +92,11 @@ router.get('/create', isEditor, (req, res) => res.render('data-closure/form', { 
 
 router.post('/', isEditor, async (req, res) => {
     try { await DataClosure.create(req.body); req.flash('success_msg', 'Data berhasil ditambahkan'); res.redirect('/data-closure'); }
-    catch (error) { req.flash('error_msg', 'Gagal menambahkan data'); res.redirect('/data-closure/create'); }
+    catch (error) {
+        const message = error.message && error.message.startsWith('Koordinat') ? error.message : 'Gagal menambahkan data';
+        req.flash('error_msg', message);
+        res.redirect('/data-closure/create');
+    }
 });
 
 router.get('/:id/edit', isEditor, async (req, res) => {
@@ -105,7 +109,11 @@ router.get('/:id/edit', isEditor, async (req, res) => {
 
 router.put('/:id', isEditor, async (req, res) => {
     try { await DataClosure.update(req.body, { where: { id: req.params.id } }); req.flash('success_msg', 'Data berhasil diperbarui'); res.redirect('/data-closure'); }
-    catch (error) { res.redirect(`/data-closure/${req.params.id}/edit`); }
+    catch (error) {
+        const message = error.message && error.message.startsWith('Koordinat') ? error.message : 'Gagal memperbarui data';
+        req.flash('error_msg', message);
+        res.redirect(`/data-closure/${req.params.id}/edit`);
+    }
 });
 
 router.delete('/:id', isEditor, async (req, res) => {

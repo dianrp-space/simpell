@@ -42,7 +42,8 @@
                                 companion: data && data[field.fill || 'customer'] ? data[field.fill || 'customer'] : '',
                                 placeholder: field.placeholder,
                                 fill: field.fill || 'customer',
-                                required: field.required
+                                required: field.required,
+                                autofill: field.autofill
                             }) %>
                         <% } else if (field.type === 'textarea') { %>
                             <textarea id="<%= field.name %>" name="<%= field.name %>" rows="4"
