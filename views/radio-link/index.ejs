@@ -205,19 +205,26 @@
                                         class="px-6 py-4 text-gray-700 dark:text-gray-300 align-top text-sm whitespace-nowrap">
                                         <%= item.password || '-' %>
                                     </td>
-                                    <% const radioMap = mapsHref((item.latitude || '') + ',' + (item.longitude || '')); %>
                                     <td
                                         class="px-6 py-4 text-gray-700 dark:text-gray-300 align-top font-mono text-sm whitespace-nowrap">
-                                        <% if (radioMap) { %>
-                                            <a href="<%= radioMap %>" target="_blank" rel="noopener noreferrer" title="Buka di Google Maps"
-                                                class="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 hover:underline"><%= item.latitude %></a>
+                                        <% if (item.latitude && item.longitude) { %>
+                                            <a href="https://www.google.com/maps?q=<%= item.latitude %>,<%= item.longitude %>"
+                                                target="_blank"
+                                                class="flex items-center gap-1 text-blue-500 hover:underline"
+                                                title="Buka di Google Maps">
+                                                <%= item.latitude %>
+                                            </a>
                                         <% } else { %><%= item.latitude || '-' %><% } %>
                                     </td>
                                     <td
                                         class="px-6 py-4 text-gray-700 dark:text-gray-300 align-top font-mono text-sm whitespace-nowrap">
-                                        <% if (radioMap) { %>
-                                            <a href="<%= radioMap %>" target="_blank" rel="noopener noreferrer" title="Buka di Google Maps"
-                                                class="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 hover:underline"><%= item.longitude %></a>
+                                        <% if (item.latitude && item.longitude) { %>
+                                            <a href="https://www.google.com/maps?q=<%= item.latitude %>,<%= item.longitude %>"
+                                                target="_blank"
+                                                class="flex items-center gap-1 text-blue-500 hover:underline"
+                                                title="Buka di Google Maps">
+                                                <%= item.longitude %>
+                                            </a>
                                         <% } else { %><%= item.longitude || '-' %><% } %>
                                     </td>
                                     <td

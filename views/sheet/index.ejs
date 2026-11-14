@@ -162,12 +162,23 @@
                                         <% } else if (column.key === 'port' && typeof fiberMap !== 'undefined' && fiberMap && item.warna && fiberMap[item.warna]) { %>
                                             <span class="inline-flex h-7 min-w-[1.75rem] items-center justify-center rounded-md border border-black/10 px-2 text-xs font-bold" style="background:<%= fiberMap[item.warna].hex %>;color:<%= fiberMap[item.warna].ink %>"><%= item.port %></span>
                                         <% } else if (column.key === 'lat_long' || column.key === 'koordinat') { %>
-                                            <% const coordinateHref = mapsHref(item[column.key]); %>
-                                            <% if (coordinateHref) { %>
-                                                <a href="<%= coordinateHref %>" target="_blank" rel="noopener noreferrer" title="Buka di Google Maps"
-                                                    class="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 hover:underline"><%= String(item[column.key]).replace(/\s+/g, ' ') %></a>
+                                            <% var coordinateText = String(item[column.key] || '').trim();
+                                               var coordinateParts = coordinateText.split(/[\s,;]+/).filter(Boolean); %>
+                                            <% if (coordinateParts.length >= 2) { %>
+                                                <a href="https://www.google.com/maps?q=<%= coordinateParts[0] %>,<%= coordinateParts[1] %>"
+                                                    target="_blank"
+                                                    class="flex items-center gap-1 text-blue-500 hover:underline"
+                                                    title="Buka di Google Maps">
+                                                    <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                            d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                            d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                                    </svg>
+                                                    <%= coordinateParts[0] %>, <%= coordinateParts[1] %>
+                                                </a>
                                             <% } else { %>
-                                                <%= item[column.key] == null || item[column.key] === '' ? '-' : String(item[column.key]).replace(/\s+/g, ' ') %>
+                                                <span class="text-gray-400"><%= coordinateText || '-' %></span>
                                             <% } %>
                                         <% } else { %>
                                             <%= item[column.key] == null || item[column.key] === '' ? '-' : String(item[column.key]).replace(/\s+/g, ' ') %>
