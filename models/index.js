@@ -20,6 +20,7 @@ const OtbCentral = require('./OtbCentral');
 const OtbPhd = require('./OtbPhd');
 const CoreProjectCentral = require('./CoreProjectCentral');
 const CoreProjectCore = require('./CoreProjectCore');
+const CoreProjectColumn = require('./CoreProjectColumn');
 const PendingGgn = require('./PendingGgn');
 const QcPsb = require('./QcPsb');
 const MsFo = require('./MsFo');
@@ -207,6 +208,7 @@ module.exports = {
     OtbPhd,
     CoreProjectCentral,
     CoreProjectCore,
+    CoreProjectColumn,
     PendingGgn,
     QcPsb,
     MsFo,

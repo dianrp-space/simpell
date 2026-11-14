@@ -22,7 +22,7 @@ const CoreProjectCore = sequelize.define('CoreProjectCore', {
         onDelete: 'CASCADE'
     },
     sector: {
-        type: DataTypes.STRING(50),
+        type: DataTypes.TEXT,
         allowNull: false
     },
     tube_number: {
@@ -61,6 +61,10 @@ const CoreProjectCore = sequelize.define('CoreProjectCore', {
     },
     keterangan: {
         type: DataTypes.TEXT,
+        allowNull: true
+    },
+    custom_values: {
+        type: DataTypes.JSON,
         allowNull: true
     }
 }, {

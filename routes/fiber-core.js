@@ -5,7 +5,7 @@ const sequelize = require('../config/database');
 const { pageState, pageMeta } = require('../utils/paginate');
 const ExcelJS = require('exceljs');
 
-function createFiberCoreRouter({ Central, Core, base, label }) {
+function createFiberCoreRouter({ Central, Core, Column, base, label }) {
     const router = express.Router();
     router.use((req, res, next) => {
         res.locals.fiberBase = base;
@@ -14,8 +14,19 @@ function createFiberCoreRouter({ Central, Core, base, label }) {
         next();
     });
 
+    function cleanSectorName(value) {
+        return String(value || '').replace(/\s+/g, ' ').trim();
+    }
+
     const CORE_COLORS = ['Blue', 'Orange', 'Green', 'Brown', 'Gray', 'White', 'Red', 'Black', 'Yellow', 'Purple', 'Pink', 'Aqua'];
     const STATUSES = ['Active', 'Cut', 'Alokasi', 'Idle', 'None'];
+
+    function columnsFor(ColumnModel, sectorName, centralId) {
+        return ColumnModel.findAll({
+            where: { sector: sectorName, central_id: centralId || null },
+            order: [['sort_order', 'ASC'], ['id', 'ASC']]
+        });
+    }
 
     // ==========================================
     // CENTRAL ROUTES
@@ -368,8 +379,14 @@ function createFiberCoreRouter({ Central, Core, base, label }) {
     // POST - Create new sector with tubes and cores
     router.post('/sector', isEditor, async (req, res) => {
         try {
-            const { sector, tube_count, central_id } = req.body;
+            const sector = cleanSectorName(req.body.sector);
+            const { tube_count, central_id } = req.body;
             const tubeCountNum = parseInt(tube_count);
+
+            if (!sector) {
+                req.flash('error_msg', 'Nama sector wajib diisi');
+                return res.redirect(`${base}/central/${central_id}/sector/create`);
+            }
 
             // Check if sector already exists (Global check or Per-Central? Preserving Global for now)
             const existing = await Core.findOne({ where: { sector } });
@@ -447,19 +464,92 @@ function createFiberCoreRouter({ Central, Core, base, label }) {
 
             const tubes = Object.values(tubesMap).sort((a, b) => a.tube_number - b.tube_number);
 
-            res.render('otb-phd/detail', {
+            const viewData = {
                 title: `Detail Sector ${sectorName} - SIMPELL`,
                 sectorName,
                 tubes,
                 totalCores: cores.length,
-                central, // Pass central for breadcrumbs/navigation
+                central,
                 coreColors: CORE_COLORS,
                 statuses: STATUSES
-            });
+            };
+            if (Column) {
+                viewData.customColumns = (await columnsFor(Column, sectorName, centralId)).map((column) => column.toJSON());
+            }
+            res.render('otb-phd/detail', viewData);
         } catch (error) {
             console.error('Error:', error);
             req.flash('error_msg', 'Gagal memuat data');
             res.redirect(base);
+        }
+    });
+
+    router.post('/sector/:sectorName/columns', isEditor, async (req, res) => {
+        const sectorName = decodeURIComponent(req.params.sectorName);
+        const back = `${base}/sector/${encodeURIComponent(sectorName)}`;
+        try {
+            if (!Column) return res.redirect(back);
+            const name = String(req.body.name || '').trim().slice(0, 40);
+            if (!name) {
+                req.flash('error_msg', 'Nama kolom wajib diisi');
+                return res.redirect(back);
+            }
+            const sample = await Core.findOne({ where: { sector: sectorName } });
+            if (!sample) {
+                req.flash('error_msg', 'Sector tidak ditemukan');
+                return res.redirect(base);
+            }
+            const existing = await columnsFor(Column, sectorName, sample.central_id);
+            if (existing.length >= 12) {
+                req.flash('error_msg', 'Maksimal 12 kolom tambahan');
+                return res.redirect(back);
+            }
+            if (existing.some((column) => column.name.toLowerCase() === name.toLowerCase())) {
+                req.flash('error_msg', `Kolom "${name}" sudah ada`);
+                return res.redirect(back);
+            }
+            const sortOrder = existing.reduce((max, column) => Math.max(max, column.sort_order || 0), 0) + 1;
+            await Column.create({
+                central_id: sample.central_id,
+                sector: sectorName,
+                name,
+                sort_order: sortOrder
+            });
+            req.flash('success_msg', `Kolom "${name}" berhasil ditambahkan`);
+            res.redirect(back);
+        } catch (error) {
+            console.error('Error:', error);
+            req.flash('error_msg', 'Gagal menambah kolom');
+            res.redirect(back);
+        }
+    });
+
+    router.delete('/sector/:sectorName/columns/:columnId', isEditor, async (req, res) => {
+        const sectorName = decodeURIComponent(req.params.sectorName);
+        const back = `${base}/sector/${encodeURIComponent(sectorName)}`;
+        try {
+            if (!Column) return res.redirect(back);
+            const column = await Column.findOne({ where: { id: req.params.columnId, sector: sectorName } });
+            if (!column) {
+                req.flash('error_msg', 'Kolom tidak ditemukan');
+                return res.redirect(back);
+            }
+            const cores = await Core.findAll({ where: { sector: sectorName, central_id: column.central_id } });
+            for (const core of cores) {
+                if (!core.custom_values || !core.custom_values[String(column.id)]) continue;
+                const values = { ...core.custom_values };
+                delete values[String(column.id)];
+                core.custom_values = values;
+                core.changed('custom_values', true);
+                await core.save();
+            }
+            await column.destroy();
+            req.flash('success_msg', `Kolom "${column.name}" berhasil dihapus`);
+            res.redirect(back);
+        } catch (error) {
+            console.error('Error:', error);
+            req.flash('error_msg', 'Gagal menghapus kolom');
+            res.redirect(back);
         }
     });
 
@@ -492,8 +582,14 @@ function createFiberCoreRouter({ Central, Core, base, label }) {
     router.put('/sector/:sectorName', isEditor, async (req, res) => {
         try {
             const oldSectorName = decodeURIComponent(req.params.sectorName);
-            const { newSectorName, tube_count } = req.body;
+            const newSectorName = cleanSectorName(req.body.newSectorName);
+            const { tube_count } = req.body;
             const newTubeCount = parseInt(tube_count);
+
+            if (!newSectorName) {
+                req.flash('error_msg', 'Nama sector wajib diisi');
+                return res.redirect(`${base}/sector/${encodeURIComponent(oldSectorName)}/edit`);
+            }
 
             // 1. Handle Sector Name Change
             if (oldSectorName !== newSectorName) {
@@ -509,6 +605,12 @@ function createFiberCoreRouter({ Central, Core, base, label }) {
                     { sector: newSectorName },
                     { where: { sector: oldSectorName } }
                 );
+                if (Column) {
+                    await Column.update(
+                        { sector: newSectorName },
+                        { where: { sector: oldSectorName } }
+                    );
+                }
             }
 
             const currentSectorName = newSectorName;
@@ -614,6 +716,7 @@ function createFiberCoreRouter({ Central, Core, base, label }) {
             const centralId = core ? core.central_id : null;
 
             await Core.destroy({ where: { sector: sectorName } });
+            if (Column) await Column.destroy({ where: { sector: sectorName } });
             req.flash('success_msg', `Sector "${sectorName}" berhasil dihapus`);
 
             if (centralId) {
@@ -665,6 +768,24 @@ function createFiberCoreRouter({ Central, Core, base, label }) {
             if (destination !== undefined) updateData.destination = destination;
             if (customer !== undefined) updateData.customer = customer;
             if (keterangan !== undefined) updateData.keterangan = keterangan;
+            if (Column && req.body.custom_column_id !== undefined) {
+                const column = await Column.findOne({
+                    where: {
+                        id: req.body.custom_column_id,
+                        sector: core.sector,
+                        central_id: core.central_id
+                    }
+                });
+                if (!column) {
+                    req.flash('error_msg', 'Kolom tidak ditemukan');
+                    return res.redirect(`${base}/sector/${encodeURIComponent(core.sector)}`);
+                }
+                const values = { ...(core.custom_values || {}) };
+                const text = String(req.body.custom_value || '').trim();
+                if (text) values[String(column.id)] = text;
+                else delete values[String(column.id)];
+                updateData.custom_values = values;
+            }
 
             await core.update(updateData);
 

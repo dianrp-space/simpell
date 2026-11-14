@@ -23,6 +23,18 @@
                     </h1>
                 </div>
             </div>
+            <% const extraColumns = typeof customColumns !== 'undefined' ? customColumns : []; %>
+            <div class="flex flex-col sm:flex-row sm:items-center gap-2">
+            <% if (isEditor && typeof customColumns !== 'undefined') { %>
+                <form action="<%= fiberBase %>/sector/<%= encodeURIComponent(sectorName) %>/columns" method="POST" class="flex items-center gap-2">
+                    <input type="text" name="name" required maxlength="40" placeholder="Nama kolom baru"
+                        class="w-44 px-3 py-2 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-lg text-sm text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500">
+                    <button type="submit"
+                        class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors">
+                        Tambah Kolom
+                    </button>
+                </form>
+            <% } %>
             <% if (isEditor) { %>
                 <a href="<%= fiberBase %>/sector/<%= encodeURIComponent(sectorName) %>/edit?return_to=<%= fiberBase %>/sector/<%= encodeURIComponent(sectorName) %>"
                     class="inline-flex items-center gap-2 px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-medium rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
@@ -34,6 +46,7 @@
                     Edit Sector
                 </a>
                 <% } %>
+            </div>
         </div>
 
         <!-- Summary Stats -->
@@ -153,6 +166,18 @@
                                 <th class="p-3 text-left border-r border-blue-500">Destination</th>
                                 <th class="p-3 text-left border-r border-blue-500">Customer</th>
                                 <th class="p-3 text-left border-r border-blue-500">Keterangan</th>
+                                <% extraColumns.forEach(function (column) { %>
+                                    <th class="p-3 text-left border-r border-blue-500 min-w-[140px]">
+                                        <div class="flex items-center justify-between gap-2 normal-case">
+                                            <span><%= column.name %></span>
+                                            <% if (isEditor) { %>
+                                                <form action="<%= fiberBase %>/sector/<%= encodeURIComponent(sectorName) %>/columns/<%= column.id %>?_method=DELETE" method="POST" class="inline" onsubmit="return confirmSubmit(this, 'Hapus kolom <%= column.name %>?')">
+                                                    <button type="submit" class="text-white/80 hover:text-white" title="Hapus kolom" aria-label="Hapus kolom <%= column.name %>">×</button>
+                                                </form>
+                                            <% } %>
+                                        </div>
+                                    </th>
+                                <% }); %>
                             </tr>
                         </thead>
                         <tbody>
@@ -306,6 +331,25 @@
                                                             </span>
                                                             <% } %>
                                                 </td>
+                                                <% extraColumns.forEach(function (column) { %>
+                                                    <% const customValue = core.custom_values && core.custom_values[String(column.id)] ? core.custom_values[String(column.id)] : ''; %>
+                                                    <td class="p-2 border-r border-gray-200 dark:border-gray-700 text-sm align-middle">
+                                                        <% if (isEditor) { %>
+                                                            <button type="button"
+                                                                onclick="openOtbEditModal(this.dataset.id, 'custom', this.dataset.value, this.dataset.core, this.dataset.columnId, this.dataset.label)"
+                                                                data-id="<%= core.id %>" data-value="<%= customValue %>" data-core="<%= core.core_number %>" data-column-id="<%= column.id %>" data-label="<%= column.name %>"
+                                                                class="w-full text-left block hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded p-1 -m-1 transition-colors min-h-[1.5rem]">
+                                                                <% if (customValue) { %>
+                                                                    <span class="text-gray-900 dark:text-white"><%- formatText(customValue) %></span>
+                                                                <% } else { %>
+                                                                    <span class="text-gray-300 dark:text-gray-600 hover:text-blue-400 text-xs">+ <%= column.name %></span>
+                                                                <% } %>
+                                                            </button>
+                                                        <% } else { %>
+                                                            <span class="text-gray-900 dark:text-white"><%= customValue || '-' %></span>
+                                                        <% } %>
+                                                    </td>
+                                                <% }); %>
                                     </tr>
                                     <% }); %>
                                         <% }); %>
@@ -377,6 +421,14 @@
                                                         <%= core.destination %>
                                                     </div>
                                                     <% } %>
+                                                <% extraColumns.forEach(function (column) { %>
+                                                    <% const customValue = core.custom_values && core.custom_values[String(column.id)] ? core.custom_values[String(column.id)] : ''; %>
+                                                    <% if (customValue) { %>
+                                                        <div class="truncate text-gray-500" title="<%= column.name %>: <%= customValue %>">
+                                                            <span class="font-medium"><%= column.name %>:</span> <%= customValue %>
+                                                        </div>
+                                                    <% } %>
+                                                <% }); %>
                                     </div>
                                     <% if (isEditor) { %>
                                         <a href="<%= fiberBase %>/<%= core.id %>/edit"
@@ -470,7 +522,7 @@
         }
 
         // Modal Functions
-        function openOtbEditModal(coreId, field, currentValue, coreNumber) {
+        function openOtbEditModal(coreId, field, currentValue, coreNumber, columnId, columnLabel) {
             const modal = document.getElementById('otbEditModal');
             const form = document.getElementById('otbEditForm');
             const title = document.getElementById('modalTitle');
@@ -500,6 +552,12 @@
                 case 'keterangan':
                     label = 'Keterangan';
                     inputHtml = `<textarea name="keterangan" rows="3" class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white sm:text-sm p-2" placeholder="Masukkan Keterangan...">${currentValue}</textarea>`;
+                    break;
+                case 'custom':
+                    label = columnLabel || 'Kolom';
+                    const safeCustom = String(currentValue || '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+                    const safeLabel = String(label).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+                    inputHtml = `<input type="hidden" name="custom_column_id" value="${columnId}"><input type="text" name="custom_value" value="${safeCustom}" class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white sm:text-sm p-2" placeholder="Masukkan ${safeLabel}...">`;
                     break;
             }
 

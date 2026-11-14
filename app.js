@@ -50,7 +50,7 @@ try {
     const dataOdpRoutes = require('./routes/data-odp');
     const aksesThirdPartyRoutes = require('./routes/akses-third-party');
     const { createFiberCoreRouter } = require('./routes/fiber-core');
-    const { OtbCentral, OtbPhd, CoreProjectCentral, CoreProjectCore } = require('./models');
+    const { OtbCentral, OtbPhd, CoreProjectCentral, CoreProjectCore, CoreProjectColumn } = require('./models');
     const otbPhdRoutes = createFiberCoreRouter({
         Central: OtbCentral,
         Core: OtbPhd,
@@ -70,6 +70,7 @@ try {
     const dataCoreProjectRoutes = createFiberCoreRouter({
         Central: CoreProjectCentral,
         Core: CoreProjectCore,
+        Column: CoreProjectColumn,
         base: '/data-core-project',
         label: {
             listTitle: 'Data Core Project - SIMPELL',

@@ -7,14 +7,13 @@ const pelangganChoices = require('../utils/pelangganChoices');
 const { isEditor } = require('../middleware/auth');
 const { paginate } = require('../utils/paginate');
 const logActivity = require('../utils/activityLogger');
-const { cleanText, cleanNumber } = require('../utils/sheetValue');
+const { cleanText } = require('../utils/sheetValue');
 const { readList, buildWhere, columnMeta, listHref } = require('../utils/listState');
 
 const BASE = '/ms-fo';
 const STATUSES = ['Active', 'Inactive', 'Suspended'];
 const PJ = ['JOINTER', 'TA'];
 const COLUMNS = [
-    { key: 'nomor', label: 'No.' },
     { key: 'no_jaringan', label: 'No Jaringan' },
     { key: 'customer', label: 'Customer' },
     { key: 'service', label: 'Service' },
@@ -24,25 +23,20 @@ const COLUMNS = [
     { key: 'status', label: 'Status' },
     { key: 'kota', label: 'Kota' },
     { key: 'lat_long', label: 'Lat Long' },
-    { key: 'kontak', label: 'Kontak' },
-    { key: 'email', label: 'Email' },
-    { key: 'alamat', label: 'Alamat' },
     { key: 'keterangan', label: 'Keterangan' },
     { key: 'pj', label: 'PJ MS FO' }
 ];
-const SEARCH_FIELDS = ['no_jaringan', 'customer', 'service', 'bandwidth', 'akses', 'node', 'kota', 'lat_long', 'kontak', 'email', 'alamat', 'pj', 'keterangan'];
+const SEARCH_FIELDS = ['no_jaringan', 'customer', 'service', 'bandwidth', 'akses', 'node', 'kota', 'lat_long', 'pj', 'keterangan'];
 const LIST_OPTIONS = {
     statuses: STATUSES,
-    sort: 'nomor',
+    sort: 'no_jaringan',
     dir: 'asc',
     sequelize,
-    searchFields: SEARCH_FIELDS,
-    numericFields: ['nomor']
+    searchFields: SEARCH_FIELDS
 };
 
 function payloadFrom(body) {
     return {
-        nomor: cleanNumber(body.nomor),
         no_jaringan: cleanText(body.no_jaringan, 100),
         customer: cleanText(body.customer, 255),
         service: cleanText(body.service, 100),
@@ -52,9 +46,6 @@ function payloadFrom(body) {
         status: cleanText(body.status, 50) || 'Active',
         kota: cleanText(body.kota, 100),
         lat_long: cleanText(body.lat_long, 255),
-        kontak: cleanText(body.kontak, 50),
-        email: cleanText(body.email, 255),
-        alamat: cleanText(body.alamat),
         pj: cleanText(body.pj, 100),
         keterangan: cleanText(body.keterangan)
     };
@@ -81,10 +72,7 @@ function applyCustomer(payload, pelanggan) {
     payload.node = cleanText(pelanggan.node, 100);
     payload.status = cleanText(pelanggan.status, 50) || 'Active';
     payload.kota = cleanText(pelanggan.kota, 100);
-    payload.lat_long = cleanText(pelanggan.koordinat, 255);
-    payload.kontak = cleanText(pelanggan.kontak, 50);
-    payload.email = cleanText(pelanggan.email, 255);
-    payload.alamat = cleanText(pelanggan.alamat);
+    if (!payload.lat_long) payload.lat_long = cleanText(pelanggan.koordinat, 255);
     if (!payload.keterangan) payload.keterangan = cleanText(pelanggan.keterangan);
 }
 
@@ -117,13 +105,9 @@ function fieldsFor(lists) {
         text('akses', 'Akses', { list: 'akses', placeholder: 'Contoh: Akses FO, CPE, M2M' }),
         text('node', 'Node', { list: 'node', placeholder: 'Contoh: BTMGPNXR01' }),
         text('kota', 'Kota', { list: 'kota', placeholder: 'Contoh: BATAM' }),
-        text('lat_long', 'Koordinat', { placeholder: 'Lat, long' }),
+        text('lat_long', 'Lat Long', { placeholder: 'Lat, long' }),
         { name: 'status', label: 'Status', type: 'select', options: lists.status, default: 'Active' },
-        text('kontak', 'Kontak (No HP/Telp)', { placeholder: 'Contoh: 08123456789' }),
-        text('email', 'Email', { placeholder: 'Contoh: email@domain.com' }),
-        { name: 'alamat', label: 'Alamat', type: 'textarea', wide: true },
         { name: 'keterangan', label: 'Keterangan', type: 'textarea', wide: true },
-        { name: 'nomor', label: 'No.', type: 'number', placeholder: 'Nomor urut, khusus MS FO' },
         text('pj', 'PJ MS FO', { list: 'pj', placeholder: 'JOINTER, TA, atau ketik PJ baru' })
     ];
 }
@@ -147,7 +131,6 @@ async function statusCounts(where) {
 
 function sheetColumns() {
     return [
-        { header: 'NO.', key: 'nomor', width: 8 },
         { header: 'NO JARINGAN', key: 'no_jaringan', width: 18 },
         { header: 'CUSTOMER', key: 'customer', width: 42 },
         { header: 'SERVICE', key: 'service', width: 22 },
@@ -157,9 +140,6 @@ function sheetColumns() {
         { header: 'STATUS', key: 'status', width: 14 },
         { header: 'KOTA', key: 'kota', width: 16 },
         { header: 'LAT LONG', key: 'lat_long', width: 28 },
-        { header: 'KONTAK', key: 'kontak', width: 18 },
-        { header: 'EMAIL', key: 'email', width: 28 },
-        { header: 'ALAMAT', key: 'alamat', width: 36 },
         { header: 'PJ MS FO', key: 'pj', width: 14 },
         { header: 'KETERANGAN', key: 'keterangan', width: 40 }
     ];
@@ -179,7 +159,6 @@ router.get('/export', async (req, res) => {
         sheet.getRow(1).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF2563EB' } };
         data.forEach((item) => {
             sheet.addRow({
-                nomor: item.nomor,
                 no_jaringan: item.no_jaringan || '',
                 customer: item.customer || '',
                 service: item.service || '',
@@ -189,9 +168,6 @@ router.get('/export', async (req, res) => {
                 status: item.status || '',
                 kota: item.kota || '',
                 lat_long: item.lat_long || '',
-                kontak: item.kontak || '',
-                email: item.email || '',
-                alamat: item.alamat || '',
                 pj: item.pj || '',
                 keterangan: item.keterangan || ''
             });

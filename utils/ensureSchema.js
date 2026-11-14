@@ -1,3 +1,14 @@
+async function widenTextColumn(sequelize, table, column) {
+    const [rows] = await sequelize.query(
+        `SELECT DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS
+         WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = ? AND COLUMN_NAME = ?`,
+        { replacements: [table, column] }
+    );
+    if (rows.length && rows[0].DATA_TYPE === 'varchar') {
+        await sequelize.query(`ALTER TABLE \`${table}\` MODIFY COLUMN \`${column}\` TEXT NOT NULL`);
+    }
+}
+
 async function columnExists(sequelize, table, column) {
     const [rows] = await sequelize.query(
         `SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS
@@ -113,6 +124,16 @@ async function ensureSchema(sequelize) {
             await sequelize.query('ALTER TABLE ms_fo ADD COLUMN alamat TEXT NULL');
         }
     }
+
+    const [coreProjectTables] = await sequelize.query(
+        `SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES
+         WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'core_project_cores'`
+    );
+    if (coreProjectTables.length && !(await columnExists(sequelize, 'core_project_cores', 'custom_values'))) {
+        await sequelize.query('ALTER TABLE core_project_cores ADD COLUMN custom_values JSON NULL');
+    }
+    await widenTextColumn(sequelize, 'core_project_cores', 'sector');
+    await widenTextColumn(sequelize, 'core_project_columns', 'sector');
 
     await sequelize.query(
         `CREATE TABLE IF NOT EXISTS sessions (

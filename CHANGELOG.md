@@ -33,10 +33,22 @@ Catatan perubahan yang dikerjakan pada kode SIMPELL ini. Belum ada tag versi bar
 
 ### Data MS FO Kepri
 
-- Form Data MS FO Kepri memakai isian yang sama dengan Data Customer: customer, service, bandwidth, akses, node, kota, koordinat, status, kontak, email, alamat, dan keterangan.
+- Form Data MS FO Kepri mengikuti Data Customer untuk customer, service, bandwidth, akses, node, kota, lat long, status, dan keterangan.
+- Kolom No., Kontak, Email, dan Alamat tidak lagi tampil di daftar, form, detail, dan unduhan Excel.
+- Lat Long yang diketik di form tetap tersimpan. Kalau dikosongkan, nilainya diambil dari koordinat Data Customer.
 - Mengetik nomor jaringan yang sudah ada langsung mengisi data itu dari Data Customer.
 - Remote yang belum ada ditambahkan di Data Customer. Nomor yang belum terdaftar tidak bisa disimpan di Data MS FO Kepri, dan remote yang sama tidak bisa dimasukkan dua kali.
-- Nomor urut dan PJ MS FO tetap khusus menu ini.
+- PJ MS FO tetap khusus menu ini.
+
+### Data Core Project
+
+- Di detail sector, editor bisa menambah kolom sendiri, maksimal 12, lalu mengisi nilainya pada tiap core.
+- Kolom itu hanya berlaku di sector tersebut dan tidak muncul di Data OTB. Menghapus kolom ikut menghapus isiannya.
+- Nama sector tidak lagi dibatasi 50 karakter.
+
+### Data Customer
+
+- Daftar menampilkan kolom Koordinat setelah Kota. Kolom itu bisa diurutkan dan dicari.
 
 ## 2026-11-13
 

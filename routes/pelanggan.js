@@ -23,6 +23,7 @@ const CUSTOMER_COLUMNS = [
     { key: 'akses', label: 'Akses' },
     { key: 'node', label: 'Node' },
     { key: 'kota', label: 'Kota' },
+    { key: 'koordinat', label: 'Koordinat' },
     { key: 'status', label: 'Status' }
 ];
 const CUSTOMER_STATUSES = ['Active', 'Inactive', 'Suspended'];
@@ -58,7 +59,8 @@ function customerWhere(state, withStatus) {
                 { bandwidth: { [Op.like]: pattern } },
                 { akses: { [Op.like]: pattern } },
                 { node: { [Op.like]: pattern } },
-                { kota: { [Op.like]: pattern } }
+                { kota: { [Op.like]: pattern } },
+                { koordinat: { [Op.like]: pattern } }
             ]
         });
     }
