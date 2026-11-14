@@ -93,9 +93,23 @@ function decimalCoordinateText(value) {
     return converted;
 }
 
+function mapsHref(value) {
+    if (value === undefined || value === null) return '';
+    const text = String(value).trim();
+    if (!text || text === '-') return '';
+    const parts = text.split(/[,;]/).map((part) => part.trim()).filter(Boolean);
+    if (parts.length < 2) return '';
+    const latitude = Number(parts[0].replace(',', '.'));
+    const longitude = Number(parts[1].replace(',', '.'));
+    if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) return '';
+    if (latitude < -90 || latitude > 90 || longitude < -180 || longitude > 180) return '';
+    return `https://www.google.com/maps?q=${latitude},${longitude}`;
+}
+
 module.exports = {
     coordinateError,
     parseCoordinate,
     decimalCoordinate,
-    decimalCoordinateText
+    decimalCoordinateText,
+    mapsHref
 };

@@ -9,6 +9,7 @@ Catatan perubahan yang dikerjakan pada kode SIMPELL ini. Belum ada tag versi bar
 - Isian koordinat menerima format desimal dan DMS. DMS diubah ke desimal saat disimpan.
 - Contoh `1° 07' 15.6" N` menjadi `1.121`, dan `104° 03' 02.7" E` menjadi `104.05075`. Arah selatan atau barat, serta tanda minus, membuat nilai negatif.
 - Isian kosong tetap disimpan sebagai kosong.
+- Koordinat yang tampil di tabel bisa diklik dan membuka Google Maps di tab baru. Berlaku di Data Customer, Data MS FO Kepri, dan Radio Link. Sel kosong tetap tanda minus.
 
 ### Data FO Kepri
 

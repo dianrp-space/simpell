@@ -179,6 +179,7 @@ try {
         res.locals.user = req.session.user || null;
         res.locals.isEditor = req.session.user ? (req.session.user.role === 'admin' || req.session.user.sub_user === 'editor') : false;
         res.locals.isAdmin = req.session.user ? req.session.user.role === 'admin' : false;
+        res.locals.mapsHref = require('./utils/coordinates').mapsHref;
         res.locals.formatText = (text) => {
             return (text || '').split('\n')
                 .map(l => l.trim()

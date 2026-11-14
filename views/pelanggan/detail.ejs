@@ -111,7 +111,15 @@
             </div>
             <div class="p-4 bg-gray-50 dark:bg-gray-900/50 rounded-lg">
                 <p class="text-xs text-gray-500 dark:text-gray-400 mb-1">Koordinat</p>
-                <p class="font-medium text-gray-900 dark:text-white"><%= pelanggan.koordinat || '-' %></p>
+                <p class="font-medium text-gray-900 dark:text-white break-words">
+                    <% const koordinatHref = mapsHref(pelanggan.koordinat); %>
+                    <% if (koordinatHref) { %>
+                        <a href="<%= koordinatHref %>" target="_blank" rel="noopener noreferrer" title="Buka di Google Maps"
+                            class="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 hover:underline"><%= pelanggan.koordinat %></a>
+                    <% } else { %>
+                        <%= pelanggan.koordinat || '-' %>
+                    <% } %>
+                </p>
             </div>
             <div class="p-4 bg-gray-50 dark:bg-gray-900/50 rounded-lg">
                 <p class="text-xs text-gray-500 dark:text-gray-400 mb-1">Kontak</p>
