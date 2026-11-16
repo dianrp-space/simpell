@@ -506,7 +506,7 @@
                         <%= user ? user.nama : 'User' %>
                     </p>
                     <p class="text-xs text-gray-500 dark:text-gray-400 truncate capitalize">
-                        <%= user ? user.role : '' %>
+                        <%= user ? user.role : '' %><% if (user && user.role === 'mitra' && user.nama_mitra) { %> · <%= user.nama_mitra %><% } %>
                     </p>
                 </div>
             </a>

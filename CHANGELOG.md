@@ -8,6 +8,12 @@ Catatan perubahan yang dikerjakan pada kode SIMPELL ini. Belum ada tag versi bar
 
 - Simpan di Struktur ODC Builder tetap di posisi gulir yang sama. Halaman dan tabel core tidak kembali ke atas.
 
+### Role Mitra
+
+- Akun role Mitra wajib punya nama mitra. Pilihan yang sudah ada adalah JOINTER dan TA, sama dengan PJ MS FO. Nama lain tetap bisa diketik.
+- Menu tetap dipilih dengan centang. Untuk mitra, biasanya Record GGN & PM, Data MS FO Kepri, Pendingan MS FO Kepri, dan Data PM MS FO Kepri.
+- Di menu itu, mitra hanya melihat baris yang PJ-nya sama dengan nama mitranya. Menu yang tidak dicentang tidak muncul.
+
 ## 2026-11-14
 
 ### Koordinat

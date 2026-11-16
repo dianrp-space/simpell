@@ -209,13 +209,14 @@ try {
         }
         try {
             const fresh = await User.findByPk(sessionUser.id, {
-                attributes: ['allowed_menus', 'is_active', 'role']
+                attributes: ['allowed_menus', 'is_active', 'role', 'nama_mitra']
             });
             if (!fresh || !fresh.is_active || fresh.role !== 'mitra') {
                 return req.session.destroy(() => res.redirect('/auth/login'));
             }
             const allowed = normalizeMenus(fresh.allowed_menus);
             req.session.user.allowed_menus = allowed;
+            req.session.user.nama_mitra = fresh.nama_mitra || '';
             res.locals.allowedMenus = allowed;
             res.locals.canSeeMenu = (key) => allowed.includes(key);
             res.locals.canSeeGroup = (keys) => keys.some((key) => allowed.includes(key));

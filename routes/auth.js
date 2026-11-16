@@ -61,6 +61,7 @@ router.post('/login', isGuest, async (req, res) => {
             role: user.role,
             sub_user: user.sub_user, // Added sub_user
             allowed_menus: user.allowed_menus || [],
+            nama_mitra: user.nama_mitra || '',
             foto: user.foto,
             no_hp: user.no_hp
         };

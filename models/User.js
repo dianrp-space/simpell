@@ -66,6 +66,10 @@ const User = sequelize.define('User', {
         type: DataTypes.JSON,
         allowNull: true,
         defaultValue: null
+    },
+    nama_mitra: {
+        type: DataTypes.STRING(100),
+        allowNull: true
     }
 }, {
     tableName: 'users',

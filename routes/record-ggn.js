@@ -3,6 +3,7 @@ const router = express.Router();
 const { RecordGgn, Pelanggan } = require('../models');
 const { Op } = require('sequelize');
 const { isEditor } = require('../middleware/auth');
+const { scopePartner, findForPartner } = require('../utils/mitraScope');
 
 const ExcelJS = require('exceljs');
 const { paginate } = require('../utils/paginate');
@@ -25,7 +26,7 @@ router.get('/export', async (req, res) => {
         }
 
         const data = await RecordGgn.findAll({
-            where,
+            where: scopePartner(where, req, 'record_ggn'),
             order: [['tanggal', 'DESC']],
             include: [{ model: Pelanggan, as: 'pelanggan' }]
         });
@@ -93,7 +94,7 @@ router.get('/', async (req, res) => {
             ];
         }
         const { rows, pagination } = await paginate(RecordGgn, req, {
-            where,
+            where: scopePartner(where, req, 'record_ggn'),
             order: [['tanggal', 'DESC']],
             include: [{ model: Pelanggan, as: 'pelanggan' }],
             subQuery: false
@@ -166,7 +167,7 @@ router.get('/:id/edit', isEditor, async (req, res) => {
 
 router.get('/:id', async (req, res) => {
     try {
-        const data = await RecordGgn.findByPk(req.params.id, {
+        const data = await findForPartner(RecordGgn, req.params.id, req, {
             include: [{ model: Pelanggan, as: 'pelanggan' }]
         });
         if (!data) { req.flash('error_msg', 'Data tidak ditemukan'); return res.redirect('/record-ggn'); }

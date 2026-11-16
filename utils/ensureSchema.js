@@ -82,6 +82,9 @@ async function ensureSchema(sequelize) {
     if (userTables.length && !(await columnExists(sequelize, 'users', 'allowed_menus'))) {
         await sequelize.query('ALTER TABLE users ADD COLUMN allowed_menus JSON NULL');
     }
+    if (userTables.length && !(await columnExists(sequelize, 'users', 'nama_mitra'))) {
+        await sequelize.query('ALTER TABLE users ADD COLUMN nama_mitra VARCHAR(100) NULL');
+    }
 
     const [pmTables] = await sequelize.query(
         `SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES

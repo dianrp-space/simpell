@@ -1,5 +1,14 @@
 const { User, PasswordResetRequest } = require('../models');
 const { parseMenuSelection } = require('../utils/menus');
+
+function mitraAccess(body, role) {
+    if (role !== 'mitra') return { nama_mitra: null, allowed_menus: null };
+    const namaMitra = String(body.nama_mitra || '').trim().slice(0, 100);
+    return {
+        nama_mitra: namaMitra || null,
+        allowed_menus: parseMenuSelection(body, role)
+    };
+}
 const bcrypt = require('bcryptjs');
 const logActivity = require('../utils/activityLogger');
 const { Op } = require('sequelize');
@@ -42,7 +51,8 @@ exports.index = async (req, res) => {
         if (q) {
             activeWhere[Op.or] = [
                 { nama: { [Op.like]: `%${q}%` } },
-                { email: { [Op.like]: `%${q}%` } }
+                { email: { [Op.like]: `%${q}%` } },
+                { nama_mitra: { [Op.like]: `%${q}%` } }
             ];
         }
 
@@ -108,9 +118,15 @@ exports.approveUser = async (req, res) => {
             finalSubUser = 'editor';
         }
 
+        const access = mitraAccess(req.body, finalRole);
+        if (finalRole === 'mitra' && !access.nama_mitra) {
+            req.flash('error_msg', 'Nama mitra wajib diisi untuk role Mitra');
+            return res.redirect('/admin/users?tab=requests');
+        }
         user.role = finalRole;
         user.sub_user = finalSubUser;
-        user.allowed_menus = parseMenuSelection(req.body, finalRole);
+        user.nama_mitra = access.nama_mitra;
+        user.allowed_menus = access.allowed_menus;
         await user.save();
         await markReadBySource('account:' + user.id);
 
@@ -172,10 +188,16 @@ exports.editRole = async (req, res) => {
         if (role === 'mitra') finalSubUser = 'viewer';
         else if (role === 'admin') finalSubUser = 'editor';
 
+        const access = mitraAccess(req.body, role);
+        if (role === 'mitra' && !access.nama_mitra) {
+            req.flash('error_msg', 'Nama mitra wajib diisi untuk role Mitra');
+            return res.redirect('/admin/users?tab=accounts');
+        }
         user.role = role;
         user.sub_user = finalSubUser;
         user.is_active = is_active === '1';
-        user.allowed_menus = parseMenuSelection(req.body, role);
+        user.nama_mitra = access.nama_mitra;
+        user.allowed_menus = access.allowed_menus;
         await user.save();
 
         await logActivity(req, 'EDIT_ROLE', `Updated role for ${user.nama}`, 'user', user.id);
@@ -206,10 +228,17 @@ exports.createUser = async (req, res) => {
         if (role === 'mitra') finalSubUser = 'viewer';
         else if (role === 'admin') finalSubUser = 'editor';
 
+        const access = mitraAccess(req.body, role);
+        if (role === 'mitra' && !access.nama_mitra) {
+            req.flash('error_msg', 'Nama mitra wajib diisi untuk role Mitra');
+            return res.redirect('/admin/users?tab=accounts');
+        }
+
         const user = await User.create({
             nama, email, password, role, sub_user: finalSubUser,
             is_verified: true, is_active: true,
-            allowed_menus: parseMenuSelection(req.body, role)
+            nama_mitra: access.nama_mitra,
+            allowed_menus: access.allowed_menus
         });
 
         await logActivity(req, 'CREATE_USER', `Created user ${nama}`, 'user', user.id);

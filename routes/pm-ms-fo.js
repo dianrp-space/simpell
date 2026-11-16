@@ -9,6 +9,7 @@ const { paginate } = require('../utils/paginate');
 const logActivity = require('../utils/activityLogger');
 const { cleanText, cleanNumber, parseDisplayDate } = require('../utils/sheetValue');
 const { readList, buildWhere, columnMeta, listHref } = require('../utils/listState');
+const { scopePartner, findForPartner } = require('../utils/mitraScope');
 
 const BASE = '/pm-ms-fo';
 const JENIS = ['PM ODP', 'PM CLOSURE', 'PM REMOTE'];
@@ -170,7 +171,7 @@ router.get('/export', async (req, res) => {
     try {
         const state = readList(req.query, COLUMNS, LIST_OPTIONS);
         const data = await PmMsFo.findAll({
-            where: buildWhere(state, LIST_OPTIONS),
+            where: scopePartner(buildWhere(state, LIST_OPTIONS), req, 'pm_ms_fo'),
             order: [['urutan', 'ASC'], ['id', 'ASC']]
         });
         const workbook = new ExcelJS.Workbook();
@@ -191,7 +192,7 @@ router.get('/', async (req, res) => {
     try {
         const state = readList(req.query, COLUMNS, LIST_OPTIONS);
         const { rows, pagination } = await paginate(PmMsFo, req, {
-            where: buildWhere(state, LIST_OPTIONS),
+            where: scopePartner(buildWhere(state, LIST_OPTIONS), req, 'pm_ms_fo'),
             order: [[state.sortKey, state.dir], ['id', 'ASC']]
         });
         res.render('sheet/index', {
@@ -210,7 +211,7 @@ router.get('/', async (req, res) => {
             dir: state.sorting ? state.dir.toLowerCase() : '',
             exportHref: listHref(BASE + '/export', state),
             columns: columnMeta(BASE, state, COLUMNS),
-            stats: await blockCounts(buildWhere(state, { ...LIST_OPTIONS, withStatus: false })),
+            stats: await blockCounts(scopePartner(buildWhere(state, { ...LIST_OPTIONS, withStatus: false }), req, 'pm_ms_fo')),
             searchPlaceholder: 'Cari jenis, periode, tiket, jaringan, customer, rincian, PJ...'
         });
     } catch (error) {
@@ -272,7 +273,7 @@ router.get('/:id/edit', isEditor, async (req, res) => {
 });
 
 router.get('/:id', async (req, res) => {
-    const data = await PmMsFo.findByPk(req.params.id);
+    const data = await findForPartner(PmMsFo, req.params.id, req);
     if (!data) {
         req.flash('error_msg', 'Data tidak ditemukan');
         return res.redirect(BASE);
