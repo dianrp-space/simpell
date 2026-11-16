@@ -232,7 +232,7 @@
                 </span>
             </div>
 
-            <div class="overflow-auto max-h-[80vh] relative">
+            <div id="odcCoreMatrix" class="overflow-auto max-h-[80vh] relative">
                 <table class="w-full text-sm border-collapse">
                     <thead class="sticky top-0 z-50 bg-white dark:bg-gray-800 shadow-md">
                         <tr
@@ -631,5 +631,40 @@
                 if (tubeSectorSelect && tubeSectorSelect.value) {
                     populateTubeTrays();
                 }
+
+                const scrollKey = 'odc-scroll:' + location.pathname;
+                const nativeSubmit = HTMLFormElement.prototype.submit;
+                function rememberScroll() {
+                    const matrix = document.getElementById('odcCoreMatrix');
+                    sessionStorage.setItem(scrollKey, JSON.stringify({
+                        y: window.scrollY,
+                        matrix: matrix ? matrix.scrollTop : 0
+                    }));
+                }
+                const savedScroll = sessionStorage.getItem(scrollKey);
+                if (savedScroll) {
+                    sessionStorage.removeItem(scrollKey);
+                    try {
+                        const saved = JSON.parse(savedScroll);
+                        const restore = function () {
+                            const matrix = document.getElementById('odcCoreMatrix');
+                            if (matrix) matrix.scrollTop = saved.matrix || 0;
+                            window.scrollTo(0, saved.y || 0);
+                        };
+                        requestAnimationFrame(function () {
+                            restore();
+                            requestAnimationFrame(restore);
+                        });
+                    } catch (error) {
+                        sessionStorage.removeItem(scrollKey);
+                    }
+                }
+                document.querySelectorAll('form').forEach(function (form) {
+                    form.addEventListener('submit', rememberScroll);
+                    form.submit = function () {
+                        rememberScroll();
+                        nativeSubmit.call(form);
+                    };
+                });
             });
         </script>

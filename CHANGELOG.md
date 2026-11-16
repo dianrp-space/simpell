@@ -2,6 +2,12 @@
 
 Catatan perubahan yang dikerjakan pada kode SIMPELL ini. Belum ada tag versi baru. Dasarnya tetap rilis `1.0.0` yang sudah ada.
 
+## 2026-11-16
+
+### Data ODC
+
+- Simpan di Struktur ODC Builder tetap di posisi gulir yang sama. Halaman dan tabel core tidak kembali ke atas.
+
 ## 2026-11-14
 
 ### Koordinat
