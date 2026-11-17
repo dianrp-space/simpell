@@ -26,7 +26,7 @@ router.get('/export', async (req, res) => {
         }
 
         const data = await RecordGgn.findAll({
-            where: scopePartner(where, req, 'record_ggn'),
+            where: scopePartner(where, req, RecordGgn),
             order: [['tanggal', 'DESC']],
             include: [{ model: Pelanggan, as: 'pelanggan' }]
         });
@@ -94,7 +94,7 @@ router.get('/', async (req, res) => {
             ];
         }
         const { rows, pagination } = await paginate(RecordGgn, req, {
-            where: scopePartner(where, req, 'record_ggn'),
+            where: scopePartner(where, req, RecordGgn),
             order: [['tanggal', 'DESC']],
             include: [{ model: Pelanggan, as: 'pelanggan' }],
             subQuery: false

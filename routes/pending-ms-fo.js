@@ -22,8 +22,8 @@ const COLUMNS = [
     { key: 'rincian', label: 'Rincian' },
     { key: 'akses', label: 'Akses' },
     { key: 'status', label: 'Status' },
-    { key: 'keterangan', label: 'Keterangan' },
-    { key: 'pj', label: 'PJ' }
+    { key: 'pj', label: 'PJ' },
+    { key: 'keterangan', label: 'Keterangan' }
 ];
 const SEARCH_FIELDS = ['no_ticket', 'no_jaringan', 'customer', 'rincian', 'akses', 'pj', 'keterangan'];
 const LIST_OPTIONS = {
@@ -108,7 +108,7 @@ router.get('/export', async (req, res) => {
     try {
         const state = readList(req.query, COLUMNS, LIST_OPTIONS);
         const data = await PendingMsFo.findAll({
-            where: scopePartner(buildWhere(state, LIST_OPTIONS), req, 'pending_ms_fo'),
+            where: scopePartner(buildWhere(state, LIST_OPTIONS), req, PendingMsFo),
             order: [[state.sortKey, state.dir], ['id', 'ASC']]
         });
         const workbook = new ExcelJS.Workbook();
@@ -120,8 +120,8 @@ router.get('/export', async (req, res) => {
             { header: 'CUSTOMER', key: 'customer', width: 28 },
             { header: 'RINCIAN', key: 'rincian', width: 48 },
             { header: 'AKSES', key: 'akses', width: 14 },
-            { header: 'PJ', key: 'pj', width: 14 },
             { header: 'Status', key: 'status', width: 14 },
+            { header: 'PJ', key: 'pj', width: 14 },
             { header: 'Keterangan', key: 'keterangan', width: 48 }
         ];
         sheet.getRow(1).font = { bold: true, color: { argb: 'FFFFFFFF' } };
@@ -154,13 +154,13 @@ router.get('/', async (req, res) => {
     try {
         const state = readList(req.query, COLUMNS, LIST_OPTIONS);
         const { rows, pagination } = await paginate(PendingMsFo, req, {
-            where: scopePartner(buildWhere(state, LIST_OPTIONS), req, 'pending_ms_fo'),
+            where: scopePartner(buildWhere(state, LIST_OPTIONS), req, PendingMsFo),
             order: [[state.sortKey, state.dir], ['id', 'ASC']]
         });
         res.render('sheet/index', {
             title: 'Pendingan MS FO Kepri - SIMPELL',
             heading: 'Pendingan MS FO Kepri',
-            subtitle: 'Tanggal, no tiket, no jaringan, customer, rincian, akses, PJ, status, dan keterangan',
+            subtitle: 'Tanggal, no tiket, no jaringan, customer, rincian, akses, status, PJ, dan keterangan',
             base: BASE,
             data: rows,
             pagination,
@@ -172,7 +172,7 @@ router.get('/', async (req, res) => {
             dir: state.sorting ? state.dir.toLowerCase() : '',
             exportHref: listHref(BASE + '/export', state),
             columns: columnMeta(BASE, state, COLUMNS),
-            stats: await statusCounts(scopePartner(buildWhere(state, { ...LIST_OPTIONS, withStatus: false }), req, 'pending_ms_fo')),
+            stats: await statusCounts(scopePartner(buildWhere(state, { ...LIST_OPTIONS, withStatus: false }), req, PendingMsFo)),
             searchPlaceholder: 'Cari tiket, jaringan, customer, rincian, PJ...'
         });
     } catch (error) {

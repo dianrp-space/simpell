@@ -171,7 +171,7 @@ router.get('/export', async (req, res) => {
     try {
         const state = readList(req.query, COLUMNS, LIST_OPTIONS);
         const data = await PmMsFo.findAll({
-            where: scopePartner(buildWhere(state, LIST_OPTIONS), req, 'pm_ms_fo'),
+            where: scopePartner(buildWhere(state, LIST_OPTIONS), req, PmMsFo),
             order: [['urutan', 'ASC'], ['id', 'ASC']]
         });
         const workbook = new ExcelJS.Workbook();
@@ -192,7 +192,7 @@ router.get('/', async (req, res) => {
     try {
         const state = readList(req.query, COLUMNS, LIST_OPTIONS);
         const { rows, pagination } = await paginate(PmMsFo, req, {
-            where: scopePartner(buildWhere(state, LIST_OPTIONS), req, 'pm_ms_fo'),
+            where: scopePartner(buildWhere(state, LIST_OPTIONS), req, PmMsFo),
             order: [[state.sortKey, state.dir], ['id', 'ASC']]
         });
         res.render('sheet/index', {
@@ -211,7 +211,7 @@ router.get('/', async (req, res) => {
             dir: state.sorting ? state.dir.toLowerCase() : '',
             exportHref: listHref(BASE + '/export', state),
             columns: columnMeta(BASE, state, COLUMNS),
-            stats: await blockCounts(scopePartner(buildWhere(state, { ...LIST_OPTIONS, withStatus: false }), req, 'pm_ms_fo')),
+            stats: await blockCounts(scopePartner(buildWhere(state, { ...LIST_OPTIONS, withStatus: false }), req, PmMsFo)),
             searchPlaceholder: 'Cari jenis, periode, tiket, jaringan, customer, rincian, PJ...'
         });
     } catch (error) {

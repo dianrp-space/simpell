@@ -2,6 +2,18 @@
 
 Catatan perubahan yang dikerjakan pada kode SIMPELL ini. Belum ada tag versi baru. Dasarnya tetap rilis `1.0.0` yang sudah ada.
 
+## 2026-11-17
+
+### Role Mitra
+
+- Akun Mitra yang menunya sudah dicentang bisa masuk ke Record GGN & PM, Data MS FO Kepri, Pendingan MS FO Kepri, dan Data PM MS FO Kepri.
+- Klik SIMPELL di portal membuka menu pertama yang dicentang, tidak kembali ke portal.
+
+### Pendingan MS FO Kepri
+
+- Kolom PJ berada di sebelah kiri Keterangan. Urutan akhirnya Status, PJ, lalu Keterangan di kanan.
+- Unduhan Excel memakai urutan kolom yang sama.
+
 ## 2026-11-16
 
 ### Data ODC

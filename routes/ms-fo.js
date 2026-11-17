@@ -150,7 +150,7 @@ router.get('/export', async (req, res) => {
     try {
         const state = readList(req.query, COLUMNS, LIST_OPTIONS);
         const data = await MsFo.findAll({
-            where: scopePartner(buildWhere(state, LIST_OPTIONS), req, 'ms_fo'),
+            where: scopePartner(buildWhere(state, LIST_OPTIONS), req, MsFo),
             order: [[state.sortKey, state.dir], ['id', 'ASC']]
         });
         const workbook = new ExcelJS.Workbook();
@@ -187,7 +187,7 @@ router.get('/export', async (req, res) => {
 router.get('/', async (req, res) => {
     try {
         const state = readList(req.query, COLUMNS, LIST_OPTIONS);
-        const where = scopePartner(buildWhere(state, LIST_OPTIONS), req, 'ms_fo');
+        const where = scopePartner(buildWhere(state, LIST_OPTIONS), req, MsFo);
         const { rows, pagination } = await paginate(MsFo, req, {
             where,
             order: [[state.sortKey, state.dir], ['id', 'ASC']]
@@ -207,7 +207,7 @@ router.get('/', async (req, res) => {
             dir: state.sorting ? state.dir.toLowerCase() : '',
             exportHref: listHref(BASE + '/export', state),
             columns: columnMeta(BASE, state, COLUMNS),
-            stats: await statusCounts(scopePartner(buildWhere(state, { ...LIST_OPTIONS, withStatus: false }), req, 'ms_fo')),
+            stats: await statusCounts(scopePartner(buildWhere(state, { ...LIST_OPTIONS, withStatus: false }), req, MsFo)),
             searchPlaceholder: 'Cari no jaringan, customer, service, node, kota...'
         });
     } catch (error) {

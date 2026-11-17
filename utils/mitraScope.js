@@ -7,11 +7,12 @@ function partnerName(req) {
     return String(user.nama_mitra || '').trim();
 }
 
-function scopePartner(where, req, table) {
+function scopePartner(where, req, Model) {
     const name = partnerName(req);
     if (name === null) return where || {};
+    const alias = Model && Model.name ? Model.name : Model;
     const clause = name
-        ? sequelize.where(sequelize.fn('LOWER', sequelize.col(`${table}.pj`)), name.toLowerCase())
+        ? sequelize.where(sequelize.fn('LOWER', sequelize.col(`${alias}.pj`)), name.toLowerCase())
         : { id: -1 };
     if (!where || !Object.keys(where).length) return clause;
     return { [Op.and]: [where, clause] };
@@ -20,7 +21,7 @@ function scopePartner(where, req, table) {
 function findForPartner(Model, id, req, options = {}) {
     return Model.findOne({
         ...options,
-        where: scopePartner({ id }, req, Model.tableName)
+        where: scopePartner({ id }, req, Model)
     });
 }
 
