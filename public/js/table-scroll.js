@@ -88,6 +88,9 @@ document.addEventListener('DOMContentLoaded', () => {
             if (/^(aksi|action)$/i.test(headerLabel(th))) {
                 return Math.max(floor, 88);
             }
+            if (/^customer$/i.test(headerLabel(th))) {
+                return Math.max(floor, 280);
+            }
             return Math.max(floor, naturalWidth(table, index));
         });
 
@@ -139,6 +142,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 document.addEventListener('mousemove', move);
                 document.addEventListener('mouseup', up);
+            });
+        });
+
+        ths.forEach((th, index) => {
+            if (!/^customer$/i.test(headerLabel(th))) return;
+            table.querySelectorAll('tr').forEach((row) => {
+                const cell = row.children[index];
+                if (cell && cell.tagName === 'TD' && !cell.hasAttribute('colspan')) cell.classList.add('col-wrap');
             });
         });
 

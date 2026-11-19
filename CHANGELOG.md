@@ -2,6 +2,13 @@
 
 Catatan perubahan yang dikerjakan pada kode SIMPELL ini. Belum ada tag versi baru. Dasarnya tetap rilis `1.0.0` yang sudah ada.
 
+## 2026-11-19
+
+### Data Customer
+
+- Kolom Customer di setiap tabel memakai lebar tetap. Ukuran tulisan tidak mengecil.
+- Nama yang muat tetap satu baris. Nama yang kepanjangan turun ke baris di bawahnya.
+
 ## 2026-11-17
 
 ### Role Mitra
