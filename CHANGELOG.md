@@ -9,6 +9,11 @@ Catatan perubahan yang dikerjakan pada kode SIMPELL ini. Belum ada tag versi bar
 - Kolom Customer di setiap tabel memakai lebar tetap. Ukuran tulisan tidak mengecil.
 - Nama yang muat tetap satu baris. Nama yang kepanjangan turun ke baris di bawahnya.
 
+### Tabel
+
+- Teks di setiap kolom tabel tetap utuh. Yang tidak muat turun ke baris bawah, tidak terpotong.
+- Simbol di kolom Aksi tetap kelihatan satu baris, mengikuti jumlah ikon detail, edit, dan hapus.
+
 ## 2026-11-17
 
 ### Role Mitra

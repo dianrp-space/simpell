@@ -55,6 +55,20 @@ document.addEventListener('DOMContentLoaded', () => {
         return Math.ceil(textWidth(text, style) + boxExtra(th) + 28);
     }
 
+    function isAction(label) {
+        return /^(aksi|action)$/i.test(label);
+    }
+
+    function actionFloor(table, index, th) {
+        let buttons = 1;
+        table.querySelectorAll('tr').forEach((row) => {
+            const cell = row.children[index];
+            if (!cell || cell.tagName !== 'TD' || cell.hasAttribute('colspan')) return;
+            buttons = Math.max(buttons, cell.querySelectorAll('a, button').length);
+        });
+        return Math.max(headerWidth(th), buttons * 40 + 28);
+    }
+
     function naturalWidth(table, index) {
         let widest = MIN;
         table.querySelectorAll('tr').forEach((row) => {
@@ -77,20 +91,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const key = storageKey(ths);
         const saved = readSaved(key, ths.length);
-        const floors = ths.map((th) => {
+        const floors = ths.map((th, index) => {
+            const label = headerLabel(th);
+            if (isAction(label)) return Math.max(MIN, actionFloor(table, index, th));
             const floor = Math.max(MIN, headerWidth(th));
             if (th.querySelector('[data-col-filter], select')) return Math.max(floor, 168);
             return floor;
         });
         const widths = ths.map((th, index) => {
             const floor = floors[index];
+            const label = headerLabel(th);
             if (saved) return Math.max(floor, saved[index]);
-            if (/^(aksi|action)$/i.test(headerLabel(th))) {
-                return Math.max(floor, 88);
-            }
-            if (/^customer$/i.test(headerLabel(th))) {
-                return Math.max(floor, 280);
-            }
+            if (isAction(label)) return floor;
+            if (/^customer$/i.test(label)) return Math.max(floor, 280);
             return Math.max(floor, naturalWidth(table, index));
         });
 
@@ -106,6 +119,7 @@ document.addEventListener('DOMContentLoaded', () => {
             let sum = 0;
             widths.forEach((width, index) => {
                 cols[index].style.width = width + 'px';
+                if (isAction(headerLabel(ths[index]))) cols[index].style.minWidth = floors[index] + 'px';
                 sum += width;
             });
             table.style.tableLayout = 'fixed';
@@ -146,10 +160,11 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         ths.forEach((th, index) => {
-            if (!/^customer$/i.test(headerLabel(th))) return;
+            const action = isAction(headerLabel(th));
             table.querySelectorAll('tr').forEach((row) => {
                 const cell = row.children[index];
-                if (cell && cell.tagName === 'TD' && !cell.hasAttribute('colspan')) cell.classList.add('col-wrap');
+                if (!cell || cell.tagName !== 'TD' || cell.hasAttribute('colspan')) return;
+                cell.classList.add(action ? 'col-actions' : 'col-wrap');
             });
         });
 

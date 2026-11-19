@@ -10,16 +10,37 @@
 }
 
 .col-resized td {
-    white-space: nowrap;
-    text-overflow: ellipsis;
-}
-
-.col-resized td.col-wrap {
     white-space: normal;
-    overflow-wrap: break-word;
-    word-break: normal;
+    overflow-wrap: anywhere;
+    word-break: break-word;
     text-overflow: clip;
     line-height: 1.35;
+}
+
+.col-resized td.col-wrap :is(.whitespace-nowrap, .truncate) {
+    white-space: normal;
+    overflow: visible;
+    text-overflow: clip;
+    max-width: none;
+}
+
+.col-resized td.col-wrap .flex {
+    flex-wrap: wrap;
+}
+
+.col-resized td.col-actions {
+    overflow: visible;
+    white-space: nowrap;
+    overflow-wrap: normal;
+    word-break: normal;
+    text-overflow: clip;
+}
+
+.col-resized td.col-actions :is(.whitespace-nowrap, .truncate, .flex) {
+    white-space: nowrap;
+    overflow: visible;
+    text-overflow: clip;
+    flex-wrap: nowrap;
 }
 
 .col-resized th {
